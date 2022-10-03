@@ -1,7 +1,6 @@
-from os import path
 import csv
 import time
-import sqlite3
+import os
 import psycopg2
 
 
@@ -81,14 +80,18 @@ class DataModel():
     def loadTestData(self):
 
         for table in self.schema.keys():
-            try:
-                csvFile = table + '.csv'
-                with open(csvFile, 'r', encoding='utf-8') as f:
-                    reader = csv.DictReader(f, delimiter=",", quotechar='"')
-                    for row in reader:
+            # try:
+            csvFile = '\\' + table + '.csv'
+            with open(os.path.dirname(__file__) + csvFile, 'r', encoding='utf-8') as f:
+                reader = csv.DictReader(f, delimiter=",", quotechar='"')
+                for row in reader:
+                    try:
                         self.insertRow(table, row)
-            except:
-                print(f"Failed to create table{table}")
+                    except:
+                        return
+            # except:
+            #     print(f"Failed to create table {table}")
+            #     return
 
     def close(self):
         try:
@@ -97,7 +100,7 @@ class DataModel():
         except:
             print("Exit failed")
 
-    def executeSQL(self, strQuery, values=None, show=False, txtFile=None):
+    def executeSQL(self, strQuery, values=None, show=False, txtFile=None, fetch=False):
         try:
 
             if txtFile == None:
@@ -118,19 +121,19 @@ class DataModel():
                         f'Executing querie {subquery[:50]}... finished in {sql_time:.5f} sec')
 
             self.con.commit()
+            if(fetch):
+                result = []
+                if len(self.cur.fetchall()):
+                    for row in self.cur.fetchall():
+                        element = []
+                        for item in row:
+                            element.append(str(item))
+                        result.append(element)
+                        if show:
+                            print(element)
+                    return result
 
-            result = []
-            if len(self.cur.fetchall()):
-                for row in self.cur.fetchall():
-                    element = []
-                    for item in row:
-                        element.append(str(item))
-                    result.append(element)
-                    if show:
-                        print(element)
-                return result
-
-        except sqlite3.Error as error:
+        except psycopg2.Error as error:
             print(f"Failed to execute SQL querie \n {query}", error)
             return False
 
@@ -138,13 +141,7 @@ class DataModel():
         try:
             vlist = []
             for f in val.keys():
-                v = val[f]
-                if v[0] == '=':
-                    v = v[1:]
-                if ';' in v:
-                    print("Possible SQL injection attemt detected")
-                v = v.split(' & ')
-                vlist += v
+                vlist.append(val[f])
             return vlist
         except:
             print(
@@ -204,7 +201,8 @@ class DataModel():
     def insertRow(self, table, val):
         try:
             values = self.values(val, ins=1, table=table)
-            strQuery = f"""INSERT INTO {table}({",".join(val.keys())}) VALUES(?{(len(val)-1) * ", ?"}); \n"""
+            strQuery = f"""INSERT INTO {table}({",".join(val.keys())}) VALUES(%s{(len(val)-1) * ", %s"}); \n"""
+            print(values)
             self.executeSQL(strQuery, values=values)
             return True
         except:
@@ -240,25 +238,33 @@ class DataModel():
 
     def create(self, tableName, tableDict):
         try:
+            primary_keys = []
             foreign_keys = []
             uniques = []
             query = f"CREATE TABLE IF NOT EXISTS {tableName} (\n"
+            # Attributes with types
             for a in tableDict.keys():
-                query += f"{a} {tableDict[a][0]}"
+                query += f"{a} {tableDict[a][0]},\n"
                 if tableDict[a][1]:
-                    query += ' PRIMARY KEY'
+                    primary_keys.append(a)
                 if len(tableDict[a]) > 3:
                     foreign_keys.append(a)
                 elif len(tableDict[a]) == 3:
                     uniques.append(a)
-                if (list(tableDict.keys()).index(a) < len(list(tableDict.keys())) - 1):
-                    query += ",\n"
+            # Primary key(s)
+            if len(primary_keys) == 0:
+                print(f'No primary key found for table {tableName}')
+            else:
+                query += 'PRIMARY KEY ('
+                for p in primary_keys:
+                    query += p
+                    if (primary_keys.index(p) < len(primary_keys) - 1):
+                        query += ','
+                if len(foreign_keys) == 0 and len(uniques) == 0:
+                    query += ")\n);"
                 else:
-                    if len(foreign_keys) == 0 and len(uniques) == 0:
-                        query += "\n);\n"
-                    else:
-                        query += ",\n"
-
+                    query += "),\n"
+            # Unique constraints
             if len(uniques) != 0:
                 for u in uniques:
                     query += f'CONSTRAINT KEEP_UNIQUE UNIQUE ({u})'
@@ -269,7 +275,7 @@ class DataModel():
                     query += "\n);\n"
                 else:
                     query += ",\n"
-
+            # Foreign key constraints
             if len(foreign_keys) != 0:
                 for fk in foreign_keys:
 
@@ -288,7 +294,7 @@ class DataModel():
         except:
             print(f"Failed to create table {tableName}")
 
-    def clear(self):
+    def dropTables(self):
         q = """ DO $$ DECLARE
                 r RECORD;
                 BEGIN
@@ -299,25 +305,13 @@ class DataModel():
         self.cur.execute(q)
         self.con.commit()
 
-
-schema = {
-    'Person': {"SSN": ['serial', True], "Firstname": ['text', False], "Surname": ['text', False],
-               "Phone": ['text', False], "Email": ['text', False], "Birth_date": ['date', False]},
-
-    'Patient': {"Patient_ID": ['integer', True, 'Person', 'SSN'], "Priority": ['float', False]},
-
-    'Speciality': {"Title": ['text', True]},
-
-    'Doctor': {"Doctor_ID": ['integer', True, 'Person', 'SSN'], "UPIN": ['text', False],
-               "Availability": ['boolean', False], "Speciality": ['text', False, 'Speciality', 'Title']},
-
-    'Timeslot': {"Timeslot_ID": ['serial', True], "Date": ['date', False], "Day": ['text', False], "Time": ['time', False],
-                 "Status": ['boolean', False], "Doctor": ['integer', False, 'Doctor', 'Doctor_ID']},
-
-    'Chooses': {"Patient": ['integer', True, 'Patient', 'SSN'], "Timeslot": ['integer', True, 'Timeslot', 'Timeslot_ID'],
-                "Preference": ['integer', False], "Score": ['float', False]}
-
-}
-
-test = DataModel('kanon2000', 'nhs', 'kanon2000', schema)
-# test.clear()
+    def dropData(self):
+        q = """ DO $$ DECLARE
+                r RECORD;
+                BEGIN
+                FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = current_schema()) LOOP
+                EXECUTE 'TRUNCATE ' || quote_ident(r.tablename) || ' CASCADE';
+                END LOOP;
+                END $$;"""
+        self.cur.execute(q)
+        self.con.commit()
