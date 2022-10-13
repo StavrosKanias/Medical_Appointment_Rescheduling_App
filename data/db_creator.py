@@ -26,20 +26,14 @@ def main():
     d.createTables()
     inp = input(" Do you want to fabricate new test data?\n y/n:")
     if inp == 'y':
-        fab = DataFabricator(schema, 10000, 50000, 50, 100, 10, 15, 1.5)
+        fab = DataFabricator(schema, 100000, 500000, 100, 150, 10, 20, 1.5)
         for e in list(schema.keys()):
             fab.fabricate(e)
-        d.dropData()
-        d.loadTestData()
-
-    elif d.isEmpty():
-        for i in list(schema.keys()):
-            f = open('{}.csv'.format(i), 'w')
-            f.close()
+        if d.isEmpty():
             d.loadTestData()
-    else:
-        d.dropData()
-        d.loadTestData()
+        else:
+            d.dropData()
+            d.loadTestData()
 
 
 if __name__ == "__main__":

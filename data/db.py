@@ -56,7 +56,6 @@ class DataModel():
         self.cur.execute(q)
         rows = self.cur.fetchall()
         if(rows[0][0]):
-            # print(rows[0][0])
             return False
         else:
             print('The database has no tables')
@@ -79,18 +78,15 @@ class DataModel():
     def loadTestData(self):
 
         for table in self.schema.keys():
-            # try:
-            csvFile = '\\' + table + '.csv'
-            with open(os.path.dirname(__file__) + csvFile, 'r', encoding='utf-8') as f:
-                reader = csv.DictReader(f, delimiter=",", quotechar='"')
-                for row in reader:
-                    try:
+            try:
+                csvFile = '\\' + table + '.csv'
+                with open(os.path.dirname(__file__) + csvFile, 'r', encoding='utf-8') as f:
+                    reader = csv.DictReader(f, delimiter=",", quotechar='"')
+                    for row in reader:
                         self.insertRow(table, row)
-                    except:
-                        return
-            # except:
-            #     print(f"Failed to create table {table}")
-            #     return
+            except:
+                print(f"Failed to create table {table}")
+                return
 
     def close(self):
         try:
@@ -116,8 +112,9 @@ class DataModel():
                     else:
                         self.cur.execute(subquery, values)
                     sql_time = time.perf_counter() - t1
-                    # print(
-                    #     f'Executing querie {subquery[:50]}... finished in {sql_time:.5f} sec')
+                    if show:
+                        print(
+                            f'Executing querie {subquery[:50]}... finished in {sql_time:.5f} sec')
 
             self.con.commit()
             if(fetch):
@@ -133,7 +130,7 @@ class DataModel():
                     return result
 
         except psycopg2.Error as error:
-            # print(f"Failed to execute SQL querie \n {query}", error)
+            print(f"Failed to execute SQL querie \n {query}", error)
             return False
 
     def values(self, val, ins=0, table=None):
