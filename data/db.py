@@ -76,7 +76,6 @@ class DataModel():
         print("Table creation finished")
 
     def loadTestData(self):
-
         for table in self.schema.keys():
             try:
                 csvFile = '\\' + table + '.csv'
@@ -110,7 +109,11 @@ class DataModel():
                     if values == None:
                         self.cur.execute(subquery)
                     else:
-                        self.cur.execute(subquery, values)
+                        try:
+                            self.cur.execute(subquery, values)
+                        except psycopg2.Error as error:
+                            print(
+                                f"Failed to execute SQL querie \n {query}", error)
                     sql_time = time.perf_counter() - t1
                     if show:
                         print(
@@ -130,7 +133,7 @@ class DataModel():
                     return result
 
         except psycopg2.Error as error:
-            print(f"Failed to execute SQL querie \n {query}", error)
+            # print(f"Failed to execute SQL querie \n {query}", error)
             return False
 
     def values(self, val, ins=0, table=None):
@@ -195,6 +198,7 @@ class DataModel():
             return False
 
     def insertRow(self, table, val):
+
         try:
             values = self.values(val, ins=1, table=table)
             strQuery = f"""INSERT INTO {table}({",".join(val.keys())}) VALUES(%s{(len(val)-1) * ", %s"}); \n"""
