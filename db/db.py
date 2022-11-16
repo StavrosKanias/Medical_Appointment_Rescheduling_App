@@ -76,13 +76,15 @@ class DataModel():
         print("Table creation finished")
 
     def loadTestData(self):
+        print("Loading test data...")
         for table in self.schema.keys():
             try:
                 csvFile = '\\' + table + '.csv'
-                with open(os.path.dirname(__file__) + csvFile, 'r', encoding='utf-8') as f:
+                with open(os.path.dirname(__file__) + '\\data' + csvFile, 'r', encoding='utf-8') as f:
                     reader = csv.DictReader(f, delimiter=",", quotechar='"')
                     for row in reader:
                         self.insertRow(table, row)
+                print(f"Successfuly loaded test data for table {table}")
             except:
                 print(f"Failed to create table {table}")
                 return

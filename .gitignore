@@ -1,13 +1,4 @@
 # Exclude CSVs
-
-data/test_data/*
-data/Person.csv
-data/Specialty.csv
-data/Doctor.csv
-data/Patient.csv
-data/Timeslot.csv
-data/Chooses.csv
-
+db/data/*
 # Exclude secondary implementations
-
-data/secondary/*
+db/secondary/*
