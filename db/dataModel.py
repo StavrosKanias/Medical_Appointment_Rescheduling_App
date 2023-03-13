@@ -5,7 +5,7 @@ import psycopg2
 
 
 class DataModel():
-    def __init__(self, postgresKey, dbName, dbKey, schema):
+    def __init__(self, postgresKey, dbName, dbKey, schema=None):
         self.dbName = dbName
         self.dbKey = dbKey
         self.schema = schema
@@ -29,7 +29,7 @@ class DataModel():
             if (dbName,) in list_database:
                 print("'{}' Database exist".format(dbName))
                 self.connect()
-                if(self.isEmpty()):
+                if(self.isEmpty() and schema is not None):
                     self.createTables()
             else:
                 print("'{}' Database does not exist.".format(dbName))
@@ -52,8 +52,8 @@ class DataModel():
             print("Connection failed")
 
     def isEmpty(self):
-        q = "SELECT count(*) FROM pg_catalog.pg_tables where schemaname not in ('information_schema', 'pg_catalog')"
-        self.cur.execute(q)
+        query = "SELECT count(*) FROM pg_catalog.pg_tables where schemaname not in ('information_schema', 'pg_catalog')"
+        self.cur.execute(query)
         rows = self.cur.fetchall()
         if(rows[0][0]):
             return False
@@ -66,8 +66,8 @@ class DataModel():
         print("Creating the database tables...")
         for table in self.schema.keys():
             try:
-                q = self.create(table, self.schema[table])
-                self.cur.execute(q)
+                query = self.create(table, self.schema[table])
+                self.cur.execute(query)
                 self.con.commit()
             except psycopg2.Error as e:
                 print(
@@ -98,7 +98,6 @@ class DataModel():
 
     def executeSQL(self, strQuery, values=None, show=False, txtFile=None, fetch=False):
         try:
-
             if txtFile == None:
                 query = strQuery
             else:
@@ -108,14 +107,14 @@ class DataModel():
             for subquery in query.split(";"):
                 if subquery.strip():
                     t1 = time.perf_counter()
-                    if values == None:
-                        self.cur.execute(subquery)
-                    else:
-                        try:
+                    try:
+                        if values == None:
+                            self.cur.execute(subquery)
+                        else:
                             self.cur.execute(subquery, values)
-                        except psycopg2.Error as error:
-                            print(
-                                f"Failed to execute SQL querie \n {query}", error)
+                    except psycopg2.Error as error:
+                        print(
+                            f"Failed to execute SQL querie \n {query}", error)
                     sql_time = time.perf_counter() - t1
                     if show:
                         print(
@@ -124,56 +123,49 @@ class DataModel():
             self.con.commit()
             if(fetch):
                 result = []
-                if len(self.cur.fetchall()):
-                    for row in self.cur.fetchall():
+                data = self.cur.fetchall()
+                if len(data):
+                    for row in data:
                         element = []
                         for item in row:
-                            element.append(str(item))
+                            element.append(item)
                         result.append(element)
                         if show:
                             print(element)
                     return result
 
         except psycopg2.Error as error:
-            # print(f"Failed to execute SQL querie \n {query}", error)
+            print(f"Failed to execute SQL querie \n {query}", error)
             return False
 
-    def values(self, val, ins=0, table=None):
+    def values(self, val, table=None):
         try:
             vlist = []
-            for f in val.keys():
-                vlist.append(val[f])
+            for f in val:
+                if type(val[f]) == list:
+                    for v in val[f]:
+                        if v[0] in ['<', '=', '>']:
+                            vlist.append(v[1:])
+                        else:
+                            vlist.append(v)
+                else:
+                    vlist.append(val[f])
             return vlist
         except:
             print(
                 f"Failed to create a list for the values\n {val}")
             return False
 
-    def conditions(self, cond, sep, table, upd=0):
+    def conditions(self, cond, sep, table):
         try:
             condstr = ''
-            for f in cond.keys():
-                c = cond[f]
-                c = c.split('&')
-                type = self.schema[table][f][0]
+            for c in cond:
+                condlst = cond[c]
+                for condition in condlst:
 
-                if len(c) > 1:
-                    if type == 'date' and not upd:
-                        condstr += f'(julianday({f}) {c[0][0]} julianday(?) and julianday({f}) {c[1][0]} julianday(?))'
-                    else:
-                        condstr += f'({f} {c[0][0]} ? and {f} {c[1][0]} ?)'
-                    cond[f] = f'{c[0][1:]} & {c[1][1:]}'
-
-                else:
-                    if type == 'date' and not upd:
-                        condstr += f'(julianday({f}) {c[0][0]} julianday(?))'
-                    else:
-                        condstr += f"{f} {c[0][0]} ?"
-                    cond[f] = cond[f][1:]
-
-                if list(cond.keys()).index(f) < len(list(cond.keys())) - 1:
-                    condstr += sep
-
+                    condstr += f"{c} {condition[0]} %s"
+                    if list(cond.keys()).index(c) < len(list(cond.keys())) - 1:
+                        condstr += sep
             return condstr
 
         except:
@@ -181,28 +173,40 @@ class DataModel():
                 f"Failed to create a unified string for the conditions\n {cond}")
             return False
 
-    def search(self, table, conditions):
+    def select(self, table, attributes=None, conditions=None):
         try:
-            query = f"\nSELECT *\nFROM {table}\n"
+            query = f"\nSELECT "
+            if attributes != None:
+                for a in attributes:
+                    query += a
+                    if attributes.index(a) < len(attributes) - 1:
+                        query += ', '
+                    else:
+                        query += '\n'
+            else:
+                query += '*\n'
+            query += f"FROM {table}\n"
+
             if conditions != None:
                 condstr = self.conditions(conditions, ' and ', table=table)
                 query += f"""WHERE({condstr}); \n"""
                 values = self.values(conditions)
-                filtered = self.executeSQL(query, values=values)
-            else:
-                filtered = self.executeSQL(query)
+                data = self.executeSQL(query, values=values, fetch=True)
 
-            return filtered
+            else:
+                data = self.executeSQL(query, fetch=True)
+
+            return data
 
         except:
             print(
-                f"Failed to filter {table} using conditions {conditions}")
+                f"Failed to select attributes {attributes} from {table} using conditions {conditions}")
             return False
 
     def insertRow(self, table, val):
 
         try:
-            values = self.values(val, ins=1, table=table)
+            values = self.values(val, table=table)
             strQuery = f"""INSERT INTO {table}({",".join(val.keys())}) VALUES(%s{(len(val)-1) * ", %s"}); \n"""
             self.executeSQL(strQuery, values=values)
             return True
@@ -226,7 +230,7 @@ class DataModel():
         try:
             condstr = self.conditions(conditions, ' and ', table=table)
             condval = self.values(conditions)
-            newstr = self.conditions(new, ', ', table=table, upd=1)
+            newstr = self.conditions(new, ', ', table=table)
             newval = self.values(new, table=table, ins=1)
             values = newval + condval
             query = f"UPDATE {table} SET {newstr} WHERE ({condstr});\n"
@@ -295,24 +299,31 @@ class DataModel():
         except:
             print(f"Failed to create table {tableName}")
 
+    def getTables(self):
+        query = "SELECT tablename FROM pg_tables WHERE schemaname = current_schema()"
+        tables = self.executeSQL(query, fetch=True)
+        for i in range(len(tables)):
+            tables[i] = tables[i][0].upper()
+        return tables
+
     def dropTables(self):
-        q = """ DO $$ DECLARE
+        query = """ DO $$ DECLARE
                 r RECORD;
                 BEGIN
                 FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = current_schema()) LOOP
                 EXECUTE 'DROP TABLE ' || quote_ident(r.tablename) || ' CASCADE';
                 END LOOP;
                 END $$;"""
-        self.cur.execute(q)
+        self.cur.execute(query)
         self.con.commit()
 
     def dropData(self):
-        q = """ DO $$ DECLARE
+        query = """ DO $$ DECLARE
                 r RECORD;
                 BEGIN
                 FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = current_schema()) LOOP
                 EXECUTE 'TRUNCATE ' || quote_ident(r.tablename) || ' CASCADE';
                 END LOOP;
                 END $$;"""
-        self.cur.execute(q)
+        self.cur.execute(query)
         self.con.commit()

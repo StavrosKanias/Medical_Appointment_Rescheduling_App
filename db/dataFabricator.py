@@ -1,14 +1,14 @@
 import pandas as pd
 import csv
-import string
 import random
+import numpy as np
 from faker import Faker
 from unidecode import unidecode
 from datetime import date, timedelta
 
 
 class DataFabricator():
-    def __init__(self, schema, minP, maxP, minD, maxD, minS, maxS, demand):
+    def __init__(self, schema, minP, maxP, minD, maxD, minS, maxS, demand, tAvailability):
         self.schema = schema
         self.quantities = {}
         self.quantities['PERSON'] = random.randint(minP, maxP)
@@ -21,6 +21,7 @@ class DataFabricator():
             self.quantities['DOCTOR'] * 8 * 5 * 12)
         self.quantities['REQUEST'] = int(
             demand * self.quantities['TIMESLOT'])
+        self.tAvailability = tAvailability
         for i in self.quantities:
             print(i, self.quantities[i])
 
@@ -38,8 +39,8 @@ class DataFabricator():
         primaries.append(temp)
         return primaryKey
 
-    def loadNonForeign(self, entity, entity_diction, attribute):
-        type = entity_diction[attribute][0]
+    def loadNonForeign(self, entity, attribute):
+        type = self.schema[entity][attribute][0]
         if type == 'text':
             type = 'str'
         elif type == 'integer':
@@ -75,7 +76,7 @@ class DataFabricator():
         priority = patient_info[patient]
         preference = request["PREFERENCE"]
         # the smallest the score the better
-        score = preference / priority
+        score = round(30 * 1/preference + 70 * (priority/100))
         return score, patient
 
     def handleStatus(self, requests, patient_info):
@@ -83,22 +84,22 @@ class DataFabricator():
         for i in range(len(requests)):
             request = requests[i]
             score, patient = self.calculateScore(request, patient_info)
+            requests[i]['SCORE'] = score
             if request['TIMESLOT_ID'] not in timeslot_requests.keys():
                 timeslot_requests[request['TIMESLOT_ID']] = [
                     (request['ID'], i, patient, score)]
             else:
                 timeslot_requests[request['TIMESLOT_ID']].append(
                     (request['ID'], i, patient, score))
+
         for timeslot in timeslot_requests:
             timeslot_requests[timeslot] = sorted(
                 timeslot_requests[timeslot], key=lambda item: item[3])
             priority_patient = timeslot_requests[timeslot].pop(0)
             requests[priority_patient[1]]['STATUS'] = 1
-            # requests[priority_patient[1]]['SCORE'] = priority_patient[3]
 
             for patient in timeslot_requests[timeslot]:
                 requests[patient[1]]['STATUS'] = 0
-                # requests[patient[1]]['SCORE'] = patient[3]
 
     def fabricatePerson(self, quantity):
         fake = Faker('el_GR')
@@ -193,7 +194,8 @@ class DataFabricator():
                                 text='????-########')
 
                     elif type == 'boolean':
-                        temp_dict[attribute] = random.randint(0, 1)
+                        if attribute == 'DOCTOR_AVAILABLE':
+                            temp_dict[attribute] = 1
 
             list_of_dicts.append(temp_dict)
         self.write_to_csv('DOCTOR', entity_diction, list_of_dicts)
@@ -216,7 +218,7 @@ class DataFabricator():
                         foreign_lists[attribute] = self.loadForeign(
                             entity_diction, attribute)
                         doctors = self.loadNonForeign(
-                            'DOCTOR', self.schema['DOCTOR'], 'ID')
+                            'DOCTOR', 'ID')
                         for d in doctors:
                             foreign_lists['ID'].remove(d)
                     foreign = self.chooseForeign(
@@ -226,7 +228,7 @@ class DataFabricator():
                 elif len(entity_diction[attribute]) < 4:
                     if type == 'integer':
                         if attribute == 'PRIORITY':
-                            temp_dict[attribute] = random.randint(1, 10)
+                            temp_dict[attribute] = random.randint(1, 100)
             list_of_dicts.append(temp_dict)
         self.write_to_csv('PATIENT', entity_diction, list_of_dicts)
 
@@ -291,11 +293,9 @@ class DataFabricator():
                             temp_dict[attribute] = current_appointment
 
                         elif type == 'boolean':
-                            if attribute == 'AVAILABILITY':
-                                if random.random() <= 0.05:
-                                    temp_dict[attribute] = 0
-                                else:
-                                    temp_dict[attribute] = 1
+                            if attribute == 'TIMESLOT_AVAILABLE':
+                                temp_dict[attribute] = np.random.choice(
+                                    [0, 1], p=[1-self.tAvailability, self.tAvailability])
 
             list_of_dicts.append(temp_dict)
         self.write_to_csv('TIMESLOT', entity_diction, list_of_dicts)
@@ -303,16 +303,15 @@ class DataFabricator():
     def fabricateRequest(self, quantity):
         primaryKey = 1
         entity_diction = self.schema['REQUEST']
-        patient_dict = self.schema['PATIENT']
         priorities = self.loadNonForeign(
-            "PATIENT", patient_dict, "PRIORITY")
+            "PATIENT", "PRIORITY")
 
         list_of_dicts = []
         primaries = []
         patients = {}
         current_patient = None
         availabilities = self.loadNonForeign(
-            'TIMESLOT', self.schema['TIMESLOT'], 'AVAILABILITY')
+            'TIMESLOT', 'TIMESLOT_AVAILABLE')
 
         # contains the coresponding column to the referenced enity for each foreign
         foreign_lists = {}
