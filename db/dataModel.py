@@ -118,7 +118,7 @@ class DataModel():
                     sql_time = time.perf_counter() - t1
                     if show:
                         print(
-                            f'Executing querie {subquery[:50]}... finished in {sql_time:.5f} sec')
+                            f'Executing querie {subquery}... finished in {sql_time:.5f} sec')
 
             self.con.commit()
             if(fetch):
@@ -191,7 +191,8 @@ class DataModel():
                 condstr = self.conditions(conditions, ' and ', table=table)
                 query += f"""WHERE({condstr}); \n"""
                 values = self.values(conditions)
-                data = self.executeSQL(query, values=values, fetch=True)
+                data = self.executeSQL(
+                    query, values=values, fetch=True)
 
             else:
                 data = self.executeSQL(query, fetch=True)

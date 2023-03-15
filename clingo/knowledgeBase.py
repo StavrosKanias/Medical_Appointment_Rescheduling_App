@@ -1,12 +1,16 @@
+from clorm import monkey
+monkey.patch()  # nopep8 # must call this before importing clingo
 from clorm import FactBase, Predicate, IntegerField, StringField
+from clingo import Control
 from customPredicates import DateField, TimeField
-import sys
 from datetime import datetime, timedelta
+import sys
 sys.path.append('./db')  # nopep8
 from dataModel import DataModel
 
 
 class KnowledgeBase():
+
     def __init__(self, name, schema, dbInfo=None, dbConditions=None, data=None):
         self.name = name
         self.schema = schema
@@ -23,7 +27,12 @@ class KnowledgeBase():
             self.db2kb()
 
         elif data:
-            self.data2kb(data)
+            for entity in data:
+                attributes = list(self.schema[entity])
+                l = self.literals[entity]
+                d = data[entity]
+                print(d)
+                self.data2kb(entity, attributes, d)
 
     def createLiterals(self, schema):
         literals = {}
@@ -108,6 +117,20 @@ class KnowledgeBase():
                     elif self.schema[entity][attribute][0] == 'time':
                         conditions[attribute].append(condition[0] + (datetime.now() +
                                                                      timedelta(hours=int(condition[1:]))).strftime("%H:%M:%S"))
+                        if conditions[attribute][-1][0] == '>' and conditions[attribute][-1][1:] > '17:00:00':
+                            conditions[attribute][-1] = '>09:00:00'
+                            d = []
+                            for t in conditions['DATE'][-1][1:].split('-'):
+                                d.append(int(t))
+                            conditions['DATE'][-1] = conditions['DATE'][-1][0] + (
+                                datetime(*d) + timedelta(days=1)).strftime("%Y-%m-%d")
+                        elif conditions[attribute][-1][0] == '<' and conditions[attribute][-1][1:] < '09:00:00':
+                            conditions[attribute][-1] = '<17:00:00'
+                            d = []
+                            for t in conditions['DATE'][-1][1:].split('-'):
+                                d.append(int(t))
+                            conditions['DATE'][-1] = conditions['DATE'][-1][0] + (
+                                datetime(*d) + timedelta(days=-1)).strftime("%Y-%m-%d")
                 else:
                     conditions[attribute].append(condition)
         return conditions
@@ -135,14 +158,43 @@ class KnowledgeBase():
                 v = pv.copy()
                 if not self.isPrimary(entity, a) and not self.schema[entity][a][0] == 'boolean':
                     v.append(d[attributes.index(a)])
+                print(l, v, pv)
                 self.kb.add(l(*v))
 
+    # Select from kb (More code needed for creating a condition)
+    def select(self, entity, on=None, conditions=None, order=None, asc=True, group=None, attributes=None):
+        l = []
+        if type(entity) == list:
+            for e in entity:
+                l.append(self.literals[e.upper()])
+        else:
+            l = [self.literals[entity.upper()]]
+        query = self.kb.query(*l)
+        if type(entity) == list:
+            if on:
+                query = self.kb.query(*entity).join(on)
+            else:
+                raise Exception(
+                    f"Attribute to join on for entities {entity} is not specified")
+        if conditions:
+            query = query.where(conditions)
+        if order:
+            query = query.order_by(order)
+        if group:
+            query = query.group_by(group)
+        if attributes:
+            query = query.select(attributes)
+        return list(query.all())
+
+    # Insert to kb and db
     def insert(self):
         pass
 
+    # Update to kb and db
     def update(self):
         pass
 
+    # Delete from kb and db
     def delete(self):
         pass
 
@@ -153,8 +205,33 @@ class KnowledgeBase():
         f.write(content)
         f.close()
 
+    def run(self, asp):
+
+        # Create a Control object that will unify models against the appropriate
+        # predicates. Then load the asp file that encodes the problem domain.
+        print(list(self.literals.values()))
+        ctrl = Control(unifier=list(self.literals.values()))
+        ctrl.load(asp)
+
+        # Add the instance data and ground the ASP program
+        ctrl.add_facts(self.kb)
+        ctrl.ground([("base", [])])
+
+        # Generate a solution - use a call back that saves the solution
+        solution = None
+
+        def on_model(model):
+            nonlocal solution
+            solution = model.facts(atoms=True)
+
+        ctrl.solve(on_model=on_model)
+        if not solution:
+            raise ValueError("No solution found")
+        else:
+            return solution
+
     def __repr__(self):
-        return "Test()"
+        return FactBase.asp_str(self.kb)
 
     def __str__(self):
-        return "member of Test"
+        return FactBase.asp_str(self.kb)

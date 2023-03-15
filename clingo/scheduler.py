@@ -22,6 +22,8 @@ def main():
     kb = KnowledgeBase('NHS_APPOINTMENTS', schema,
                        dbInfo=db_info, dbConditions=dbConditions)
     kb.toFile('clingo/')
+    # TODO
+    #print(kb.select('Timeslot', conditions={'Timeslot': [('ID', '>10')]}))
 
 
 if __name__ == "__main__":
