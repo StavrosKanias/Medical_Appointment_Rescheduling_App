@@ -18,15 +18,57 @@ schema = {
                 "PREFERENCE": ['integer', False], "SCORE": ['integer', False], "STATUS": ['integer', False]}  # The "SCORE" must be rounded to an int because clingo does not support floats yet
 }
 
+# ----------------- DEFAULT DATA ----------------------------------
+person = ['PERSON', [{"SSN": '21088977182', "FIRSTNAME": "Dimitrios", "LASTNAME": "Dimitriou",
+                      "PHONE": '6978909873', "EMAIL": "dimitriosdimitriou@gmail.com", "BIRTH_DATE": "1985-05-05"},
+                     {"SSN": '21088977183', "FIRSTNAME": "Nikos", "LASTNAME": "Nikou",
+                      "PHONE": "6978909845", "EMAIL": "nikosnikou@gmail.com", "BIRTH_DATE": "1990-05-05"},
+                     {"SSN": "21088977184", "FIRSTNAME": "Giorgos", "LASTNAME": "Georgiou",
+                      "PHONE": "6978909846", "EMAIL": "giogrosgeorgiou@gmail.com", "BIRTH_DATE": "1991-05-05"},
+                     {"SSN": "21088977185", "FIRSTNAME": "Ioannis", "LASTNAME": "Ioannou",
+                      "PHONE": "6978909846", "EMAIL": "ioannisioannou@gmail.com", "BIRTH_DATE": "1992-05-05"},
+                     {"SSN": "21088977186", "FIRSTNAME": "Maria", "LASTNAME": "Marietti",
+                      "PHONE": "6978909846", "EMAIL": "mariamarietti@gmail.com", "BIRTH_DATE": "1995-05-05"}, ]]
+specialty = ['SPECIALTY', [{"TITLE": 'Cardiology'}]]
+doctor = ['DOCTOR', [{"ID": "21088977182", "UPIN": 'cfnasnd123',
+                      "DOCTOR_AVAILABLE": 1, "SPECIALTY_TITLE": 'Cardiology'}]]
+patient = ['PATIENT', [{"ID": "21088977183", "PRIORITY": 80}, {
+    "ID": '21088977184', "PRIORITY": 70}, {"ID": '21088977185', "PRIORITY": 60}, {"ID": '21088977186', "PRIORITY": 50}]]
+timeslot = ['TIMESLOT', [
+    {"ID": 1, "DATE": "2025-05-05", "TIME": "09:00:00",
+        "TIMESLOT_AVAILABLE": 1, "DOCTOR_ID": "21088977182"},
+    {"ID": 2, "DATE": "2025-05-06", "TIME": "09:00:00",
+        "TIMESLOT_AVAILABLE": 1, "DOCTOR_ID": "21088977182"},
+    {"ID": 3, "DATE": "2025-05-07", "TIME": "09:00:00", "TIMESLOT_AVAILABLE": 1, "DOCTOR_ID": "21088977182"}]]
+
+
+def score(preference, priority):
+    return round(30 * 1/preference + 70 * (priority/100))
+
+
+request = ['REQUEST', [{"ID": 1, "PATIENT_ID": '21088977183', "TIMESLOT_ID": 1, "PREFERENCE": 1, "SCORE": score(1, 80), "STATUS": 1},
+                       {"ID": 2, "PATIENT_ID": '21088977184', "TIMESLOT_ID": 1,
+                           "PREFERENCE": 1, "SCORE": score(1, 70), "STATUS": 1},
+                       {"ID": 3, "PATIENT_ID": '21088977184', "TIMESLOT_ID": 2,
+                           "PREFERENCE": 2, "SCORE": score(2, 70), "STATUS": 1},
+                       {"ID": 4, "PATIENT_ID": '21088977185', "TIMESLOT_ID": 2,
+                           "PREFERENCE": 1, "SCORE": score(1, 60), "STATUS": 1},
+                       {"ID": 5, "PATIENT_ID": '21088977185', "TIMESLOT_ID": 3,
+                           "PREFERENCE": 2, "SCORE": score(1, 60), "STATUS": 1},
+                       {"ID": 6, "PATIENT_ID": '21088977186', "TIMESLOT_ID": 3, "PREFERENCE": 1, "SCORE": score(1, 50), "STATUS": 1}]]
+
+data = [person, specialty, doctor, patient, request, timeslot]
+print(data)
+
 
 def main():
 
-    d = DataModel('kanon2000', 'nhs', 'kanon2000', schema)
+    db = DataModel('kanon2000', 'nhs', 'kanon2000', schema)
 
     new_db = input(" Do you want to recreate the database?\n y/n:")
     if new_db == 'y':
-        d.dropTables()
-        d.createTables()
+        db.dropTables()
+        db.createTables()
 
     new_data = input(" Do you want to fabricate new test data?\n y/n:\n")
     if new_data == 'y':
@@ -43,35 +85,23 @@ def main():
                              maximum_people, minimum_doctors, maximum_doctors, minimum_specialites, maximum_specialites, demand, timeslot_availability)
         for e in schema.keys():
             fab.fabricate(e)
-        if d.isEmpty():
-            d.loadTestData()
+        if db.isEmpty():
+            db.loadTestData()
         else:
-            d.dropData()
-            d.loadTestData()
+            db.dropData()
+            db.loadTestData()
     else:
-        # d = Doctor('a', 'b', 1, 'c')
-        # p = Patient('a', 1)
-        # pe = Person('a', 's', 'k', '1412321', 'agsgacgz', datetime.date(2023, 1, 1))
-        # r = Request(1, 'asd', 1, 1, 1, 1)
-        # s = Specialty('lalala')
-        # t = Timeslot(1, datetime.date(2023, 10, 12), datetime.time(), 1, 'a')
-        doctor = ['DOCTOR', [{'aaaaaaa', 'ababababa', 1, 'Ortho'}]]
-        patient = ['PATIENT', [{'bbbbb', 50}, {
-            'ccccc', 60}, {'ddddd', 70}, {'eeeee', 80}]]
-        request = ['REQUEST', [{1, 'bbbbb', 1, 1, 65, 0}, {
-            2, 'ccccc', 1, 1, 65, 0}, {3, 'ddddd', 1, 1, 65, 0}]]
-        timeslot = ['TIMESLOT', [{}]]
-        data = [doctor, patient, request, timeslot]
         print('Using default data\n')
+        fab = DataFabricator()
         for d in data:
-            DataFabricator.write_to_csv(d[0], schema[d[0]], d[1])
-        if d.isEmpty():
-            d.loadTestData()
+            fab.write_to_csv(d[0], schema[d[0]], d[1])
+        if db.isEmpty():
+            db.loadTestData()
         else:
-            d.dropData()
-            d.loadTestData()
+            db.dropData()
+            db.loadTestData()
 
-    d.close()
+    db.close()
 
 
 if __name__ == "__main__":

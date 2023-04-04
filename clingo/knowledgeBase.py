@@ -29,9 +29,7 @@ class KnowledgeBase():
         elif data:
             for entity in data:
                 attributes = list(self.schema[entity])
-                l = self.literals[entity]
                 d = data[entity]
-                print(d)
                 self.data2kb(entity, attributes, d)
 
     def createLiterals(self, schema):
@@ -148,6 +146,7 @@ class KnowledgeBase():
             self.data2kb(e, attributes, data)
 
     def data2kb(self, entity, attributes, data):
+        print(entity, data)
         for a in list(attributes):
             if self.isPrimary(entity, a):
                 l = self.literals[entity]
@@ -158,7 +157,7 @@ class KnowledgeBase():
                 v = pv.copy()
                 if not self.isPrimary(entity, a) and not self.schema[entity][a][0] == 'boolean':
                     v.append(d[attributes.index(a)])
-                print(l, v, pv)
+                print(l, v)
                 self.kb.add(l(*v))
 
     # Select from kb (More code needed for creating a condition)
@@ -209,7 +208,6 @@ class KnowledgeBase():
 
         # Create a Control object that will unify models against the appropriate
         # predicates. Then load the asp file that encodes the problem domain.
-        print(list(self.literals.values()))
         ctrl = Control(unifier=list(self.literals.values()))
         ctrl.load(asp)
 

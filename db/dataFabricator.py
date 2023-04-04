@@ -8,22 +8,23 @@ from datetime import date, timedelta
 
 
 class DataFabricator():
-    def __init__(self, schema, minP, maxP, minD, maxD, minS, maxS, demand, tAvailability):
-        self.schema = schema
-        self.quantities = {}
-        self.quantities['PERSON'] = random.randint(minP, maxP)
-        self.quantities['DOCTOR'] = random.randint(minD, maxD)
-        self.quantities['PATIENT'] = self.quantities['PERSON'] - \
-            self.quantities['DOCTOR']
-        self.quantities['SPECIALTY'] = random.randint(minS, maxS)
-        # 8 timeslots per day, per doctor for 5 days a week for 3 months
-        self.quantities['TIMESLOT'] = int(
-            self.quantities['DOCTOR'] * 8 * 5 * 12)
-        self.quantities['REQUEST'] = int(
-            demand * self.quantities['TIMESLOT'])
-        self.tAvailability = tAvailability
-        for i in self.quantities:
-            print(i, self.quantities[i])
+    def __init__(self, schema=None, minP=None, maxP=None, minD=None, maxD=None, minS=None, maxS=None, demand=None, tAvailability=None):
+        if schema != None:
+            self.schema = schema
+            self.quantities = {}
+            self.quantities['PERSON'] = random.randint(minP, maxP)
+            self.quantities['DOCTOR'] = random.randint(minD, maxD)
+            self.quantities['PATIENT'] = self.quantities['PERSON'] - \
+                self.quantities['DOCTOR']
+            self.quantities['SPECIALTY'] = random.randint(minS, maxS)
+            # 8 timeslots per day, per doctor for 5 days a week for 3 months
+            self.quantities['TIMESLOT'] = int(
+                self.quantities['DOCTOR'] * 8 * 5 * 12)
+            self.quantities['REQUEST'] = int(
+                demand * self.quantities['TIMESLOT'])
+            self.tAvailability = tAvailability
+            for i in self.quantities:
+                print(i, self.quantities[i])
 
     def write_to_csv(self, entity, entity_diction, list_of_dicts):
         with open('db\\data\\{}.csv'.format(entity), 'w', encoding='utf8') as csvfile:
@@ -75,7 +76,6 @@ class DataFabricator():
         patient = request["PATIENT_ID"]
         priority = patient_info[patient]
         preference = request["PREFERENCE"]
-        # the smallest the score the better
         score = round(30 * 1/preference + 70 * (priority/100))
         return score, patient
 
@@ -97,9 +97,6 @@ class DataFabricator():
                 timeslot_requests[timeslot], key=lambda item: item[3])
             priority_patient = timeslot_requests[timeslot].pop(0)
             requests[priority_patient[1]]['STATUS'] = 1
-
-            for patient in timeslot_requests[timeslot]:
-                requests[patient[1]]['STATUS'] = 0
 
     def fabricatePerson(self, quantity):
         fake = Faker('el_GR')
@@ -353,6 +350,8 @@ class DataFabricator():
                             if attribute == 'PREFERENCE':
                                 temp_dict[attribute] = len(
                                     patients[current_patient])
+                            elif attribute == 'STATUS':
+                                temp_dict[attribute] = 0
 
             list_of_dicts.append(temp_dict)
         patient_info = {patient: priority for patient, priority in zip(

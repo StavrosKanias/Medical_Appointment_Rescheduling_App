@@ -12,10 +12,8 @@ class DataModel():
         connection = None
         try:
             connection = psycopg2.connect(
-                user='postgres',
-                host='localhost',
+                dbname='postgres',
                 password=postgresKey,
-                port='5433'
             )
         except:
             print('Connection refused.')
@@ -40,11 +38,8 @@ class DataModel():
             print("Connecting to database...")
             # connect to db
             self.con = psycopg2.connect(
-                host='localhost',
-                database=self.dbName,
-                user='postgres',
+                dbname=self.dbName,
                 password=self.dbKey,
-                port=5433
             )
             self.cur = self.con.cursor()
             print("Successfuly connected to the database", self.dbName)

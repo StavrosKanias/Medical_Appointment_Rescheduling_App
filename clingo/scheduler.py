@@ -1,5 +1,7 @@
 from knowledgeBase import KnowledgeBase
-
+import sys
+sys.path.append('./db')  # nopep8
+from dbCreator import schema
 schema = {
     'DOCTOR': {"ID": ['text', 'primary'], "DOCTOR_AVAILABLE": ['boolean'],
                "SPECIALTY_TITLE": ['text']},
