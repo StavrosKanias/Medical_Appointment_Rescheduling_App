@@ -26,39 +26,63 @@ person = ['PERSON', [{"SSN": '21088977182', "FIRSTNAME": "Dimitrios", "LASTNAME"
                      {"SSN": "21088977184", "FIRSTNAME": "Giorgos", "LASTNAME": "Georgiou",
                       "PHONE": "6978909846", "EMAIL": "giogrosgeorgiou@gmail.com", "BIRTH_DATE": "1991-05-05"},
                      {"SSN": "21088977185", "FIRSTNAME": "Ioannis", "LASTNAME": "Ioannou",
-                      "PHONE": "6978909846", "EMAIL": "ioannisioannou@gmail.com", "BIRTH_DATE": "1992-05-05"},
+                      "PHONE": "6978903456", "EMAIL": "ioannisioannou@gmail.com", "BIRTH_DATE": "1992-05-05"},
                      {"SSN": "21088977186", "FIRSTNAME": "Maria", "LASTNAME": "Marietti",
-                      "PHONE": "6978909846", "EMAIL": "mariamarietti@gmail.com", "BIRTH_DATE": "1995-05-05"}, ]]
+                      "PHONE": "6945609846", "EMAIL": "mariamarietti@gmail.com", "BIRTH_DATE": "1995-05-05"},
+                     {"SSN": "21088977187", "FIRSTNAME": "Despoina", "LASTNAME": "Panagiotopoulou",
+                      "PHONE": "6972349846", "EMAIL": "despoinapanagiotopoulou@gmail.com", "BIRTH_DATE": "1997-05-05"},
+                     {"SSN": "21088977188", "FIRSTNAME": "Kostas", "LASTNAME": "Karakostas",
+                      "PHONE": "6972747848", "EMAIL": "kostaskarakostas@gmail.com", "BIRTH_DATE": "1992-05-05"}]]
+
 specialty = ['SPECIALTY', [{"TITLE": 'Cardiology'}]]
+
 doctor = ['DOCTOR', [{"ID": "21088977182", "UPIN": 'cfnasnd123',
                       "DOCTOR_AVAILABLE": 1, "SPECIALTY_TITLE": 'Cardiology'}]]
-patient = ['PATIENT', [{"ID": "21088977183", "PRIORITY": 80}, {
-    "ID": '21088977184', "PRIORITY": 70}, {"ID": '21088977185', "PRIORITY": 60}, {"ID": '21088977186', "PRIORITY": 50}]]
+
+patient = ['PATIENT', [{"ID": "21088977183", "PRIORITY": 85},
+                       {"ID": '21088977184', "PRIORITY": 81},
+                       {"ID": '21088977185', "PRIORITY": 43},
+                       {"ID": '21088977186', "PRIORITY": 36},
+                       {"ID": '21088977187', "PRIORITY": 57},
+                       {"ID": '21088977188', "PRIORITY": 80}]]
+
 timeslot = ['TIMESLOT', [
     {"ID": 1, "DATE": "2025-05-05", "TIME": "09:00:00",
-        "TIMESLOT_AVAILABLE": 1, "DOCTOR_ID": "21088977182"},
-    {"ID": 2, "DATE": "2025-05-06", "TIME": "09:00:00",
-        "TIMESLOT_AVAILABLE": 1, "DOCTOR_ID": "21088977182"},
-    {"ID": 3, "DATE": "2025-05-07", "TIME": "09:00:00", "TIMESLOT_AVAILABLE": 1, "DOCTOR_ID": "21088977182"}]]
+     "TIMESLOT_AVAILABLE": 1, "DOCTOR_ID": "21088977182"},
+    {"ID": 2, "DATE": "2025-05-06", "TIME": "10:00:00",
+     "TIMESLOT_AVAILABLE": 1, "DOCTOR_ID": "21088977182"},
+    {"ID": 3, "DATE": "2025-05-07", "TIME": "11:00:00",
+     "TIMESLOT_AVAILABLE": 1, "DOCTOR_ID": "21088977182"},
+    {"ID": 4, "DATE": "2025-05-08", "TIME": "12:00:00",
+     "TIMESLOT_AVAILABLE": 1, "DOCTOR_ID": "21088977182"}]]
 
 
 def score(preference, priority):
     return round(30 * 1/preference + 70 * (priority/100))
 
 
-request = ['REQUEST', [{"ID": 1, "PATIENT_ID": '21088977183', "TIMESLOT_ID": 1, "PREFERENCE": 1, "SCORE": score(1, 80), "STATUS": 1},
+request = ['REQUEST', [{"ID": 1, "PATIENT_ID": '21088977183', "TIMESLOT_ID": 1,
+                        "PREFERENCE": 1, "SCORE": 90, "STATUS": 1},
                        {"ID": 2, "PATIENT_ID": '21088977184', "TIMESLOT_ID": 1,
-                           "PREFERENCE": 1, "SCORE": score(1, 70), "STATUS": 1},
-                       {"ID": 3, "PATIENT_ID": '21088977184', "TIMESLOT_ID": 2,
-                           "PREFERENCE": 2, "SCORE": score(2, 70), "STATUS": 1},
-                       {"ID": 4, "PATIENT_ID": '21088977185', "TIMESLOT_ID": 2,
-                           "PREFERENCE": 1, "SCORE": score(1, 60), "STATUS": 1},
-                       {"ID": 5, "PATIENT_ID": '21088977185', "TIMESLOT_ID": 3,
-                           "PREFERENCE": 2, "SCORE": score(1, 60), "STATUS": 1},
-                       {"ID": 6, "PATIENT_ID": '21088977186', "TIMESLOT_ID": 3, "PREFERENCE": 1, "SCORE": score(1, 50), "STATUS": 1}]]
+                        "PREFERENCE": 1, "SCORE": 87, "STATUS": 0},
+                       {"ID": 3, "PATIENT_ID": '21088977188', "TIMESLOT_ID": 1,
+                        "PREFERENCE": 1, "SCORE": 86, "STATUS": 0},
+                       {"ID": 4, "PATIENT_ID": '21088977184', "TIMESLOT_ID": 2,
+                        "PREFERENCE": 2, "SCORE": 72, "STATUS": 1},
+                       {"ID": 5, "PATIENT_ID": '21088977185', "TIMESLOT_ID": 2,
+                        "PREFERENCE": 1, "SCORE": 60, "STATUS": 0},
+                       {"ID": 6, "PATIENT_ID": '21088977186', "TIMESLOT_ID": 2,
+                        "PREFERENCE": 1, "SCORE": 55, "STATUS": 0},
+                       {"ID": 7, "PATIENT_ID": '21088977185', "TIMESLOT_ID": 3,
+                        "PREFERENCE": 2, "SCORE": 45, "STATUS": 1},
+                       {"ID": 8, "PATIENT_ID": '21088977186', "TIMESLOT_ID": 3,
+                        "PREFERENCE": 1, "SCORE": 40, "STATUS": 0},
+                       {"ID": 9, "PATIENT_ID": '21088977188', "TIMESLOT_ID": 4,
+                        "PREFERENCE": 2, "SCORE": 71, "STATUS": 1},
+                       {"ID": 10, "PATIENT_ID": '21088977187', "TIMESLOT_ID": 4,
+                        "PREFERENCE": 1, "SCORE": 70, "STATUS": 0}]]
 
 data = [person, specialty, doctor, patient, request, timeslot]
-print(data)
 
 
 def main():

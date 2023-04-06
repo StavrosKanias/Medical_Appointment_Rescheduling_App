@@ -1,7 +1,5 @@
 from knowledgeBase import KnowledgeBase
 import sys
-sys.path.append('./db')  # nopep8
-from dbCreator import schema
 schema = {
     'DOCTOR': {"ID": ['text', 'primary'], "DOCTOR_AVAILABLE": ['boolean'],
                "SPECIALTY_TITLE": ['text']},
@@ -19,13 +17,16 @@ schema = {
 
 
 def main():
-    dbConditions = {'TIMESLOT': {"DATE": ['>+0'], "TIME": ['>+0']}}
+    dbConditions = {'TIMESLOT': {"DATE": ['>+0']}}
     db_info = ['kanon2000', 'nhs', 'kanon2000']
     kb = KnowledgeBase('NHS_APPOINTMENTS', schema,
                        dbInfo=db_info, dbConditions=dbConditions)
-    kb.toFile('clingo/')
+    # kb.toFile('clingo/')
+    # solution = kb.run('clingo/scheduler.lp')
+    # print(solution)
     # TODO
-    #print(kb.select('Timeslot', conditions={'Timeslot': [('ID', '>10')]}))
+    print(kb.select('Request',
+                    conditions={'Status': [('STATUS', '=', 1)]}))
 
 
 if __name__ == "__main__":

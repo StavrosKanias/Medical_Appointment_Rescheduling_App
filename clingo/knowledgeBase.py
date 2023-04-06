@@ -17,7 +17,8 @@ class KnowledgeBase():
         self.kb = FactBase()
         self.TYPE2FIELD = {'integer': IntegerField,
                            'text': StringField, 'date': DateField, 'time': TimeField}
-        self.literals = self.createLiterals(schema)
+        self.predicates = self.createPredicates(schema)
+        print(self.predicates)
         if dbInfo:
             self.bindToDb(dbInfo)
             if dbConditions != None:
@@ -32,38 +33,39 @@ class KnowledgeBase():
                 d = data[entity]
                 self.data2kb(entity, attributes, d)
 
-    def createLiterals(self, schema):
-        literals = {}
+    def createPredicates(self, schema):
+        predicates = {}
         for e in schema:
-            literals[e] = {}
+            predicates[e] = {}
             attributes = schema[e].copy()
-            primary = self.createPrimaryLiteral(e, attributes, literals)
+            primary = self.createPrimaryPredicate(e, attributes, predicates)
             for a in attributes:
                 if attributes[a][0] == 'boolean':
                     content = primary.copy()
-                    literalName = self.getLiteralName(a)
-                    literal = type(literalName,
-                                   (Predicate, ), content)
-                    literals[a] = literal
+                    predicateName = self.getPredicateName(a)
+                    predicate = type(predicateName,
+                                     (Predicate, ), content)
+                    predicates[a] = predicate
                 else:
                     field = self.TYPE2FIELD[attributes[a][0]]
                     content = primary.copy()
                     content[a.lower()] = field
-                    literalName = self.getLiteralName(a)
-                    literal = type(literalName,
-                                   (Predicate, ), content)
-                    literals[a] = literal
-        return literals
+                    print(content)
+                    predicateName = self.getPredicateName(a)
+                    predicate = type(predicateName,
+                                     (Predicate, ), content)
+                    predicates[a] = predicate
+        return predicates
 
     def isPrimary(self, entity, attribute):
-        l = self.schema[entity][attribute]
-        if len(l) > 1 and l[1] == 'primary':
+        p = self.schema[entity][attribute]
+        if len(p) > 1 and p[1] == 'primary':
             return True
         else:
             return False
 
     # Creates the primary fields taking into account complex primary keys
-    def createPrimaryLiteral(self, entity, attributes, literals):
+    def createPrimaryPredicate(self, entity, attributes, predicates):
         primary = {}
         for a in list(attributes):
             if self.isPrimary(entity, a):
@@ -71,12 +73,26 @@ class KnowledgeBase():
                 primaryField = self.TYPE2FIELD[p[0]]
                 primary[a.lower()] = primaryField
         content = primary.copy()
-        literalName = self.getLiteralName(entity)
-        literal = type(literalName, (Predicate, ), content)
-        literals[entity] = literal
+        predicateName = self.getPredicateName(entity)
+        predicate = type(predicateName, (Predicate, ), content)
+        predicates[entity] = predicate
         for p in list(primary):
             primary[entity.lower() + p[0].upper() + p[1:]] = primary.pop(p)
         return primary
+
+    def getPrimaries(self, entity):
+        primaries = []
+        for a in self.schema[entity]:
+            if self.isPrimary(entity, a):
+                primaries.append(a)
+        return primaries
+
+    def getPrimaries(self, entity):
+        primaries = []
+        for a in list(self.schema[entity]):
+            if self.isPrimary(entity, a):
+                primaries.append(a)
+        return primaries
 
     def getPrimaryData(self, entity, attributes, data):
         primaryData = []
@@ -86,14 +102,14 @@ class KnowledgeBase():
                 primaryData.append(d)
         return primaryData
 
-    def getLiteralName(self, schemaName):
-        literal_name_parts = schemaName.split('_')
-        literal_name = ''
-        for w in literal_name_parts:
-            literal_name += w[0].upper() + w[1:].lower()
-            if literal_name_parts.index(w) < len(literal_name_parts) - 1:
-                literal_name += '_'
-        return literal_name
+    def getPredicateName(self, schemaName):
+        predicate_name_parts = schemaName.split('_')
+        predicate_name = ''
+        for w in predicate_name_parts:
+            predicate_name += w[0].upper() + w[1:].lower()
+            if predicate_name_parts.index(w) < len(predicate_name_parts) - 1:
+                predicate_name += '_'
+        return predicate_name
 
     def bindToDb(self, dbInfo):
         self.db = DataModel(dbInfo[0], dbInfo[1], dbInfo[2])
@@ -101,7 +117,7 @@ class KnowledgeBase():
         for s in self.schema:
             if s not in dbEntities:
                 raise Exception(
-                    f"Literal {s} doesn't exist in the given database.")
+                    f"The predicate {s} doesn't exist in the given database.")
 
     def getConditions(self, entity):
         conditions = {}
@@ -133,7 +149,7 @@ class KnowledgeBase():
                     conditions[attribute].append(condition)
         return conditions
 
-    # Translate db data to clingo literals
+    # Translate db data to clingo predicates
     def db2kb(self):
         # first clear the kb TODO
         for e in self.schema:
@@ -146,29 +162,69 @@ class KnowledgeBase():
             self.data2kb(e, attributes, data)
 
     def data2kb(self, entity, attributes, data):
-        print(entity, data)
         for a in list(attributes):
             if self.isPrimary(entity, a):
-                l = self.literals[entity]
+                p = self.predicates[entity]
             else:
-                l = self.literals[a]
+                p = self.predicates[a]
             for d in data:
                 pv = self.getPrimaryData(entity, attributes, d)
                 v = pv.copy()
                 if not self.isPrimary(entity, a) and not self.schema[entity][a][0] == 'boolean':
                     v.append(d[attributes.index(a)])
-                print(l, v)
-                self.kb.add(l(*v))
+                self.kb.add(p(*v))
+
+    def getMatchingPrimaries(self, entity, conditions):
+        primaries = self.getPrimaries(entity)
+        cattr = []
+        cpred = []
+        for c in conditions:
+            cattr.append(c[0])
+        for attribute in list(self.schema[entity]):
+            if self.isPrimary(entity.upper(), attribute):
+                cpred.append(self.predicates[entity.upper()])
+            else:
+                cpred.append = self.predicates[attribute.upper()]
+        query = self.kb.query(*cpred)
+        # Μετά βάλε condition και να επιλέγει και να επιστρέφει τα primaries
+
+    def conditionQuery(self, query, entity, conditions):
+        params = []
+        for conditionedEntity in conditions:
+            for c in conditions[conditionedEntity]:
+                attribute = c[0]
+                pathAttribute = None
+                predicate = None
+                if self.isPrimary(entity.upper(), attribute):
+                    predicate = self.predicates[entity.upper()]
+                    pathAttribute = getattr(predicate, attribute.lower())
+                else:
+                    predicate = self.predicates[attribute.upper()]
+                    pathAttribute = getattr(predicate, attribute.lower())
+                match c[1]:
+                    case '=':
+                        params.append(pathAttribute == c[2])
+                    case '!=':
+                        params.append(pathAttribute != c[2])
+                    case '>':
+                        params.append(pathAttribute > c[2])
+                    case '<':
+                        params.append(pathAttribute < c[2])
+                    case '>=':
+                        params.append(pathAttribute >= c[2])
+                    case '<=':
+                        params.append(pathAttribute == c[2])
+        return query.where(*params)
 
     # Select from kb (More code needed for creating a condition)
     def select(self, entity, on=None, conditions=None, order=None, asc=True, group=None, attributes=None):
-        l = []
+        p = []
         if type(entity) == list:
             for e in entity:
-                l.append(self.literals[e.upper()])
+                p.append(self.predicates[e.upper()])
         else:
-            l = [self.literals[entity.upper()]]
-        query = self.kb.query(*l)
+            p = [self.predicates[entity.upper()]]
+        query = self.kb.query(*p)
         if type(entity) == list:
             if on:
                 query = self.kb.query(*entity).join(on)
@@ -176,13 +232,19 @@ class KnowledgeBase():
                 raise Exception(
                     f"Attribute to join on for entities {entity} is not specified")
         if conditions:
-            query = query.where(conditions)
+            query = self.conditionQuery(query, entity, conditions)
         if order:
             query = query.order_by(order)
         if group:
             query = query.group_by(group)
         if attributes:
-            query = query.select(attributes)
+            a = []
+            for attribute in attributes:
+                if self.isPrimary(entity.upper(), attribute):
+                    a.append(self.predicates[entity.upper()])
+                else:
+                    a.append = self.predicates[attribute.upper()]
+            query = query.select(*a)
         return list(query.all())
 
     # Insert to kb and db
@@ -194,8 +256,13 @@ class KnowledgeBase():
         pass
 
     # Delete from kb and db
-    def delete(self):
-        pass
+    def delete(self, entity, condtitions=None):
+        attributes = self.schema[entity.upper()].keys()
+        primaries = self.select(
+            entity, conditions=condtitions, attributes='ID')
+        p = [self.predicates[entity.upper()]]
+        query = self.kb.query(p)
+        query = self.conditionQuery()
 
     def toFile(self, path, format='lp'):
         filename = path + self.name.lower() + '.' + format
@@ -208,7 +275,7 @@ class KnowledgeBase():
 
         # Create a Control object that will unify models against the appropriate
         # predicates. Then load the asp file that encodes the problem domain.
-        ctrl = Control(unifier=list(self.literals.values()))
+        ctrl = Control(unifier=list(self.predicates.values()))
         ctrl.load(asp)
 
         # Add the instance data and ground the ASP program
