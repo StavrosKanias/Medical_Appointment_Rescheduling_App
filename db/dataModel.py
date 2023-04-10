@@ -78,7 +78,7 @@ class DataModel():
                 with open(os.path.dirname(__file__) + '\\data' + csvFile, 'r', encoding='utf-8') as f:
                     reader = csv.DictReader(f, delimiter=",", quotechar='"')
                     for row in reader:
-                        self.insertRow(table, row)
+                        self.insert(table, row)
                 print(f"Successfuly loaded test data for table {table}")
             except:
                 print(f"Failed to create table {table}")
@@ -133,34 +133,29 @@ class DataModel():
             print(f"Failed to execute SQL querie \n {query}", error)
             return False
 
-    def values(self, val, table=None):
+    def values(self, val):
         try:
             vlist = []
-            for f in val:
-                if type(val[f]) == list:
-                    for v in val[f]:
-                        if v[0] in ['<', '=', '>']:
-                            vlist.append(v[1:])
-                        else:
-                            vlist.append(v)
-                else:
-                    vlist.append(val[f])
+            for c in val.values():
+                for v in c:
+                    vlist.append(v[1])
             return vlist
         except:
             print(
                 f"Failed to create a list for the values\n {val}")
             return False
 
-    def conditions(self, cond, sep, table):
+    def conditions(self, cond, sep):
         try:
             condstr = ''
             for c in cond:
                 condlst = cond[c]
                 for condition in condlst:
-
                     condstr += f"{c} {condition[0]} %s"
-                    if list(cond.keys()).index(c) < len(list(cond.keys())) - 1:
+                    if condlst.index(condition) < len(condlst) - 1:
                         condstr += sep
+                if list(cond.keys()).index(c) < len(list(cond.keys())) - 1:
+                    condstr += sep
             return condstr
 
         except:
@@ -183,7 +178,7 @@ class DataModel():
             query += f"FROM {table}\n"
 
             if conditions != None:
-                condstr = self.conditions(conditions, ' and ', table=table)
+                condstr = self.conditions(conditions, ' and ')
                 query += f"""WHERE({condstr}); \n"""
                 values = self.values(conditions)
                 data = self.executeSQL(
@@ -199,7 +194,7 @@ class DataModel():
                 f"Failed to select attributes {attributes} from {table} using conditions {conditions}")
             return False
 
-    def insertRow(self, table, val):
+    def insert(self, table, val):
 
         try:
             values = self.values(val, table=table)
@@ -210,9 +205,10 @@ class DataModel():
             print(f"Failed to insert values {values} to table {table}")
             return False
 
-    def deleteRow(self, table, conditions):
+    def delete(self, table, conditions):
         try:
-            condstr = self.conditions(conditions, ' and ', table=table)
+            condstr = self.conditions(conditions, ' and ')
+            print(condstr)
             values = self.values(conditions)
             query = f"""DELETE FROM {table} WHERE({condstr}); \n"""
             self.executeSQL(query, values=values)
@@ -222,11 +218,11 @@ class DataModel():
                 f"Failed to delete the row from table {table}")
             return False
 
-    def updateRow(self, table, conditions, new):
+    def update(self, table, conditions, new):
         try:
-            condstr = self.conditions(conditions, ' and ', table=table)
+            condstr = self.conditions(conditions, ' and ')
             condval = self.values(conditions)
-            newstr = self.conditions(new, ', ', table=table)
+            newstr = self.conditions(new, ', ')
             newval = self.values(new, table=table, ins=1)
             values = newval + condval
             query = f"UPDATE {table} SET {newstr} WHERE ({condstr});\n"

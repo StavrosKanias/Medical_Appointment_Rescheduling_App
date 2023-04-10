@@ -50,7 +50,6 @@ class KnowledgeBase():
                     field = self.TYPE2FIELD[attributes[a][0]]
                     content = primary.copy()
                     content[a.lower()] = field
-                    print(content)
                     predicateName = self.getPredicateName(a)
                     predicate = type(predicateName,
                                      (Predicate, ), content)
@@ -58,7 +57,7 @@ class KnowledgeBase():
         return predicates
 
     def isPrimary(self, entity, attribute):
-        p = self.schema[entity][attribute]
+        p = self.schema[entity.upper()][attribute]
         if len(p) > 1 and p[1] == 'primary':
             return True
         else:
@@ -80,19 +79,11 @@ class KnowledgeBase():
             primary[entity.lower() + p[0].upper() + p[1:]] = primary.pop(p)
         return primary
 
-    def getPrimaries(self, entity):
+    def getPrimary(self, entity):
         primaries = []
-        for a in self.schema[entity]:
-            if self.isPrimary(entity, a):
-                primaries.append(a)
-        return primaries
-
-    def getPrimaries(self, entity):
-        primaries = []
-        for a in list(self.schema[entity]):
-            if self.isPrimary(entity, a):
-                primaries.append(a)
-        return primaries
+        for a in list(self.schema[entity.upper()]):
+            if self.isPrimary(entity.upper(), a):
+                return a
 
     def getPrimaryData(self, entity, attributes, data):
         primaryData = []
@@ -120,26 +111,28 @@ class KnowledgeBase():
                     f"The predicate {s} doesn't exist in the given database.")
 
     def getConditions(self, entity):
+        entcond = self.conditions[entity]
         conditions = {}
-        for attribute in self.conditions[entity]:
-            for condition in self.conditions[entity][attribute]:
+        for attribute in entcond:
+            attrcond = entcond[attribute]
+            for condition in attrcond:
                 conditions[attribute] = []
-                if condition[1] in ['+', '-']:
+                if condition[1][0] in ['+', '-']:
                     if self.schema[entity][attribute][0] == 'date':
-                        conditions[attribute].append(condition[0] + (datetime.today() +
-                                                                     timedelta(days=int(condition[1:]))).strftime("%Y-%m-%d"))
+                        conditions[attribute].append((condition[0], (datetime.today() +
+                                                                     timedelta(days=int(condition[1][1:]))).strftime("%Y-%m-%d")))
                     elif self.schema[entity][attribute][0] == 'time':
-                        conditions[attribute].append(condition[0] + (datetime.now() +
-                                                                     timedelta(hours=int(condition[1:]))).strftime("%H:%M:%S"))
-                        if conditions[attribute][-1][0] == '>' and conditions[attribute][-1][1:] > '17:00:00':
-                            conditions[attribute][-1] = '>09:00:00'
+                        conditions[attribute].append((condition[0], (datetime.now() +
+                                                                     timedelta(hours=int(condition[1][1:]))).strftime("%H:%M:%S")))
+                        if conditions[attribute][-1][0] == '>' and conditions[attribute][-1][1] > '17:00:00':
+                            conditions[attribute][-1][1] = '> 09:00:00'
                             d = []
-                            for t in conditions['DATE'][-1][1:].split('-'):
+                            for t in conditions['DATE'][-1][1].split('-'):
                                 d.append(int(t))
-                            conditions['DATE'][-1] = conditions['DATE'][-1][0] + (
+                            conditions['DATE'][-1][1] = conditions['DATE'][-1][0] + (
                                 datetime(*d) + timedelta(days=1)).strftime("%Y-%m-%d")
                         elif conditions[attribute][-1][0] == '<' and conditions[attribute][-1][1:] < '09:00:00':
-                            conditions[attribute][-1] = '<17:00:00'
+                            conditions[attribute][-1][1] = '< 17:00:00'
                             d = []
                             for t in conditions['DATE'][-1][1:].split('-'):
                                 d.append(int(t))
@@ -156,6 +149,7 @@ class KnowledgeBase():
             attributes = list(self.schema[e])
             if e in self.conditions:
                 conditions = self.getConditions(e)
+                print(conditions)
                 data = self.db.select(e, attributes, conditions)
             else:
                 data = self.db.select(e, attributes)
@@ -174,25 +168,41 @@ class KnowledgeBase():
                     v.append(d[attributes.index(a)])
                 self.kb.add(p(*v))
 
-    def getMatchingPrimaries(self, entity, conditions):
-        primaries = self.getPrimaries(entity)
-        cattr = []
-        cpred = []
-        for c in conditions:
-            cattr.append(c[0])
-        for attribute in list(self.schema[entity]):
-            if self.isPrimary(entity.upper(), attribute):
-                cpred.append(self.predicates[entity.upper()])
-            else:
-                cpred.append = self.predicates[attribute.upper()]
-        query = self.kb.query(*cpred)
-        # Μετά βάλε condition και να επιλέγει και να επιστρέφει τα primaries
+    def getMatchingPrimaries(self, entity, conditions=None):
+        pv = []
+        if conditions:
+            for attribute in conditions:
+                primary = self.getPrimary(entity)
+                query = None
+                if self.isPrimary(entity, attribute):
+                    query = self.kb.query(self.predicates[entity.upper()])
+                else:
+                    query = self.kb.query(self.predicates[attribute.upper()])
+                query = self.conditionQuery(
+                    query, entity, {attribute: conditions[attribute]})
+                if self.isPrimary(entity, attribute):
+                    attrpred = getattr(self.predicates[
+                        entity.upper()], primary.lower())
+                    query = query.select(attrpred)
+                else:
+                    attrpred = getattr(
+                        self.predicates[attribute.upper()], entity.lower()+primary[0].upper()+primary[1:].lower())
+                    query = query.select(attrpred)
+                pv.append(set(query.all()))
+            return list(pv[0].intersection(*pv))
+        else:
+            primary = self.getPrimary(entity)
+            query = self.kb.query(self.predicates[entity.upper()])
+            attrpred = getattr(self.predicates[
+                entity.upper()], primary.lower())
+            query = query.select(attrpred)
+            return list(query.all())
 
     def conditionQuery(self, query, entity, conditions):
         params = []
-        for conditionedEntity in conditions:
-            for c in conditions[conditionedEntity]:
-                attribute = c[0]
+        for attribute in conditions:
+            for c in conditions[attribute]:
+                compop = c[0]
                 pathAttribute = None
                 predicate = None
                 if self.isPrimary(entity.upper(), attribute):
@@ -201,51 +211,44 @@ class KnowledgeBase():
                 else:
                     predicate = self.predicates[attribute.upper()]
                     pathAttribute = getattr(predicate, attribute.lower())
-                match c[1]:
+                match compop:
                     case '=':
-                        params.append(pathAttribute == c[2])
+                        params.append(pathAttribute == c[1])
                     case '!=':
-                        params.append(pathAttribute != c[2])
+                        params.append(pathAttribute != c[1])
                     case '>':
-                        params.append(pathAttribute > c[2])
+                        params.append(pathAttribute > c[1])
                     case '<':
-                        params.append(pathAttribute < c[2])
+                        params.append(pathAttribute < c[1])
                     case '>=':
-                        params.append(pathAttribute >= c[2])
+                        params.append(pathAttribute >= c[1])
                     case '<=':
-                        params.append(pathAttribute == c[2])
+                        params.append(pathAttribute == c[1])
         return query.where(*params)
 
-    # Select from kb (More code needed for creating a condition)
-    def select(self, entity, on=None, conditions=None, order=None, asc=True, group=None, attributes=None):
-        p = []
-        if type(entity) == list:
-            for e in entity:
-                p.append(self.predicates[e.upper()])
-        else:
-            p = [self.predicates[entity.upper()]]
-        query = self.kb.query(*p)
-        if type(entity) == list:
-            if on:
-                query = self.kb.query(*entity).join(on)
-            else:
-                raise Exception(
-                    f"Attribute to join on for entities {entity} is not specified")
-        if conditions:
-            query = self.conditionQuery(query, entity, conditions)
-        if order:
-            query = query.order_by(order)
-        if group:
-            query = query.group_by(group)
-        if attributes:
-            a = []
-            for attribute in attributes:
-                if self.isPrimary(entity.upper(), attribute):
-                    a.append(self.predicates[entity.upper()])
+    # Select from kb (Can be extended to use joins and grouping)
+    def select(self, entity, conditions=None, attributes=None):
+        data = []
+        primaries = self.getMatchingPrimaries(entity, conditions=conditions)
+        if not attributes:
+            attributes = list(self.schema[entity.upper()])
+        for p in primaries:
+            record = []
+            for a in attributes:
+                if self.isPrimary(entity, a):
+                    record.append(p)
                 else:
-                    a.append = self.predicates[attribute.upper()]
-            query = query.select(*a)
-        return list(query.all())
+                    if self.schema[entity.upper()][a.upper()][0] == 'boolean':
+                        record.append(1)
+                    else:
+                        apred = self.predicates[a.upper()]
+                        cpred = getattr(apred, entity.lower()+'Id')
+                        vpred = getattr(apred, a.lower())
+                        query = self.kb.query(apred).where(
+                            cpred == p).select(vpred)
+                        record.append(list(query.all())[0])
+            data.append(record)
+        return data
 
     # Insert to kb and db
     def insert(self):
@@ -256,13 +259,23 @@ class KnowledgeBase():
         pass
 
     # Delete from kb and db
-    def delete(self, entity, condtitions=None):
-        attributes = self.schema[entity.upper()].keys()
-        primaries = self.select(
-            entity, conditions=condtitions, attributes='ID')
-        p = [self.predicates[entity.upper()]]
-        query = self.kb.query(p)
-        query = self.conditionQuery()
+    def delete(self, entity, conditions=None, onDelete=None):
+        # Delete from kb
+        primary = self.getPrimary(entity)
+        primaries = self.getMatchingPrimaries(entity, conditions=conditions)
+        attributes = list(self.schema[entity.upper()])
+        for p in primaries:
+            for a in attributes:
+                if self.isPrimary(entity, a):
+                    apred = self.predicates[entity.upper()]
+                    cpred = getattr(apred, primary.lower())
+                else:
+                    apred = self.predicates[a.upper()]
+                    cpred = getattr(apred, entity.lower()+'Id')
+                self.kb.query(apred).where(cpred == p).delete()
+        # Delete from db
+        self.db.delete(entity.upper(), conditions)
+        return 1
 
     def toFile(self, path, format='lp'):
         filename = path + self.name.lower() + '.' + format

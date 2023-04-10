@@ -1,5 +1,5 @@
 from knowledgeBase import KnowledgeBase
-import sys
+from datetime import date
 schema = {
     'DOCTOR': {"ID": ['text', 'primary'], "DOCTOR_AVAILABLE": ['boolean'],
                "SPECIALTY_TITLE": ['text']},
@@ -17,7 +17,9 @@ schema = {
 
 
 def main():
-    dbConditions = {'TIMESLOT': {"DATE": ['>+0']}}
+    # TODO Change that
+    dbConditions = {'TIMESLOT': {
+        "TIME": [('>', '18:00:00')], "DATE": [('>', '+0')]}}
     db_info = ['kanon2000', 'nhs', 'kanon2000']
     kb = KnowledgeBase('NHS_APPOINTMENTS', schema,
                        dbInfo=db_info, dbConditions=dbConditions)
@@ -25,8 +27,9 @@ def main():
     # solution = kb.run('clingo/scheduler.lp')
     # print(solution)
     # TODO
-    print(kb.select('Request',
-                    conditions={'Status': [('STATUS', '=', 1)]}))
+    kb.delete('Timeslot', conditions={
+        "ID": [('>=', 1), ('<', 3)]})
+    print(kb.select('Timeslot'))
 
 
 if __name__ == "__main__":
