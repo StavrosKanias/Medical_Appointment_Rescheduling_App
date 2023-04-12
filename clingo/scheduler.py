@@ -27,9 +27,10 @@ def main():
     # solution = kb.run('clingo/scheduler.lp')
     # print(solution)
     # TODO
-    kb.delete('Timeslot', conditions={
-        "ID": [('>=', 3)]})
-    print(kb.select('Timeslot'))
+    # kb.delete('Timeslot', conditions={
+    #     "ID": [('>=', 3)]})
+    # print(kb.select('Timeslot'))
+    kb.reload()
 
 
 if __name__ == "__main__":

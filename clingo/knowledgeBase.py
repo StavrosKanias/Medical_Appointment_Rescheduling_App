@@ -18,10 +18,9 @@ class KnowledgeBase():
         self.TYPE2FIELD = {'integer': IntegerField,
                            'text': StringField, 'date': DateField, 'time': TimeField}
         self.predicates = self.createPredicates(schema)
-        print(self.predicates)
         if dbInfo:
             self.bindToDb(dbInfo)
-            if dbConditions != None:
+            if dbConditions:
                 self.conditions = dbConditions
             else:
                 self.conditions = {}
@@ -148,23 +147,20 @@ class KnowledgeBase():
             attributes = list(self.schema[e])
             if e in self.conditions:
                 conditions = self.getConditions(e)
-                print(conditions)
                 data = self.db.select(e, attributes, conditions)
                 if data:
                     self.data2kb(e, attributes, data)
                 else:
                     print('No database data found to fit the conditions ' +
-                          str(self.conditions) + ' for entity ' + e + '.')
+                          str(conditions) + ' for entity ' + e + '.')
             else:
                 data = self.db.select(e, attributes)
                 if data:
                     self.data2kb(e, attributes, data)
                 else:
-                    print('No database data found for the entity ' +
-                          e + ' ')
+                    print('No database data found for the entity ' + e + ' ')
 
     def data2kb(self, entity, attributes, data):
-        print(entity, data)
         for a in list(attributes):
             if self.isPrimary(entity, a):
                 p = self.predicates[entity]
@@ -268,7 +264,7 @@ class KnowledgeBase():
         pass
 
     # Delete from kb and db
-    def delete(self, entity, conditions=None):
+    def delete(self, entity, conditions=None, fromDb=True):
         # Delete from kb
         primary = self.getPrimary(entity)
         primaries = self.getMatchingPrimaries(entity, conditions=conditions)
@@ -283,7 +279,8 @@ class KnowledgeBase():
                     cpred = getattr(apred, entity.lower()+'Id')
                 self.kb.query(apred).where(cpred == p).delete()
         # Delete from db
-        self.db.delete(entity.upper(), conditions)
+        if fromDb:
+            self.db.delete(entity.upper(), conditions)
         return True
 
     def toFile(self, path, format='lp'):
@@ -318,7 +315,8 @@ class KnowledgeBase():
             return solution
 
     def clear(self):
-        pass
+        for e in self.schema:
+            self.delete(e, fromDb=False)
 
     def reload(self):
         self.clear()

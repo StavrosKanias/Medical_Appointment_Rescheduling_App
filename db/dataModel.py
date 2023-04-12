@@ -171,7 +171,7 @@ class DataModel():
     def select(self, table, attributes=None, conditions=None):
         try:
             query = f"\nSELECT "
-            if attributes != None:
+            if attributes:
                 for a in attributes:
                     query += a
                     if attributes.index(a) < len(attributes) - 1:
@@ -182,16 +182,14 @@ class DataModel():
                 query += '*\n'
             query += f"FROM {table}\n"
 
-            if conditions != None:
+            if conditions:
                 condstr = self.conditions(conditions, ' and ')
                 query += f"""WHERE({condstr}); \n"""
                 values = self.values(conditions)
                 data = self.executeSQL(
                     query, values=values, fetch=True)
-
             else:
                 data = self.executeSQL(query, fetch=True)
-
             return data
 
         except:
@@ -202,9 +200,7 @@ class DataModel():
     def insert(self, table, val):
 
         try:
-            print(val)
             values = self.values(val)
-            print(values)
             strQuery = f"""INSERT INTO {table}({",".join(val.keys())}) VALUES(%s{(len(val)-1) * ", %s"}); \n"""
             self.executeSQL(strQuery, values=values)
             return True
@@ -214,11 +210,14 @@ class DataModel():
 
     def delete(self, table, conditions):
         try:
-            condstr = self.conditions(conditions, ' and ')
-            print(condstr)
-            values = self.values(conditions)
-            query = f"""DELETE FROM {table} WHERE({condstr}); \n"""
-            self.executeSQL(query, values=values)
+            query = f"""DELETE FROM {table}"""
+            if conditions:
+                condstr = self.conditions(conditions, ' and ')
+                values = self.values(conditions)
+                query += f"""WHERE({condstr}); \n"""
+                self.executeSQL(query, values=values)
+            else:
+                self.executeSQL(query)
             return True
         except:
             print(
