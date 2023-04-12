@@ -144,18 +144,27 @@ class KnowledgeBase():
 
     # Translate db data to clingo predicates
     def db2kb(self):
-        # first clear the kb TODO
         for e in self.schema:
             attributes = list(self.schema[e])
             if e in self.conditions:
                 conditions = self.getConditions(e)
                 print(conditions)
                 data = self.db.select(e, attributes, conditions)
+                if data:
+                    self.data2kb(e, attributes, data)
+                else:
+                    print('No database data found to fit the conditions ' +
+                          str(self.conditions) + ' for entity ' + e + '.')
             else:
                 data = self.db.select(e, attributes)
-            self.data2kb(e, attributes, data)
+                if data:
+                    self.data2kb(e, attributes, data)
+                else:
+                    print('No database data found for the entity ' +
+                          e + ' ')
 
     def data2kb(self, entity, attributes, data):
+        print(entity, data)
         for a in list(attributes):
             if self.isPrimary(entity, a):
                 p = self.predicates[entity]
@@ -259,7 +268,7 @@ class KnowledgeBase():
         pass
 
     # Delete from kb and db
-    def delete(self, entity, conditions=None, onDelete=None):
+    def delete(self, entity, conditions=None):
         # Delete from kb
         primary = self.getPrimary(entity)
         primaries = self.getMatchingPrimaries(entity, conditions=conditions)
@@ -275,7 +284,7 @@ class KnowledgeBase():
                 self.kb.query(apred).where(cpred == p).delete()
         # Delete from db
         self.db.delete(entity.upper(), conditions)
-        return 1
+        return True
 
     def toFile(self, path, format='lp'):
         filename = path + self.name.lower() + '.' + format
@@ -307,6 +316,13 @@ class KnowledgeBase():
             raise ValueError("No solution found")
         else:
             return solution
+
+    def clear(self):
+        pass
+
+    def reload(self):
+        self.clear()
+        self.db2kb()
 
     def __repr__(self):
         return FactBase.asp_str(self.kb)

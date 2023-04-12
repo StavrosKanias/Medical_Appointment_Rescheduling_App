@@ -66,7 +66,7 @@ class DataModel():
                 self.con.commit()
             except psycopg2.Error as e:
                 print(
-                    f"Failed to upload table {table} of database with schema {self.schema} because {e}")
+                    f"Failed to create table {table} of database with schema {self.schema} because {e}")
                 return
         print("Table creation finished")
 
@@ -81,7 +81,7 @@ class DataModel():
                         self.insert(table, row)
                 print(f"Successfuly loaded test data for table {table}")
             except:
-                print(f"Failed to create table {table}")
+                print(f"Failed to load test data for table {table}")
                 return
 
     def close(self):
@@ -137,8 +137,13 @@ class DataModel():
         try:
             vlist = []
             for c in val.values():
-                for v in c:
-                    vlist.append(v[1])
+                # For condition values
+                if type(c) == list:
+                    for v in c:
+                        vlist.append(v[1])
+                # For data values
+                else:
+                    vlist.append(c)
             return vlist
         except:
             print(
@@ -197,7 +202,9 @@ class DataModel():
     def insert(self, table, val):
 
         try:
-            values = self.values(val, table=table)
+            print(val)
+            values = self.values(val)
+            print(values)
             strQuery = f"""INSERT INTO {table}({",".join(val.keys())}) VALUES(%s{(len(val)-1) * ", %s"}); \n"""
             self.executeSQL(strQuery, values=values)
             return True
@@ -223,7 +230,7 @@ class DataModel():
             condstr = self.conditions(conditions, ' and ')
             condval = self.values(conditions)
             newstr = self.conditions(new, ', ')
-            newval = self.values(new, table=table, ins=1)
+            newval = self.values(new)
             values = newval + condval
             query = f"UPDATE {table} SET {newstr} WHERE ({condstr});\n"
             self.executeSQL(query, values)
@@ -275,9 +282,8 @@ class DataModel():
             # Foreign key constraints
             if len(foreign_keys) != 0:
                 for fk in foreign_keys:
-
                     query += f'CONSTRAINT INFORM_{tableDict[fk][2].upper()} FOREIGN KEY({fk}) REFERENCES {tableDict[fk][2]}({tableDict[fk][3]}) ON UPDATE CASCADE'
-                    if tableDict[fk][2] == 'Partner':
+                    if tableDict[fk][2].upper() == 'TIMESLOT':
                         query += ' ON DELETE CASCADE'
                     else:
                         query += ' ON DELETE SET NULL'

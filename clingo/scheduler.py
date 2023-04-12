@@ -19,7 +19,7 @@ schema = {
 def main():
     # TODO Change that
     dbConditions = {'TIMESLOT': {
-        "TIME": [('>', '18:00:00')], "DATE": [('>', '+0')]}}
+        "TIME": [('>', '09:00:00')], "DATE": [('>', '+0')]}}
     db_info = ['kanon2000', 'nhs', 'kanon2000']
     kb = KnowledgeBase('NHS_APPOINTMENTS', schema,
                        dbInfo=db_info, dbConditions=dbConditions)
@@ -28,7 +28,7 @@ def main():
     # print(solution)
     # TODO
     kb.delete('Timeslot', conditions={
-        "ID": [('>=', 1), ('<', 3)]})
+        "ID": [('>=', 3)]})
     print(kb.select('Timeslot'))
 
 
