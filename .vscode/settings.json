@@ -1,3 +1,4 @@
 {
-  "python.analysis.extraPaths": ["./db"]
+  "python.analysis.extraPaths": ["./db"],
+  "python.analysis.typeCheckingMode": "off"
 }

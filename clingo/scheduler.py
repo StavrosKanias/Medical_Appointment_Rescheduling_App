@@ -1,4 +1,5 @@
 from knowledgeBase import KnowledgeBase
+from clorm import update
 from datetime import date
 schema = {
     'DOCTOR': {"ID": ['text', 'primary'], "DOCTOR_AVAILABLE": ['boolean'],
@@ -30,7 +31,10 @@ def main():
     # kb.delete('Timeslot', conditions={
     #     "ID": [('>=', 3)]})
     # print(kb.select('Timeslot'))
-    kb.reload()
+    # kb.reload()
+    # print(kb)
+    # kb.update('Request', conditions={"ID": [('=', 2)]}, values={"STATUS": 1})
+    kb.kb.update()
 
 
 if __name__ == "__main__":

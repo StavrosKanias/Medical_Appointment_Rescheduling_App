@@ -228,7 +228,7 @@ class KnowledgeBase():
                     case '>=':
                         params.append(pathAttribute >= c[1])
                     case '<=':
-                        params.append(pathAttribute == c[1])
+                        params.append(pathAttribute <= c[1])
         return query.where(*params)
 
     # Select from kb (Can be extended to use joins and grouping)
@@ -259,11 +259,21 @@ class KnowledgeBase():
     def insert(self):
         pass
 
+    def upd_fn(predicate, attributes):
+        params = {}
+        for a in attributes:
+            pathAttribute = getattr(predicate, a.lower())
+            v = attributes[a]
+            params[pathAttribute] = v
+        return {predicate.clone(**params)}
+
     # Update to kb and db
-    def update(self):
-        pass
+
+    def update(self, entity, conditions=None, values=None, toDb=True):
+        primaries = self.getMatchingPrimaries(entity, conditions=conditions)
 
     # Delete from kb and db
+
     def delete(self, entity, conditions=None, fromDb=True):
         # Delete from kb
         primary = self.getPrimary(entity)

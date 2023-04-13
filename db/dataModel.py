@@ -197,20 +197,9 @@ class DataModel():
                 f"Failed to select attributes {attributes} from {table} using conditions {conditions}")
             return False
 
-    def insert(self, table, val):
-
-        try:
-            values = self.values(val)
-            strQuery = f"""INSERT INTO {table}({",".join(val.keys())}) VALUES(%s{(len(val)-1) * ", %s"}); \n"""
-            self.executeSQL(strQuery, values=values)
-            return True
-        except:
-            print(f"Failed to insert values {values} to table {table}")
-            return False
-
     def delete(self, table, conditions):
         try:
-            query = f"""DELETE FROM {table}"""
+            query = f"""\nDELETE FROM {table}\n"""
             if conditions:
                 condstr = self.conditions(conditions, ' and ')
                 values = self.values(conditions)
@@ -222,6 +211,16 @@ class DataModel():
         except:
             print(
                 f"Failed to delete the row from table {table}")
+            return False
+
+    def insert(self, table, val):
+        try:
+            values = self.values(val)
+            strQuery = f"""INSERT INTO {table}({",".join(val.keys())}) VALUES(%s{(len(val)-1) * ", %s"}); \n"""
+            self.executeSQL(strQuery, values=values)
+            return True
+        except:
+            print(f"Failed to insert values {values} to table {table}")
             return False
 
     def update(self, table, conditions, new):
