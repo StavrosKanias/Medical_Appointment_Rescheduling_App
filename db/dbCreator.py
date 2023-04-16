@@ -106,7 +106,7 @@ def main():
         timeslot_availability = float(input(" Timeslot availability: \n"))
         # 500, 1000, 5, 10, 10, 20, 2.5, 0.95
         fab = DataFabricator(schema, minimum_people,
-                             maximum_people, minimum_doctors, maximum_doctors, minimum_specialites, maximum_specialites, demand, timeslot_availability)
+                             maximum_people, minimum_doctors, maximum_doctors, minimum_specialites, maximum_specialites, demand, timeslot_availability, seed=1)
         for e in schema.keys():
             fab.fabricate(e)
         if db.isEmpty():

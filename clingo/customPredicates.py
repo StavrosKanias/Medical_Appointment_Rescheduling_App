@@ -1,5 +1,5 @@
-from datetime import datetime, date, time
-from clorm import StringField, IntegerField, Predicate
+from datetime import datetime
+from clorm import StringField
 
 
 class DateField(StringField):

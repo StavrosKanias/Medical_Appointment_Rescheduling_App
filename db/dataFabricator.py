@@ -8,7 +8,7 @@ from datetime import date, timedelta
 
 
 class DataFabricator():
-    def __init__(self, schema=None, minP=None, maxP=None, minD=None, maxD=None, minS=None, maxS=None, demand=None, tAvailability=None):
+    def __init__(self, schema=None, minP=None, maxP=None, minD=None, maxD=None, minS=None, maxS=None, demand=None, tAvailability=None, seed=None):
         if schema != None:
             self.schema = schema
             self.quantities = {}
@@ -25,6 +25,8 @@ class DataFabricator():
             self.tAvailability = tAvailability
             for i in self.quantities:
                 print(i, self.quantities[i])
+            random.seed(seed)
+            self.seed = seed
 
     def write_to_csv(self, entity, entity_diction, list_of_dicts):
         with open('db\\data\\{}.csv'.format(entity), 'w', encoding='utf8') as csvfile:
@@ -100,6 +102,7 @@ class DataFabricator():
 
     def fabricatePerson(self, quantity):
         fake = Faker('el_GR')
+        fake.seed(self.seed)
         entity_diction = self.schema['PERSON']
         list_of_dicts = []
         for i in range(0, quantity):
@@ -159,6 +162,7 @@ class DataFabricator():
 
     def fabricateDoctor(self, quantity):
         fake = Faker('el_GR')
+        fake.seed(self.seed)
         entity_diction = self.schema['DOCTOR']
         list_of_dicts = []
         # contains the coresponding column to the referenced enity for each foreign

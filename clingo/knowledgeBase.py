@@ -30,7 +30,7 @@ class KnowledgeBase():
             for entity in data:
                 attributes = list(self.schema[entity])
                 d = data[entity]
-                self.data2kb(entity, attributes, d)
+                self.insert(entity, attributes, d, toDb=False)
 
     def createPredicates(self, schema):
         predicates = {}
@@ -149,29 +149,32 @@ class KnowledgeBase():
                 conditions = self.getConditions(e)
                 data = self.db.select(e, attributes, conditions)
                 if data:
-                    self.data2kb(e, attributes, data)
+                    self.insert(e, attributes, data, toDb=False)
                 else:
                     print('No database data found to fit the conditions ' +
                           str(conditions) + ' for entity ' + e + '.')
             else:
                 data = self.db.select(e, attributes)
                 if data:
-                    self.data2kb(e, attributes, data)
+                    self.insert(e, attributes, data, toDb=False)
                 else:
                     print('No database data found for the entity ' + e + ' ')
 
-    def data2kb(self, entity, attributes, data):
-        for a in list(attributes):
+    # Insert to kb and db
+    def insert(self, entity, attributes, data, toDb=True):
+        for a in attributes:
             if self.isPrimary(entity, a):
-                p = self.predicates[entity]
+                p = self.predicates[entity.upper()]
             else:
                 p = self.predicates[a]
             for d in data:
                 pv = self.getPrimaryData(entity, attributes, d)
                 v = pv.copy()
-                if not self.isPrimary(entity, a) and not self.schema[entity][a][0] == 'boolean':
+                if not self.isPrimary(entity, a) and not self.schema[entity.upper()][a.upper()][0] == 'boolean':
                     v.append(d[attributes.index(a)])
                 self.kb.add(p(*v))
+        if toDb:
+            self.db.insert(entity, data)
 
     def getMatchingPrimaries(self, entity, conditions=None):
         pv = []
@@ -242,38 +245,52 @@ class KnowledgeBase():
             for a in attributes:
                 if self.isPrimary(entity, a):
                     record.append(p)
+                elif self.schema[entity.upper()][a.upper()][0] == 'boolean':
+                    record.append(1)
                 else:
-                    if self.schema[entity.upper()][a.upper()][0] == 'boolean':
-                        record.append(1)
-                    else:
-                        apred = self.predicates[a.upper()]
-                        cpred = getattr(apred, entity.lower()+'Id')
-                        vpred = getattr(apred, a.lower())
-                        query = self.kb.query(apred).where(
-                            cpred == p).select(vpred)
-                        record.append(list(query.all())[0])
+                    apred = self.predicates[a.upper()]
+                    cpred = getattr(apred, entity.lower()+'Id')
+                    vpred = getattr(apred, a.lower())
+                    query = self.kb.query(apred).where(
+                        cpred == p).select(vpred)
+                    record.append(list(query.all())[0])
             data.append(record)
         return data
 
-    # Insert to kb and db
-    def insert(self):
-        pass
-
-    def upd_fn(predicate, attributes):
-        params = {}
-        for a in attributes:
-            pathAttribute = getattr(predicate, a.lower())
-            v = attributes[a]
-            params[pathAttribute] = v
-        return {predicate.clone(**params)}
-
     # Update to kb and db
-
     def update(self, entity, conditions=None, values=None, toDb=True):
+        # for booleans insert and delete
+        # for primaries update the primary and all the attributes
+        # The above two only for kb
+        # Update to kb
         primaries = self.getMatchingPrimaries(entity, conditions=conditions)
+        primary = self.getPrimary(entity)
+        for p in primaries:
+            for v in values:
+                if self.isPrimary(entity, v):
+                    # Select needed for every attribute to change the primary key everywhere
+                    self.delete(entity, {primary: p}, fromDb=False)
+                    self.insert(entity, [v], [values[v]], toDb=False)
+                elif self.schema[entity.upper()][v.upper()][0] == 'boolean':
+                    if values[v]:
+                        self.insert(entity, [v], [p], toDb=False)
+                    else:
+                        self.delete(entity, {entity.lower(): p}, fromDb=False)
+                else:
+                    # Delete the specific predicate
+                    apred = self.predicates[v.upper()]
+                    cpred = getattr(apred, entity.lower()+'Id')
+                    self.kb.query(apred).where(cpred == p).delete()
+                    # Insert with new field value
+                    self.insert(entity, [primary, v], [
+                                [p, values[v]]], toDb=False)
+
+        # Update to db
+        if toDb:
+            self.db.update(entity.upper(), conditions, values)
+        return True
 
     # Delete from kb and db
-
     def delete(self, entity, conditions=None, fromDb=True):
         # Delete from kb
         primary = self.getPrimary(entity)
