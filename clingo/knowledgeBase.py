@@ -1,7 +1,7 @@
 from clorm import monkey
 monkey.patch()  # nopep8 # must call this before importing clingo
 from clorm import FactBase, Predicate, IntegerField, StringField
-from clingo import Control
+from clorm.clingo import Control
 from customPredicates import DateField, TimeField
 from datetime import datetime, timedelta
 import sys
@@ -317,13 +317,16 @@ class KnowledgeBase():
         f.write(content)
         f.close()
 
-    def run(self, asp, outPred=None):
-
+    def run(self, asp, outPreds=None, show=False):
         # Create a Control object that will unify models against the appropriate
         # predicates. Then load the asp file that encodes the problem domain.
+        fname = asp.split('/')[-1]
+        print(f'\nExecuting {fname}...')
         predicates = list(self.predicates.values())
-        if outPred and outPred not in predicates:
-            predicates.append(outPred)
+        if outPreds:
+            for p in outPreds:
+                if p not in predicates:
+                    predicates.append(p)
         ctrl = Control(unifier=predicates)
         ctrl.load(asp)
 
@@ -336,13 +339,40 @@ class KnowledgeBase():
 
         def on_model(model):
             nonlocal solution
-            solution = model.facts(atoms=True)
+            solution = [model.optimality_proven,
+                        model.facts(atoms=True), model.cost]
 
         ctrl.solve(on_model=on_model)
         if not solution:
             raise ValueError("No solution found")
         else:
-            return list(solution.query(outPred).all())
+            output = {}
+            statistics = ctrl.statistics
+            time_elapsed = statistics['summary']['times']['total']
+            benefit = -statistics['summary']['lower'][0]
+            optimal = statistics['summary']['models']['optimal']
+            if show:
+                if optimal and solution[0]:
+                    print('\nOPTIMAL SOLUTION FOUND')
+                elif optimal and not solution[0]:
+                    print('\nOPTIMUM SOLUTION FOUND')
+                else:
+                    print('\nOPTIMIZATION FAILED')
+
+                print('\nOUTPUT\n')
+                for p in outPreds:
+                    out = list(solution[1].query(p).all())
+                    for o in out:
+                        print(str(o))
+                print('\nSTATISTICS\n')
+                print(f'Benefit: {benefit}')
+                print(f'Time elapsed: {round(time_elapsed,20)}')
+
+            # return list(solution.query(outPred).all())
+            for p in outPreds:
+                out = list(solution[1].query(p).all())
+                output[p.__name__] = out
+            return output
 
     def clear(self):
         for e in self.schema:

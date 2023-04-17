@@ -34,9 +34,12 @@ def main():
         timeslot = IntegerField
         request = IntegerField
 
-    solution = kb.run('clingo/scheduler.lp', Assign)
-    print(solution)
-
+    solution1 = kb.run('clingo/test/optimizedScheduler.lp',
+                       [Assign], show=True)
+    solution2 = kb.run('clingo/scheduler.lp',
+                       [Assign], show=True)
+    # TODO fix update for primaries and update the clingo output, after that doctor on strike and multiple chains
+    # print(solution)
     # kb.reload()
     # print(kb)
     # kb.update('Request', conditions={"ID": [('=', 2)]}, values={

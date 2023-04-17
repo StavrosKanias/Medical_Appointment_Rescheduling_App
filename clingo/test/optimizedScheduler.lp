@@ -1,8 +1,12 @@
-% SET GENERATION
-0 {assign(P, T, R) : patient(P)} 1 :- timeslot(T), request(R), patient_id(R, P), timeslot_id(R, T).
-
-% OWNERSHIP RULE
+% RULES
+%% OWNERSHIP RULE
 owns(P, T, R) :- patient(P), request(R), timeslot(T), timeslot_id(R, T), patient_id(R, P), status(R, S), S = 1.
+%% BEST CHOICE RULE
+best(P,R) :- patient(P), request(R), patient_id(R,P), score(R,SR), request(X), patient_id(X,P), score(X,SX), SR > SX.
+
+% SET CREATION
+0 {assign(P, T, R) : patient(P)} 1 :- timeslot(T), request(R), patient_id(R, P), timeslot_id(R, T), owns(P,_,X), not best(P,X).
+0 {assign(P, T, R) : patient(P)} 1 :- timeslot(T), request(R), patient_id(R, P), timeslot_id(R, T), timeslot(X), not owns(P,X,_).
 
 % INTEGRITY CONSTRAINTS
 %% The timeslot and the doctor has to be available
