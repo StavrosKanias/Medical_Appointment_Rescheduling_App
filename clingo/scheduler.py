@@ -18,22 +18,24 @@ schema = {
 }
 
 
-class Assign(Predicate):
-    patient = StringField
-    timeslot = IntegerField
-
-
 def main():
-    dbConditions = {'TIMESLOT': {
-        "TIME": [('>', '09:00:00')], "DATE": [('>', '+0')]}}
+    # dbConditions = {'TIMESLOT': {
+    #     "TIME": [('>', '09:00:00')], "DATE": [('>', '+0')]}}
+    dbConditions = {}
     db_info = ['kanon2000', 'nhs', 'kanon2000']
     kb = KnowledgeBase('NHS_APPOINTMENTS', schema,
                        dbInfo=db_info, dbConditions=dbConditions)
-    kb.toFile('clingo/')
     kb.delete('Request', conditions={
         "ID": [('=', 1)]})
-    solution = kb.run('clingo/scheduler.lp')
-    print(list(solution.query(Assign).all()))
+    kb.toFile('clingo/')
+
+    class Assign(Predicate):
+        patient = StringField
+        timeslot = IntegerField
+        request = IntegerField
+
+    solution = kb.run('clingo/scheduler.lp', Assign)
+    print(solution)
 
     # kb.reload()
     # print(kb)

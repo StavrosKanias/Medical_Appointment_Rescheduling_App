@@ -317,11 +317,14 @@ class KnowledgeBase():
         f.write(content)
         f.close()
 
-    def run(self, asp):
+    def run(self, asp, outPred=None):
 
         # Create a Control object that will unify models against the appropriate
         # predicates. Then load the asp file that encodes the problem domain.
-        ctrl = Control(unifier=list(self.predicates.values()))
+        predicates = list(self.predicates.values())
+        if outPred and outPred not in predicates:
+            predicates.append(outPred)
+        ctrl = Control(unifier=predicates)
         ctrl.load(asp)
 
         # Add the instance data and ground the ASP program
@@ -339,7 +342,7 @@ class KnowledgeBase():
         if not solution:
             raise ValueError("No solution found")
         else:
-            return solution
+            return list(solution.query(outPred).all())
 
     def clear(self):
         for e in self.schema:

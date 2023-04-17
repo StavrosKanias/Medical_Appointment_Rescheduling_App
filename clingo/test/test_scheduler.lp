@@ -13,23 +13,18 @@ priority("21088977185",43).
 priority("21088977186",36).
 priority("21088977187",57).
 priority("21088977188",80).
-timeslot(1).
 timeslot(2).
 timeslot(3).
 timeslot(4).
-date(1,"2023-04-17").
-date(2,"2023-04-18").
-date(3,"2023-04-20").
-date(4,"2023-04-21").
-time(1,"09:00:00").
-time(2,"13:00:00").
+date(2,"2025-05-06").
+date(3,"2025-05-07").
+date(4,"2025-05-08").
+time(2,"10:00:00").
 time(3,"11:00:00").
-time(4,"15:00:00").
-timeslot_available(1).
+time(4,"12:00:00").
 timeslot_available(2).
 timeslot_available(3).
 timeslot_available(4).
-doctor_id(1,"21088977182").
 doctor_id(2,"21088977182").
 doctor_id(3,"21088977182").
 doctor_id(4,"21088977182").
@@ -88,12 +83,11 @@ status(8,0).
 status(9,1).
 status(10,0).
 
+% OWNERSHIP RULE
+owns(P, T, R) :- patient(P), request(R), timeslot(T), timeslot_id(R, T), patient_id(R, P), status(R, S), S = 1.
 
 % SET CREATION
 0 {assign(P, T, R) : patient(P)} 1 :- timeslot(T), request(R), patient_id(R, P), timeslot_id(R, T).
-
-% OWNERSHIP RULE
-owns(P, T, R) :- patient(P), request(R), timeslot(T), timeslot_id(R, T), patient_id(R, P), status(R, S), S = 1.
 
 % INTEGRITY CONSTRAINTS
 %% The timeslot and the doctor has to be available
@@ -103,9 +97,9 @@ owns(P, T, R) :- patient(P), request(R), timeslot(T), timeslot_id(R, T), patient
 %% Only one timeslot can be appointed to a patient
 :- timeslot(A), timeslot(B), assign(P,A,_), assign(P,B,_), A != B.
 %% A patient cannot receive a timeslot corresponding to a lower request score than the one he or she already owns
-:- owns(P, TA, A), score(A, SA), assign(P, TB, B), score(B, SB), SA > SB.
+:- owns(P, TA, A), score(A, SA), assign(P, TB, B), score(B, SB), SA < SB.
 
 % OPTIMIZATION
 #maximize{ S, R, T, P : assign(P, T ,R), score(R, S)}.
 
-%#show assign/3.
+#show assign/3.

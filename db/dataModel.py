@@ -281,7 +281,7 @@ class DataModel():
             if len(foreign_keys) != 0:
                 for fk in foreign_keys:
                     query += f'CONSTRAINT INFORM_{tableDict[fk][2].upper()} FOREIGN KEY({fk}) REFERENCES {tableDict[fk][2]}({tableDict[fk][3]}) ON UPDATE CASCADE'
-                    if tableDict[fk][2].upper() == 'TIMESLOT':
+                    if tableDict[fk][2].upper() == 'TIMESLOT' or tableDict[fk][2].upper() == 'PATIENT':
                         query += ' ON DELETE CASCADE'
                     else:
                         query += ' ON DELETE SET NULL'

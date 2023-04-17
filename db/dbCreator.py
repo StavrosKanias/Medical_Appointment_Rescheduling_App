@@ -47,13 +47,13 @@ patient = ['PATIENT', [{"ID": "21088977183", "PRIORITY": 85},
                        {"ID": '21088977188', "PRIORITY": 80}]]
 
 timeslot = ['TIMESLOT', [
-    {"ID": 1, "DATE": "2025-05-05", "TIME": "09:00:00",
+    {"ID": 1, "DATE": "2023-04-17", "TIME": "09:00:00",
      "TIMESLOT_AVAILABLE": 1, "DOCTOR_ID": "21088977182"},
-    {"ID": 2, "DATE": "2025-05-06", "TIME": "10:00:00",
+    {"ID": 2, "DATE": "2023-04-18", "TIME": "13:00:00",
      "TIMESLOT_AVAILABLE": 1, "DOCTOR_ID": "21088977182"},
-    {"ID": 3, "DATE": "2025-05-07", "TIME": "11:00:00",
+    {"ID": 3, "DATE": "2023-04-20", "TIME": "11:00:00",
      "TIMESLOT_AVAILABLE": 1, "DOCTOR_ID": "21088977182"},
-    {"ID": 4, "DATE": "2025-05-08", "TIME": "12:00:00",
+    {"ID": 4, "DATE": "2023-04-21", "TIME": "15:00:00",
      "TIMESLOT_AVAILABLE": 1, "DOCTOR_ID": "21088977182"}]]
 
 
