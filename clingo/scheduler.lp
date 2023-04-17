@@ -108,4 +108,4 @@ owns(P, T, R) :- patient(P), request(R), timeslot(T), timeslot_id(R, T), patient
 % OPTIMIZATION
 #maximize{ S, R, T, P : assign(P, T ,R), score(R, S)}.
 
-%#show assign/3.
+#show assign/3.
