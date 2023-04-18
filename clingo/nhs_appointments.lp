@@ -79,11 +79,11 @@ score(8,40).
 score(9,71).
 score(10,70).
 status(2,0).
-status(3,0).
+status(3,1).
 status(4,1).
 status(5,0).
 status(6,0).
 status(7,1).
 status(8,0).
-status(9,1).
-status(10,0).
+status(9,0).
+status(10,1).

@@ -235,7 +235,7 @@ class KnowledgeBase():
         return query.where(*params)
 
     # Select from kb (Can be extended to use joins and grouping)
-    def select(self, entity, conditions=None, attributes=None):
+    def select(self, entity, conditions=None, attributes=None, order=None):
         data = []
         primaries = self.getMatchingPrimaries(entity, conditions=conditions)
         if not attributes:
@@ -255,6 +255,13 @@ class KnowledgeBase():
                         cpred == p).select(vpred)
                     record.append(list(query.all())[0])
             data.append(record)
+            if order:
+                if order not in attributes:
+                    print(
+                        f"Unable to order by the attribute {order} since it doesn't appear in the attribute list.")
+                else:
+                    index = attributes.index(order)
+                    data = sorted(data, key=lambda item: item[index])
         return data
 
     # Update to kb and db
@@ -348,7 +355,7 @@ class KnowledgeBase():
         else:
             output = {}
             statistics = ctrl.statistics
-            time_elapsed = statistics['summary']['times']['total']
+            time_elapsed = statistics['summary']['times']['cpu']
             benefit = -statistics['summary']['lower'][0]
             optimal = statistics['summary']['models']['optimal']
             if show:

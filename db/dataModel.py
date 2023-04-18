@@ -154,13 +154,18 @@ class DataModel():
         try:
             condstr = ''
             for c in cond:
-                condlst = cond[c]
-                for condition in condlst:
-                    condstr += f"{c} {condition[0]} %s"
-                    if condlst.index(condition) < len(condlst) - 1:
-                        condstr += sep
+                if type(cond[c]) is tuple:
+                    condlst = cond[c]
+                    for condition in condlst:
+                        condstr += f"{c} {condition[0]} %s"
+                        if condlst.index(condition) < len(condlst) - 1:
+                            condstr += sep
+                else:
+                    condstr += f"{c} = %s"
+
                 if list(cond.keys()).index(c) < len(list(cond.keys())) - 1:
                     condstr += sep
+
             return condstr
 
         except:
