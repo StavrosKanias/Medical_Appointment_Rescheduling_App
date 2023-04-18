@@ -266,18 +266,25 @@ class KnowledgeBase():
 
     # Update to kb and db
     def update(self, entity, conditions=None, values=None, toDb=True):
-        # for booleans insert and delete
-        # for primaries update the primary and all the attributes
-        # The above two only for kb
+        # for booleans insert and delete (Fix conditions to accept boolean)
         # Update to kb
+        for c in conditions:
+            if self.schema[entity.upper()][c.upper()][0] == 'boolean':
+                pass
+
         primaries = self.getMatchingPrimaries(entity, conditions=conditions)
         primary = self.getPrimary(entity)
         for p in primaries:
             for v in values:
                 if self.isPrimary(entity, v):
                     # Select needed for every attribute to change the primary key everywhere
-                    self.delete(entity, {primary: p}, fromDb=False)
-                    self.insert(entity, [v], [values[v]], toDb=False)
+                    # The primary has to change first therefore two loops are needed
+                    data = self.select(
+                        entity, {primary: [('=', p)]}, order=primary)[0]
+                    data[0] = values[v]
+                    self.delete(entity, {primary: [('=', p)]}, fromDb=False)
+                    self.insert(entity, list(self.schema[entity.upper()]), [
+                                data], toDb=False)
                 elif self.schema[entity.upper()][v.upper()][0] == 'boolean':
                     if values[v]:
                         self.insert(entity, [v], [p], toDb=False)

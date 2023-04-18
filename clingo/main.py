@@ -34,11 +34,11 @@ def main():
         timeslot = IntegerField
         request = IntegerField
 
-    # solution1 = kb.run('clingo/rescheduler.lp',
-    #                    [Assign], show=True)
-    solution2 = kb.run('clingo/scheduler.lp',
+    solution1 = kb.run('clingo/rescheduler.lp',
                        [Assign], show=True)
-    assigned = {x.request: 1 for x in solution2['Assign']}
+    # solution2 = kb.run('clingo/scheduler.lp',
+    #                    [Assign], show=True)
+    assigned = {x.request: 1 for x in solution1['Assign']}
     requestIDs = [x[0]
                   for x in kb.select('Request', attributes=['ID'], order='ID')]
     waiting = {x: 0 for x in list(set(requestIDs) ^ set(assigned))}
@@ -48,7 +48,7 @@ def main():
         kb.update('REQUEST', conditions={'ID': [
                   ('=', u)]}, values={'STATUS': update[u]}, toDb=True)
 
-    # TODO fix update for primaries and update the clingo output, after that doctor on strike and multiple chains
+    # TODO fix primary choice for booleans, after that doctor on strike and multiple chains
     # print(solution)
     # kb.reload()
     # print(kb)
