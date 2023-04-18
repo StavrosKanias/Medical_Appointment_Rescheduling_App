@@ -96,15 +96,24 @@ def main():
 
     new_data = input(" Do you want to fabricate new test data?\n y/n:\n")
     if new_data == 'y':
-        minimum_people = int(input(" Minimum number of people: \n"))
-        maximum_people = int(input(" Maximum number of people: \n"))
-        minimum_doctors = int(input(" Minimum number of doctors: \n"))
-        maximum_doctors = int(input(" Maximum number of doctors: \n"))
-        minimum_specialites = int(input(" Minimum number of specialites: \n"))
-        maximum_specialites = int(input(" Maximum number of specialites: \n"))
-        demand = float(input(" Demand (load factor): \n"))
-        timeslot_availability = float(input(" Timeslot availability: \n"))
-        # 500, 1000, 5, 10, 10, 20, 2.5, 0.95
+        # minimum_people = int(input(" Minimum number of people: \n"))
+        # maximum_people = int(input(" Maximum number of people: \n"))
+        # minimum_doctors = int(input(" Minimum number of doctors: \n"))
+        # maximum_doctors = int(input(" Maximum number of doctors: \n"))
+        # minimum_specialites = int(input(" Minimum number of specialites: \n"))
+        # maximum_specialites = int(input(" Maximum number of specialites: \n"))
+        # demand = float(input(" Demand (load factor): \n"))
+        # timeslot_availability = float(input(" Timeslot availability: \n"))
+
+        minimum_people = 500
+        maximum_people = 1000
+        minimum_doctors = 2
+        maximum_doctors = 5
+        minimum_specialites = 2
+        maximum_specialites = 5
+        demand = 3
+        timeslot_availability = 0.9
+
         fab = DataFabricator(schema, minimum_people,
                              maximum_people, minimum_doctors, maximum_doctors, minimum_specialites, maximum_specialites, demand, timeslot_availability, seed=1)
         for e in schema.keys():

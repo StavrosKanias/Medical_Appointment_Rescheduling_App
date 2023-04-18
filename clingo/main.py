@@ -34,11 +34,11 @@ def main():
         timeslot = IntegerField
         request = IntegerField
 
-    solution1 = kb.run('clingo/rescheduler.lp',
-                       [Assign], show=True)
+    # solution1 = kb.run('clingo/rescheduler.lp',
+    #                    [Assign], show=True)
     solution2 = kb.run('clingo/scheduler.lp',
                        [Assign], show=True)
-    assigned = {x.request: 1 for x in solution1['Assign']}
+    assigned = {x.request: 1 for x in solution2['Assign']}
     requestIDs = [x[0]
                   for x in kb.select('Request', attributes=['ID'], order='ID')]
     waiting = {x: 0 for x in list(set(requestIDs) ^ set(assigned))}

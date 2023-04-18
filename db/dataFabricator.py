@@ -25,8 +25,9 @@ class DataFabricator():
             self.tAvailability = tAvailability
             for i in self.quantities:
                 print(i, self.quantities[i])
-            random.seed(seed)
-            self.seed = seed
+            if seed:
+                Faker.seed(seed)
+                random.seed(seed)
 
     def write_to_csv(self, entity, entity_diction, list_of_dicts):
         with open('db\\data\\{}.csv'.format(entity), 'w', encoding='utf8') as csvfile:
@@ -102,7 +103,6 @@ class DataFabricator():
 
     def fabricatePerson(self, quantity):
         fake = Faker('el_GR')
-        fake.seed(self.seed)
         entity_diction = self.schema['PERSON']
         list_of_dicts = []
         for i in range(0, quantity):
@@ -162,7 +162,6 @@ class DataFabricator():
 
     def fabricateDoctor(self, quantity):
         fake = Faker('el_GR')
-        fake.seed(self.seed)
         entity_diction = self.schema['DOCTOR']
         list_of_dicts = []
         # contains the coresponding column to the referenced enity for each foreign
@@ -177,7 +176,6 @@ class DataFabricator():
 
                 if len(entity_diction[attribute]) == 4:
                     if i == 0:
-                        print(attribute)
                         foreign_lists[attribute] = self.loadForeign(
                             entity_diction, attribute)
                     if primary:
@@ -332,11 +330,11 @@ class DataFabricator():
                                 patients[p] = []
                     foreign, index = self.chooseForeign(
                         foreign_lists, attribute, get_index=True)
-                    available = availabilities[index]
 
                     if attribute == 'PATIENT_ID':
                         current_patient = foreign
                     elif attribute == 'TIMESLOT_ID':
+                        available = availabilities[index]
                         while foreign in patients[current_patient] or not available:
                             foreign, index = self.chooseForeign(
                                 foreign_lists, attribute, get_index=True)
