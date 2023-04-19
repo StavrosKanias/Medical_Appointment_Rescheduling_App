@@ -154,7 +154,7 @@ class DataModel():
         try:
             condstr = ''
             for c in cond:
-                if type(cond[c]) is tuple:
+                if type(cond[c]) is list:
                     condlst = cond[c]
                     for condition in condlst:
                         condstr += f"{c} {condition[0]} %s"

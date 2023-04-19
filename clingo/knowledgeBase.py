@@ -113,14 +113,20 @@ class KnowledgeBase():
         entcond = self.conditions[entity]
         conditions = {}
         for attribute in entcond:
-            attrcond = entcond[attribute]
+            if attribute in self.schema[entity]:
+                type = self.schema[entity][attribute][0]
+            else:
+                type = self.conditions[entity][attribute][0]
+
+            attrcond = entcond[attribute][1]
             for condition in attrcond:
                 conditions[attribute] = []
-                if condition[1][0] in ['+', '-']:
-                    if self.schema[entity][attribute][0] == 'date':
+
+                if type in ['date', 'time'] and condition[1][0] in ['+', '-']:
+                    if type == 'date':
                         conditions[attribute].append((condition[0], (datetime.today() +
                                                                      timedelta(days=int(condition[1][1:]))).strftime("%Y-%m-%d")))
-                    elif self.schema[entity][attribute][0] == 'time':
+                    elif type == 'time':
                         conditions[attribute].append((condition[0], (datetime.now() +
                                                                      timedelta(hours=int(condition[1][1:]))).strftime("%H:%M:%S")))
                         if conditions[attribute][-1][0] == '>' and conditions[attribute][-1][1] > '17:00:00':
@@ -234,9 +240,17 @@ class KnowledgeBase():
                         params.append(pathAttribute <= c[1])
         return query.where(*params)
 
+    def getBooleanPrimaries(booleans):
+        pass
+
     # Select from kb (Can be extended to use joins and grouping)
+
     def select(self, entity, conditions=None, attributes=None, order=None):
         data = []
+        booleans = {}
+        for c in conditions:
+            if self.schema[entity][c][0] == 'boolean':
+                pass
         primaries = self.getMatchingPrimaries(entity, conditions=conditions)
         if not attributes:
             attributes = list(self.schema[entity.upper()])
