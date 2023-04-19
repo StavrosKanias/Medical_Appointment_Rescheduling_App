@@ -105,14 +105,14 @@ def main():
         # demand = float(input(" Demand (load factor): \n"))
         # timeslot_availability = float(input(" Timeslot availability: \n"))
 
-        minimum_people = 5000
-        maximum_people = 10000
+        minimum_people = 500
+        maximum_people = 1000
         minimum_doctors = 10
         maximum_doctors = 20
         minimum_specialites = 10
         maximum_specialites = 15
-        demand = 3
-        timeslot_availability = 0.1
+        demand = 2.5
+        timeslot_availability = 0.8
 
         fab = DataFabricator(schema, minimum_people,
                              maximum_people, minimum_doctors, maximum_doctors, minimum_specialites, maximum_specialites, demand, timeslot_availability, seed=1)

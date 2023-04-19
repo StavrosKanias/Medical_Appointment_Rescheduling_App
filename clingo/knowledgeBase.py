@@ -299,10 +299,6 @@ class KnowledgeBase():
     # Update to kb and db
     def update(self, entity, conditions=None, values=None, toDb=True):
         # Update to kb
-        for c in conditions:
-            if self.schema[entity.upper()][c.upper()][0] == 'boolean':
-                pass
-
         primaries = self.getMatchingPrimaries(entity, conditions=conditions)
         primary = self.getPrimary(entity)
         for p in primaries:

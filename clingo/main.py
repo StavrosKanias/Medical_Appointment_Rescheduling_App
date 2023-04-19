@@ -3,20 +3,20 @@ from knowledgeBase import KnowledgeBase
 from datetime import date
 
 schema = {
-    # 'DOCTOR': {"ID": ['text', 'primary'], "DOCTOR_AVAILABLE": ['boolean'],
-    #            "SPECIALTY_TITLE": ['text']},
+    # # 'DOCTOR': {"ID": ['text', 'primary'], "DOCTOR_AVAILABLE": ['boolean'],
+    # #            "SPECIALTY_TITLE": ['text']},
 
-    'PATIENT': {"ID": ['text', 'primary'], "PRIORITY": ['integer']},
+    # 'PATIENT': {"ID": ['text', 'primary'], "PRIORITY": ['integer']},
 
-    'TIMESLOT': {"ID": ['integer', 'primary'], "DATE": ['date'], "TIME": ['time'],
-                 "TIMESLOT_AVAILABLE": ['boolean'], "DOCTOR_ID": ['text']},
+    # # 'TIMESLOT': {"ID": ['integer', 'primary'], "DATE": ['date'], "TIME": ['time'],
+    # #               "TIMESLOT_AVAILABLE": ['boolean'], "DOCTOR_ID": ['text']},
 
     # 'TIMESLOT': {"ID": ['integer', 'primary']},
 
 
-    # 'REQUEST': {"ID": ['integer', 'primary'], "PATIENT_ID": ['text'],
-    #             "TIMESLOT_ID": ['integer'], "PREFERENCE": ['integer'],
-    #             "SCORE": ['integer'], "STATUS": ['integer']}
+    # # 'REQUEST': {"ID": ['integer', 'primary'], "PATIENT_ID": ['text'],
+    # #             "TIMESLOT_ID": ['integer'], "PREFERENCE": ['integer'],
+    # #             "SCORE": ['integer'], "STATUS": ['integer']}
 
     'REQUEST': {"ID": ['integer', 'primary'], "PATIENT_ID": ['text'],
                 "TIMESLOT_ID": ['integer'], "SCORE": ['integer'], "STATUS": ['integer']}
@@ -30,10 +30,12 @@ def main():
     db_info = ['kanon2000', 'nhs', 'kanon2000']
     kb = KnowledgeBase('NHS_APPOINTMENTS', schema,
                        dbInfo=db_info, dbConditions=dbConditions)
-    kb.delete('TIMESLOT', conditions={
-        "TIMESLOT_AVAILABLE": True}, fromDb=False)
+    kb.delete('REQUEST', conditions={
+        "ID": [('=', 1)]})
     kb.toFile('clingo/')
-
+    # 3. Fix update for primary and implement cascade in deletion
+    # 1. Rewrite the kb and the code simplified for the base scenario
+    # 2. Create a method to merge predicated from existing data and create the simplified kb automtically
     # class Assign(Predicate):
     #     patient = StringField
     #     timeslot = IntegerField
