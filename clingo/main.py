@@ -8,10 +8,10 @@ schema = {
 
     'PATIENT': {"ID": ['text', 'primary'], "PRIORITY": ['integer']},
 
-    # 'TIMESLOT': {"ID": ['integer', 'primary'], "DATE": ['date'], "TIME": ['time'],
-    #              "TIMESLOT_AVAILABLE": ['boolean'], "DOCTOR_ID": ['text']},
+    'TIMESLOT': {"ID": ['integer', 'primary'], "DATE": ['date'], "TIME": ['time'],
+                 "TIMESLOT_AVAILABLE": ['boolean'], "DOCTOR_ID": ['text']},
 
-    'TIMESLOT': {"ID": ['integer', 'primary']},
+    # 'TIMESLOT': {"ID": ['integer', 'primary']},
 
 
     # 'REQUEST': {"ID": ['integer', 'primary'], "PATIENT_ID": ['text'],
@@ -26,11 +26,12 @@ schema = {
 def main():
     dbConditions = {'TIMESLOT': {
         "TIME": ['time', [('>', '+0')]], "DATE": ['date', [('>', '+0')]], "TIMESLOT_AVAILABLE": ['boolean', [('=', True)]]}}
+    dbConditions = {}
     db_info = ['kanon2000', 'nhs', 'kanon2000']
     kb = KnowledgeBase('NHS_APPOINTMENTS', schema,
                        dbInfo=db_info, dbConditions=dbConditions)
-    kb.delete('Request', conditions={
-        "ID": [('=', 1)]})
+    kb.delete('TIMESLOT', conditions={
+        "TIMESLOT_AVAILABLE": True}, fromDb=False)
     kb.toFile('clingo/')
 
     # class Assign(Predicate):

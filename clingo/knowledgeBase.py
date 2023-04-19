@@ -115,8 +115,11 @@ class KnowledgeBase():
         for attribute in entcond:
             if attribute in self.schema[entity]:
                 type = self.schema[entity][attribute][0]
-            else:
+            elif attribute in self.conditions[entity]:
                 type = self.conditions[entity][attribute][0]
+            else:
+                print(
+                    f'Unable to specify the type of condition attribute {attribute}')
 
             attrcond = entcond[attribute][1]
             for condition in attrcond:
@@ -174,18 +177,28 @@ class KnowledgeBase():
             else:
                 p = self.predicates[a]
             for d in data:
-                pv = self.getPrimaryData(entity, attributes, d)
-                v = pv.copy()
-                if not self.isPrimary(entity, a) and not self.schema[entity.upper()][a.upper()][0] == 'boolean':
-                    v.append(d[attributes.index(a)])
-                self.kb.add(p(*v))
+                if self.schema[entity.upper()][a.upper()][0] != 'boolean' or self.schema[entity.upper()][a.upper()][0] == 'boolean' and d[attributes.index(a)]:
+                    pv = self.getPrimaryData(entity, attributes, d)
+                    v = pv.copy()
+                    if not self.isPrimary(entity, a) and not self.schema[entity.upper()][a.upper()][0] == 'boolean':
+                        v.append(d[attributes.index(a)])
+                    self.kb.add(p(*v))
         if toDb:
             self.db.insert(entity, data)
 
     def getMatchingPrimaries(self, entity, conditions=None):
         pv = []
         if conditions:
-            for attribute in conditions:
+            # For booleans
+            booleans = {}
+            cond = conditions.copy()
+            for c in list(conditions):
+                if self.schema[entity.upper()][c.upper()][0] == 'boolean':
+                    booleans[c] = cond.pop(c)
+            for b in booleans:
+                pv.append(self.getBooleanPrimaries(entity, b, booleans[b]))
+            # For non booleans
+            for attribute in cond:
                 primary = self.getPrimary(entity)
                 query = None
                 if self.isPrimary(entity, attribute):
@@ -193,7 +206,7 @@ class KnowledgeBase():
                 else:
                     query = self.kb.query(self.predicates[attribute.upper()])
                 query = self.conditionQuery(
-                    query, entity, {attribute: conditions[attribute]})
+                    query, entity, {attribute: cond[attribute]})
                 if self.isPrimary(entity, attribute):
                     attrpred = getattr(self.predicates[
                         entity.upper()], primary.lower())
@@ -240,17 +253,22 @@ class KnowledgeBase():
                         params.append(pathAttribute <= c[1])
         return query.where(*params)
 
-    def getBooleanPrimaries(booleans):
-        pass
+    def getBooleanPrimaries(self, entity, boolean, value):
+        boolPred = self.predicates[boolean]
+        boolPrimPred = getattr(boolPred, entity.lower()+'Id')
+        true = set(self.kb.query(boolPred).select(boolPrimPred).all())
+        if value:
+            return true
+        else:
+            entPred = self.predicates[entity]
+            primary = self.getPrimary(entity)
+            primPred = getattr(entPred, primary.lower())
+            allPrims = set(self.kb.query(entPred).select(primPred).all())
+            return allPrims ^ true
 
     # Select from kb (Can be extended to use joins and grouping)
-
     def select(self, entity, conditions=None, attributes=None, order=None):
         data = []
-        booleans = {}
-        for c in conditions:
-            if self.schema[entity][c][0] == 'boolean':
-                pass
         primaries = self.getMatchingPrimaries(entity, conditions=conditions)
         if not attributes:
             attributes = list(self.schema[entity.upper()])
@@ -260,7 +278,7 @@ class KnowledgeBase():
                 if self.isPrimary(entity, a):
                     record.append(p)
                 elif self.schema[entity.upper()][a.upper()][0] == 'boolean':
-                    record.append(1)
+                    record.append(True)
                 else:
                     apred = self.predicates[a.upper()]
                     cpred = getattr(apred, entity.lower()+'Id')
@@ -280,7 +298,6 @@ class KnowledgeBase():
 
     # Update to kb and db
     def update(self, entity, conditions=None, values=None, toDb=True):
-        # for booleans insert and delete (Fix conditions to accept boolean)
         # Update to kb
         for c in conditions:
             if self.schema[entity.upper()][c.upper()][0] == 'boolean':
