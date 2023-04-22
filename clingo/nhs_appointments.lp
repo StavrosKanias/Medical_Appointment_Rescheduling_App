@@ -1,5 +1,3 @@
-request(2).
-request(3).
 request(4).
 request(5).
 request(6).
@@ -7,8 +5,6 @@ request(7).
 request(8).
 request(9).
 request(10).
-patient_id(2,"21088977184").
-patient_id(3,"21088977188").
 patient_id(4,"21088977184").
 patient_id(5,"21088977185").
 patient_id(6,"21088977186").
@@ -16,8 +12,6 @@ patient_id(7,"21088977185").
 patient_id(8,"21088977186").
 patient_id(9,"21088977188").
 patient_id(10,"21088977187").
-timeslot_id(2,1).
-timeslot_id(3,1).
 timeslot_id(4,2).
 timeslot_id(5,2).
 timeslot_id(6,2).
@@ -25,8 +19,6 @@ timeslot_id(7,3).
 timeslot_id(8,3).
 timeslot_id(9,4).
 timeslot_id(10,4).
-score(2,87).
-score(3,86).
 score(4,72).
 score(5,60).
 score(6,55).
@@ -34,8 +26,6 @@ score(7,45).
 score(8,40).
 score(9,71).
 score(10,70).
-status(2,0).
-status(3,0).
 status(4,1).
 status(5,0).
 status(6,0).

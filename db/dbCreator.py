@@ -47,13 +47,13 @@ patient = ['PATIENT', [{"ID": "21088977183", "PRIORITY": 85},
                        {"ID": '21088977188', "PRIORITY": 80}]]
 
 timeslot = ['TIMESLOT', [
-    {"ID": 1, "DATE": "2023-04-17", "TIME": "09:00:00",
+    {"ID": 1, "DATE": "2023-05-01", "TIME": "09:00:00",
      "TIMESLOT_AVAILABLE": 1, "DOCTOR_ID": "21088977182"},
-    {"ID": 2, "DATE": "2023-04-18", "TIME": "13:00:00",
+    {"ID": 2, "DATE": "2023-05-02", "TIME": "13:00:00",
      "TIMESLOT_AVAILABLE": 1, "DOCTOR_ID": "21088977182"},
-    {"ID": 3, "DATE": "2023-04-20", "TIME": "11:00:00",
+    {"ID": 3, "DATE": "2023-05-04", "TIME": "11:00:00",
      "TIMESLOT_AVAILABLE": 1, "DOCTOR_ID": "21088977182"},
-    {"ID": 4, "DATE": "2023-04-21", "TIME": "15:00:00",
+    {"ID": 4, "DATE": "2023-05-05", "TIME": "15:00:00",
      "TIMESLOT_AVAILABLE": 1, "DOCTOR_ID": "21088977182"}]]
 
 
@@ -105,8 +105,8 @@ def main():
         # demand = float(input(" Demand (load factor): \n"))
         # timeslot_availability = float(input(" Timeslot availability: \n"))
 
-        minimum_people = 500
-        maximum_people = 1000
+        minimum_people = 200
+        maximum_people = 300
         minimum_doctors = 10
         maximum_doctors = 20
         minimum_specialites = 10

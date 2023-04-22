@@ -6,7 +6,7 @@ owns(P, T, R) :- patient(P), request(R), timeslot(T), timeslot_id(R, T), patient
 
 % INTEGRITY CONSTRAINTS
 %% The timeslot and the doctor has to be available
-:- assign(_, T, _), not timeslot_available(T). 
+:- assign(P, T, R), not timeslot_available(T). 
 %% A timeslot can be appointed only to one patient
 :- patient(A), patient(B), assign(A,T,_), assign(B,T,_), A != B.
 %% Only one timeslot can be appointed to a patient

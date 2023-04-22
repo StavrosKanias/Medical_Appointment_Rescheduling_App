@@ -14,6 +14,7 @@ class KnowledgeBase():
     def __init__(self, name, schema, dbInfo=None, dbConditions=None, data=None):
         self.name = name
         self.schema = schema
+        self.joins = self.getJoins(schema)
         self.kb = FactBase()
         self.TYPE2FIELD = {'integer': IntegerField,
                            'text': StringField, 'date': DateField, 'time': TimeField}
@@ -32,32 +33,35 @@ class KnowledgeBase():
                 d = data[entity]
                 self.insert(entity, attributes, d, toDb=False)
 
+    def createPredicate(self, attribute, t, primary):
+        if t == 'boolean':
+            content = primary.copy()
+            predicateName = self.getPredicateName(attribute)
+            predicate = type(predicateName,
+                             (Predicate, ), content)
+        else:
+            field = self.TYPE2FIELD[t]
+            content = primary.copy()
+            content[attribute.lower()] = field
+            predicateName = self.getPredicateName(attribute)
+            predicate = type(predicateName,
+                             (Predicate, ), content)
+        return predicate
+
     def createPredicates(self, schema):
         predicates = {}
         for e in schema:
             predicates[e] = {}
             attributes = schema[e].copy()
-            primary = self.createPrimaryPredicate(e, attributes, predicates)
+            primary = self.createPrimaryPredicate(e, attributes,  predicates)
             for a in attributes:
-                if attributes[a][0] == 'boolean':
-                    content = primary.copy()
-                    predicateName = self.getPredicateName(a)
-                    predicate = type(predicateName,
-                                     (Predicate, ), content)
-                    predicates[a] = predicate
-                else:
-                    field = self.TYPE2FIELD[attributes[a][0]]
-                    content = primary.copy()
-                    content[a.lower()] = field
-                    predicateName = self.getPredicateName(a)
-                    predicate = type(predicateName,
-                                     (Predicate, ), content)
-                    predicates[a] = predicate
+                predicates[a] = self.createPredicate(
+                    a, attributes[a][0], primary)
         return predicates
 
     def isPrimary(self, entity, attribute):
         p = self.schema[entity.upper()][attribute]
-        if len(p) > 1 and p[1] == 'primary':
+        if p[1]:
             return True
         else:
             return False
@@ -82,7 +86,11 @@ class KnowledgeBase():
         primaries = []
         for a in list(self.schema[entity.upper()]):
             if self.isPrimary(entity.upper(), a):
-                return a
+                primaries.append(a)
+        if len(primaries) == 1:
+            return primaries[0]
+        else:
+            return primaries
 
     def getPrimaryData(self, entity, attributes, data):
         primaryData = []
@@ -113,50 +121,74 @@ class KnowledgeBase():
         entcond = self.conditions[entity]
         conditions = {}
         for attribute in entcond:
-            if attribute in self.schema[entity]:
+            if entity in self.schema and attribute in self.schema[entity]:
                 type = self.schema[entity][attribute][0]
-            elif attribute in self.conditions[entity]:
+            elif entity in self.conditions and attribute in self.conditions[entity]:
                 type = self.conditions[entity][attribute][0]
             else:
                 print(
                     f'Unable to specify the type of condition attribute {attribute}')
-
             attrcond = entcond[attribute][1]
             for condition in attrcond:
-                conditions[attribute] = []
-
+                conditions[f'{entity}.{attribute}'] = []
                 if type in ['date', 'time'] and condition[1][0] in ['+', '-']:
                     if type == 'date':
-                        conditions[attribute].append((condition[0], (datetime.today() +
-                                                                     timedelta(days=int(condition[1][1:]))).strftime("%Y-%m-%d")))
+                        conditions[f'{entity}.DATE'].append((condition[0], (datetime.today() +
+                                                                            timedelta(days=int(condition[1][1:]))).strftime("%Y-%m-%d")))
                     elif type == 'time':
-                        conditions[attribute].append((condition[0], (datetime.now() +
-                                                                     timedelta(hours=int(condition[1][1:]))).strftime("%H:%M:%S")))
-                        if conditions[attribute][-1][0] == '>' and conditions[attribute][-1][1] > '17:00:00':
-                            conditions[attribute][-1][1] = '> 09:00:00'
+                        if f'{entity}.DATE' not in conditions:
+                            print(
+                                'Set date conditions before time conditions if they exist.')
+                        conditions[f'{entity}.{attribute}'].append((condition[0], (datetime.now() +
+                                                                                   timedelta(hours=int(condition[1][1:]))).strftime("%H:%M:%S")))
+                        if conditions[f'{entity}.{attribute}'][-1][0] == '>' and conditions[f'{entity}.{attribute}'][-1][1] > '17:00:00':
+                            conditions[f'{entity}.{attribute}'][-1] = (
+                                '>', '09:00:00')
                             d = []
-                            for t in conditions['DATE'][-1][1].split('-'):
-                                d.append(int(t))
-                            conditions['DATE'][-1][1] = conditions['DATE'][-1][0] + (
-                                datetime(*d) + timedelta(days=1)).strftime("%Y-%m-%d")
-                        elif conditions[attribute][-1][0] == '<' and conditions[attribute][-1][1:] < '09:00:00':
-                            conditions[attribute][-1][1] = '< 17:00:00'
+                            if f'{entity}.DATE' in conditions:
+                                for t in conditions[f'{entity}.DATE'][-1][1].split('-'):
+                                    d.append(int(t))
+                                conditions[f'{entity}.DATE'][-1][1] = conditions[f'{entity}.DATE'][-1][0] + (
+                                    datetime(*d) + timedelta(days=1)).strftime("%Y-%m-%d")
+                        elif conditions[f'{entity}.{attribute}'][-1][0] == '<' and conditions[f'{entity}.{attribute}'][-1][1:] < '09:00:00':
+                            conditions[f'{entity}.DATE'][-1] = (
+                                '<', '17:00:00')
                             d = []
-                            for t in conditions['DATE'][-1][1:].split('-'):
-                                d.append(int(t))
-                            conditions['DATE'][-1] = conditions['DATE'][-1][0] + (
-                                datetime(*d) + timedelta(days=-1)).strftime("%Y-%m-%d")
+                            if f'{entity}.DATE' in conditions:
+                                for t in conditions[f'{entity}.DATE'][-1][1:].split('-'):
+                                    d.append(int(t))
+                                conditions[f'{entity}.DATE'][-1] = conditions[f'{entity}.DATE'][-1][0] + (
+                                    datetime(*d) + timedelta(days=-1)).strftime("%Y-%m-%d")
                 else:
-                    conditions[attribute].append(condition)
+                    conditions[f'{entity}.{attribute}'].append(condition)
         return conditions
 
-    # Translate db data to clingo predicates
+    def getJoins(self, schema):
+        joins = {}
+        for e in self.schema:
+            jlst = []
+            for a in self.schema[e]:
+                attrlst = self.schema[e][a]
+                if len(attrlst) == 4:
+                    jlst.append((a, attrlst[2], attrlst[3]))
+            joins[e] = jlst
+        return joins
+
+        # Translate db data to clingo predicates
+
     def db2kb(self):
         for e in self.schema:
             attributes = list(self.schema[e])
+            joins = self.joins[e]
+            conditions = {}
+            for j in joins:
+                if j[1] in self.conditions:
+                    conditions.update(self.getConditions(j[1]))
             if e in self.conditions:
-                conditions = self.getConditions(e)
-                data = self.db.select(e, attributes, conditions)
+                conditions.update(self.getConditions(e))
+            if conditions:
+                data = self.db.select(
+                    e, attributes, conditions, joins)
                 if data:
                     self.insert(e, attributes, data, toDb=False)
                 else:
@@ -316,7 +348,8 @@ class KnowledgeBase():
                     if values[v]:
                         self.insert(entity, [v], [p], toDb=False)
                     else:
-                        self.delete(entity, {entity.lower(): p}, fromDb=False)
+                        self.delete(
+                            entity, {entity.lower(): p}, fromDb=False)
                 else:
                     # Delete the specific predicate
                     apred = self.predicates[v.upper()]
@@ -358,7 +391,14 @@ class KnowledgeBase():
         f.write(content)
         f.close()
 
-    def run(self, asp, outPreds=None, show=False):
+    # Creates a new predicate from existing data
+    def generate(self, pName, pAttributes, populate=True, clear=False):
+        pass
+
+    def extract(self):
+        pass
+
+    def run(self, asp, outPreds=None, searchDuration=None, show=False):
         # Create a Control object that will unify models against the appropriate
         # predicates. Then load the asp file that encodes the problem domain.
         fname = asp.split('/')[-1]
@@ -377,11 +417,15 @@ class KnowledgeBase():
 
         # Generate a solution - use a call back that saves the solution
         solution = None
+        start = datetime.now()
+        end = start + timedelta(minutes=int(searchDuration))
 
         def on_model(model):
             nonlocal solution
             solution = [model.optimality_proven,
                         model.facts(atoms=True), model.cost]
+            if datetime.now() > end:
+                Control.interrupt(ctrl)
 
         ctrl.solve(on_model=on_model)
         if not solution:
@@ -389,7 +433,8 @@ class KnowledgeBase():
         else:
             output = {}
             statistics = ctrl.statistics
-            time_elapsed = statistics['summary']['times']['cpu']
+            total_time = statistics['summary']['times']['total']
+            cpu_time = statistics['summary']['times']['cpu']
             benefit = -statistics['summary']['lower'][0]
             optimal = statistics['summary']['models']['optimal']
             if show:
@@ -407,7 +452,8 @@ class KnowledgeBase():
                         print(str(o))
                 print('\nSTATISTICS\n')
                 print(f'Benefit: {benefit}')
-                print(f'Time elapsed: {round(time_elapsed,20)}')
+                print(f'Total time: {round(total_time,5)}')
+                print(f'CPU time: {round(cpu_time,5)}')
 
             # return list(solution.query(outPred).all())
             for p in outPreds:

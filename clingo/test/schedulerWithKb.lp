@@ -25994,14 +25994,15 @@ status(5198,0).
 status(5199,0).
 status(5200,1).
 
+
 % RULES
 %% OWNERSHIP RULE
 granted(R) :- status(R, S), S = 1.
 %% WAITING RULE
 1 {best(R) : request(R)} 1 :- patient_id(R,P), score(R,S), not request(X), patient_id(X,P), score(X,SX), X != R, S < SX.
 % SET CREATION
-0 {grant(R)} 1 :- request(R), granted(R), not best(R).
-0 {grant(R)} 1 :- request(R), not granted(R).
+{grant(R)} 1 :- request(R), granted(R), not best(R).
+{grant(R)} 1 :- request(R), not granted(R).
 
 % INTEGRITY CONSTRAINTS
 %% A timeslot can be appointed only to one patient

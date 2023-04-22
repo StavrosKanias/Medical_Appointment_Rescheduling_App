@@ -173,12 +173,15 @@ class DataModel():
                 f"Failed to create a unified string for the conditions\n {cond}")
             return False
 
-    def select(self, table, attributes=None, conditions=None):
+    def select(self, table, attributes=None, conditions=None, joins=None):
         try:
             query = f"\nSELECT "
             if attributes:
                 for a in attributes:
-                    query += a
+                    if joins:
+                        query += f'{table}.{a}'
+                    else:
+                        query += a
                     if attributes.index(a) < len(attributes) - 1:
                         query += ', '
                     else:
@@ -186,6 +189,13 @@ class DataModel():
             else:
                 query += '*\n'
             query += f"FROM {table}\n"
+
+            if joins:
+                for j in joins:
+                    tableAttribute = j[0]
+                    foreignEntity = j[1]
+                    joinAttribute = j[2]
+                    query += f"JOIN {foreignEntity} ON {table}.{tableAttribute} = {foreignEntity}.{joinAttribute}\n"
 
             if conditions:
                 condstr = self.conditions(conditions, ' and ')
