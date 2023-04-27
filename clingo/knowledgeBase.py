@@ -391,14 +391,39 @@ class KnowledgeBase():
         f.write(content)
         f.close()
 
-    # Creates a new predicate from existing data
-    def generate(self, pName, pAttributes, populate=True, clear=False):
-        pass
+    # Add conditions
+    def extract(self, predicates, merge=False):
+        kb = FactBase()
+        for e in predicates:
+            print(e)
+            if merge:
+                data = []
+                content = {}
+            for p in predicates[e]:
+                t = self.schema[e][p][0]
+                field = self.TYPE2FIELD[t]
+                content[p.lower()] = field
+                if self.isPrimary(e, p):
+                    apred = self.predicates[e.upper()]
+                else:
+                    apred = self.predicates[p.upper()]
+                if merge:
+                    vpred = getattr(apred, p.lower())
+                    data.append(list(self.kb.query(apred).select(vpred).all()))
+                else:
+                    data = self.kb.query(apred).all()
+                    kb.add(data)
+            if merge:
+                mergedPred = type(e, (Predicate, ), content)
+                print(data)
+                for i in range(len(data[0])):
+                    v = []
+                    for d in data:
+                        v.append(d[i])
+                    kb.add(mergedPred(*v))
+        return kb
 
-    def extract(self):
-        pass
-
-    def run(self, asp, outPreds=None, searchDuration=None, show=False):
+    def run(self, asp, outPreds=None, searchDuration=None, show=False, limit=False, subKB=None):
         # Create a Control object that will unify models against the appropriate
         # predicates. Then load the asp file that encodes the problem domain.
         fname = asp.split('/')[-1]
@@ -409,10 +434,18 @@ class KnowledgeBase():
                 if p not in predicates:
                     predicates.append(p)
         ctrl = Control(unifier=predicates)
+        if limit:
+            ctrl.configuration.solve.models = limit
+
         ctrl.load(asp)
 
         # Add the instance data and ground the ASP program
-        ctrl.add_facts(self.kb)
+        if subKB:
+            kb = self.extract(subKB[0], merge=subKB[1])
+            print(FactBase.asp_str(kb))
+            ctrl.add_facts(kb)
+        else:
+            ctrl.add_facts(self.kb)
         ctrl.ground([("base", [])])
 
         # Generate a solution - use a call back that saves the solution

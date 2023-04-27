@@ -106,9 +106,9 @@ def main():
         # timeslot_availability = float(input(" Timeslot availability: \n"))
 
         minimum_people = 200
-        maximum_people = 300
+        maximum_people = 200
         minimum_doctors = 10
-        maximum_doctors = 20
+        maximum_doctors = 15
         minimum_specialites = 10
         maximum_specialites = 15
         demand = 2.5
