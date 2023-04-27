@@ -136,13 +136,11 @@ status(10,0).
 % RULES
 %% GRANTED RULE
 granted(R) :- status(R, S), S = 1.
-%% WAITING RULE
-appointed(P) :- not {request(R)}, patient_id(R, P), granted(R).
-%% BETTER RULE
-better(R,X) :- score(R, S), score(X, SX), R != X, S > SX. 
+%% APPOINTED RULE
+appointed(P) :- request(R), patient_id(R, P), granted(R).
 % SET CREATION
 {grant(R)} 1 :- granted(R).
-{grant(R)} 1 :- not granted(R), patient_id(R,P), granted(X), patient_id(X,P), better(R,X).
+{grant(R)} 1 :- not granted(R), patient_id(R,P), granted(X), patient_id(X,P), score(R, S), score(X, SX), R != X, S > SX.
 {grant(R)} 1 :- patient_id(R,P), not appointed(P).
 % INTEGRITY CONSTRAINTS
 %% A timeslot can be appointed only to one patient

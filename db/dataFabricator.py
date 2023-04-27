@@ -19,7 +19,7 @@ class DataFabricator():
             self.quantities['SPECIALTY'] = random.randint(minS, maxS)
             # 8 timeslots per day, per doctor for 5 days a week for 3 months
             self.quantities['TIMESLOT'] = int(
-                self.quantities['DOCTOR'] * 8 * 5 * 4)
+                self.quantities['DOCTOR'] * 8 * 5 * 2)
             self.quantities['REQUEST'] = int(
                 demand * self.quantities['TIMESLOT'])
             self.tAvailability = tAvailability

@@ -395,7 +395,6 @@ class KnowledgeBase():
     def extract(self, predicates, merge=False):
         kb = FactBase()
         for e in predicates:
-            print(e)
             if merge:
                 data = []
                 content = {}
@@ -415,7 +414,6 @@ class KnowledgeBase():
                     kb.add(data)
             if merge:
                 mergedPred = type(e, (Predicate, ), content)
-                print(data)
                 for i in range(len(data[0])):
                     v = []
                     for d in data:
@@ -442,7 +440,6 @@ class KnowledgeBase():
         # Add the instance data and ground the ASP program
         if subKB:
             kb = self.extract(subKB[0], merge=subKB[1])
-            print(FactBase.asp_str(kb))
             ctrl.add_facts(kb)
         else:
             ctrl.add_facts(self.kb)

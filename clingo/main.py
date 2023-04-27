@@ -32,6 +32,8 @@ def main():
     #                    [Assign], show=True)
     class Grant(Predicate):
         request = IntegerField
+        score = IntegerField
+
     subKB = {'REQUEST': ['ID', 'PATIENT_ID',
                          'TIMESLOT_ID', 'SCORE', 'STATUS']}
     solution1 = kb.run('clingo/reschedulerGrantMerged.lp',
