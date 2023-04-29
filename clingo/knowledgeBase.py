@@ -384,10 +384,22 @@ class KnowledgeBase():
             self.db.delete(entity.upper(), conditions)
         return True
 
-    def toFile(self, path, format='lp'):
+    def toFile(self, path, format='lp', entities=None, merged=False):
         filename = path + self.name.lower() + '.' + format
         f = open(filename, "w")
-        content = FactBase.asp_str(self.kb)
+        if merged:
+            if entities:
+                subKb = self.extract(entities, merge=True)
+                content = FactBase.asp_str(subKb)
+            else:
+                mergedKb = self.extract(list(self.schema), merge=True)
+                content = FactBase.asp_str(mergedKb)
+        else:
+            if entities:
+                subKb = self.extract(entities, merge=False)
+                content = FactBase.asp_str(subKb)
+            else:
+                content = FactBase.asp_str(self.kb)
         f.write(content)
         f.close()
 
@@ -395,9 +407,9 @@ class KnowledgeBase():
     def extract(self, predicates, merge=False):
         kb = FactBase()
         for e in predicates:
+            content = {}
             if merge:
                 data = []
-                content = {}
             for p in predicates[e]:
                 t = self.schema[e][p][0]
                 field = self.TYPE2FIELD[t]
@@ -441,6 +453,7 @@ class KnowledgeBase():
         if subKB:
             kb = self.extract(subKB[0], merge=subKB[1])
             ctrl.add_facts(kb)
+            self.toFile('clingo/sub_', entities=subKB[0], merged=subKB[1])
         else:
             ctrl.add_facts(self.kb)
         ctrl.ground([("base", [])])
@@ -453,7 +466,9 @@ class KnowledgeBase():
         def on_model(model):
             nonlocal solution
             solution = [model.optimality_proven,
-                        model.facts(atoms=True), model.cost]
+                        model.symbols(shown=True), model.cost, model.number]
+            if solution[3] % 500 == 0:
+                print(f'MODEL {solution[3]}\nBENEFIT {-solution[2][0]}')
             if datetime.now() > end:
                 Control.interrupt(ctrl)
 

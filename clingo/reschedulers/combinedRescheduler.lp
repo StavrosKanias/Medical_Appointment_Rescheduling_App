@@ -132,23 +132,33 @@ status(8,0).
 status(9,1).
 status(10,0).
 
-
 % RULES
-%% GRANTED RULE
-granted(R) :- status(R, S), S = 1.
+%% OWNERSHIP RULE
+owns(P, T, R) :- request(R), timeslot_id(R, T), patient_id(R, P), status(R, S), S = 1.
+%% BEST CHOICE RULE
+best(P, T) :- request(R), patient_id(R,P), timeslot_id(R,T), score(R,S), not request(X), patient_id(X,P), score(X,SX), X != R,  S < SX.
 %% APPOINTED RULE
-appointed(P) :- request(R), patient_id(R, P), granted(R).
+appointed(P) :- request(R), patient_id(R, P), timeslot_id(R, T), owns(R,T).
+%% ONLY OPTION RULE
+onlyOption(R,T) :- request(R), patient_id(R, P), timeslot_id(R,T), not request(X), patient_id(X, P), R != X.
 % SET CREATION
-{grant(R)} 1 :- granted(R).
-{grant(R)} 1 :- not granted(R), patient_id(R,P), granted(X), patient_id(X,P), score(R, S), score(X, SX), R != X, S > SX.
-{grant(R)} 1 :- patient_id(R,P), not appointed(P).
+0 {assign(P, T, R) : patient(P)} 1 :- timeslot(T), request(R), patient_id(R, P), timeslot_id(R, T), owns(P,_,X), not best(P,X).
+0 {assign(P, T, R) : patient(P)} 1 :- timeslot(T), request(R), patient_id(R, P), timeslot_id(R, T), timeslot(X), not owns(P,X,_).
+
 % INTEGRITY CONSTRAINTS
+%% The timeslot and the doctor has to be available
+:- assign(_, T, _), not timeslot_available(T). 
 %% A timeslot can be appointed only to one patient
-:- grant(R1), timeslot_id(R1, T), grant(R2), timeslot_id(R2, T), R1 != R2.
+:- assign(P1,T,_), assign(P2,T,_), P1 != P2.
 %% Only one timeslot can be appointed to a patient
-:- grant(R1), patient_id(R1, P), grant(R2), patient_id(R2, P), R1 != R2.
+:- assign(P,T1,_), assign(P,T2,_), T1 != T2.
+%% A patient cannot receive a timeslot corresponding to a lower request score than the one he or she already owns
+:- owns(P, T1, R1), score(R1, S1), assign(P, T2, R2), score(R2, S2), S1 > S2.
+%% If a person owns his/her best option it should always be assigned to them
+:- not assign(P,T,R), owns(P,T,R), best(P,T).
+%% A person's only option if it has a better score than the rest must be assigned to him/her.
+:- assign(P1,T,R1), score(R1,S1), request(R2), patient_id(R2,P2), score(R2,S2), onlyOption(P2,T), P1 != P2, S1 < S2.
+
 
 % OPTIMIZATION
-#maximize{ S, R : grant(R), score(R, S)}.
-
-#show grant/1.
+#maximize{ S, R, T, P : assign(P, T ,R), score(R, S)}.

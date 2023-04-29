@@ -21,23 +21,25 @@ def main():
     kb.delete('REQUEST', conditions={
         "ID": [('=', 1)]})
     kb.toFile('clingo/')
-    # 3. Fix update for primary and implement cascade in deletion
-    # 1. Rewrite the kb and the code simplified for the base scenario
+
     # class Assign(Predicate):
     #     patient = StringField
     #     timeslot = IntegerField
     #     request = IntegerField
 
-    # solution1 = kb.run('clingo/rescheduler.lp',
-    #                    [Assign], show=True)
+    # solutionAssign = kb.run('clingo/finalRescheduler.lp',
+    #                         [Assign], show=True, searchDuration=12)
+
     class Grant(Predicate):
         request = IntegerField
-        score = IntegerField
 
     subKB = {'REQUEST': ['ID', 'PATIENT_ID',
                          'TIMESLOT_ID', 'SCORE', 'STATUS']}
-    solution1 = kb.run('clingo/reschedulerGrantMerged.lp',
-                       [Grant], searchDuration=1, show=True, subKB=[subKB, True])
+    solutionGrant = kb.run('clingo/reschedulerMergedGrant.lp',
+                           [Grant], searchDuration=12, show=True, subKB=[subKB, True])
+
+    # solutionMergedGrant = kb.run('clingo/reschedulerMergepdGrant.lp',
+    #                              [Grant], searchDuration=12, show=True, subKB=[subKB, True])
     # # solution2 = kb.run('clingo/scheduler.lp',
     # #                    [Assign], show=True)
     # assigned = {x.request: 1 for x in solution1['Assign']}
@@ -50,12 +52,14 @@ def main():
     #     kb.update('REQUEST', conditions={'ID': [
     #               ('=', u)]}, values={'STATUS': update[u]}, toDb=True)
 
-    # TODO fix primary choice for booleans, after that doctor on strike and multiple chains
     # print(solution)
     # kb.reload()
     # print(kb)
     # kb.update('Request', conditions={"ID": [('=', 2)]}, values={
     #           "STATUS": 1}, toDb=False)
+
+# TODO
+    # Fix update for primary and implement cascade in deletion
 
 
 if __name__ == "__main__":

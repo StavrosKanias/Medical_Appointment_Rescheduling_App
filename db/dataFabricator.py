@@ -309,8 +309,8 @@ class DataFabricator():
         primaries = []
         patients = {}
         current_patient = None
-        availabilities = self.loadNonForeign(
-            'TIMESLOT', 'TIMESLOT_AVAILABLE')
+        # availabilities = self.loadNonForeign(
+        #     'TIMESLOT', 'TIMESLOT_AVAILABLE')
 
         # contains the coresponding column to the referenced enity for each foreign
         foreign_lists = {}
@@ -334,11 +334,12 @@ class DataFabricator():
                     if attribute == 'PATIENT_ID':
                         current_patient = foreign
                     elif attribute == 'TIMESLOT_ID':
-                        available = availabilities[index]
-                        while foreign in patients[current_patient] or not available:
+                        # available = availabilities[index]
+                        # while foreign in patients[current_patient] or not available:
+                        while foreign in patients[current_patient]:
                             foreign, index = self.chooseForeign(
                                 foreign_lists, attribute, get_index=True)
-                            available = availabilities[index]
+                            # available = availabilities[index]
                         patients[current_patient].append(foreign)
                     temp_dict[attribute] = foreign
 
