@@ -134,7 +134,7 @@
 % status(9,1).
 % status(10,0).
 
-% % TEST DB
+% TEST DB
 % request(1).
 % request(2).
 % request(3).
@@ -757,782 +757,782 @@
 % request(798).
 % request(799).
 % request(800).
-% request(801).
-% request(803).
-% request(804).
-% request(805).
-% request(806).
-% request(807).
-% request(808).
-% request(809).
-% request(810).
-% request(811).
-% request(812).
-% request(813).
-% request(814).
-% request(815).
-% request(816).
-% request(817).
-% request(818).
-% request(819).
-% request(821).
-% request(822).
-% request(823).
-% request(824).
-% request(826).
-% request(827).
-% request(828).
-% request(829).
-% request(830).
-% request(833).
-% request(834).
-% request(835).
-% request(836).
-% request(837).
-% request(838).
-% request(841).
-% request(843).
-% request(844).
-% request(845).
-% request(846).
-% request(847).
-% request(848).
-% request(849).
-% request(851).
-% request(852).
-% request(854).
-% request(855).
-% request(857).
-% request(859).
-% request(860).
-% request(861).
-% request(862).
-% request(864).
-% request(866).
-% request(867).
-% request(868).
-% request(869).
-% request(871).
-% request(873).
-% request(874).
-% request(875).
-% request(876).
-% request(878).
-% request(879).
-% request(881).
-% request(882).
-% request(883).
-% request(884).
-% request(885).
-% request(886).
-% request(887).
-% request(888).
-% request(889).
-% request(890).
-% request(891).
-% request(892).
-% request(894).
-% request(895).
-% request(896).
-% request(897).
-% request(899).
-% request(900).
-% request(901).
-% request(902).
-% request(904).
-% request(905).
-% request(906).
-% request(907).
-% request(908).
-% request(909).
-% request(910).
-% request(911).
-% request(912).
-% request(914).
-% request(915).
-% request(916).
-% request(917).
-% request(918).
-% request(919).
-% request(920).
-% request(921).
-% request(922).
-% request(924).
-% request(925).
-% request(927).
-% request(928).
-% request(929).
-% request(930).
-% request(931).
-% request(933).
-% request(935).
-% request(938).
-% request(939).
-% request(940).
-% request(942).
-% request(943).
-% request(944).
-% request(946).
-% request(948).
-% request(949).
-% request(950).
-% request(951).
-% request(954).
-% request(955).
-% request(957).
-% request(959).
-% request(961).
-% request(962).
-% request(965).
-% request(966).
-% request(967).
-% request(969).
-% request(970).
-% request(971).
-% request(972).
-% request(973).
-% request(974).
-% request(975).
-% request(976).
-% request(977).
-% request(978).
-% request(980).
-% request(981).
-% request(983).
-% request(984).
-% request(985).
-% request(986).
-% request(987).
-% request(990).
-% request(991).
-% request(993).
-% request(994).
-% request(995).
-% request(997).
-% request(998).
-% request(999).
-% request(1000).
-% request(1001).
-% request(1002).
-% request(1003).
-% request(1004).
-% request(1005).
-% request(1006).
-% request(1007).
-% request(1008).
-% request(1009).
-% request(1011).
-% request(1012).
-% request(1013).
-% request(1014).
-% request(1015).
-% request(1016).
-% request(1017).
-% request(1018).
-% request(1019).
-% request(1020).
-% request(1021).
-% request(1022).
-% request(1023).
-% request(1024).
-% request(1026).
-% request(1027).
-% request(1028).
-% request(1034).
-% request(1035).
-% request(1036).
-% request(1037).
-% request(1038).
-% request(1040).
-% request(1041).
-% request(1043).
-% request(1044).
-% request(1045).
-% request(1046).
-% request(1047).
-% request(1048).
-% request(1049).
-% request(1050).
-% request(1051).
-% request(1053).
-% request(1054).
-% request(1055).
-% request(1057).
-% request(1060).
-% request(1061).
-% request(1062).
-% request(1063).
-% request(1064).
-% request(1065).
-% request(1067).
-% request(1068).
-% request(1069).
-% request(1070).
-% request(1071).
-% request(1072).
-% request(1073).
-% request(1074).
-% request(1075).
-% request(1076).
-% request(1077).
-% request(1078).
-% request(1079).
-% request(1080).
-% request(1081).
-% request(1084).
-% request(1085).
-% request(1086).
-% request(1087).
-% request(1088).
-% request(1089).
-% request(1090).
-% request(1092).
-% request(1093).
-% request(1094).
-% request(1095).
-% request(1096).
-% request(1097).
-% request(1098).
-% request(1099).
-% request(1101).
-% request(1103).
-% request(1104).
-% request(1105).
-% request(1106).
-% request(1107).
-% request(1108).
-% request(1109).
-% request(1110).
-% request(1113).
-% request(1115).
-% request(1116).
-% request(1117).
-% request(1118).
-% request(1119).
-% request(1120).
-% request(1121).
-% request(1122).
-% request(1124).
-% request(1125).
-% request(1126).
-% request(1127).
-% request(1128).
-% request(1129).
-% request(1130).
-% request(1131).
-% request(1132).
-% request(1133).
-% request(1135).
-% request(1136).
-% request(1138).
-% request(1139).
-% request(1140).
-% request(1141).
-% request(1142).
-% request(1143).
-% request(1144).
-% request(1145).
-% request(1148).
-% request(1149).
-% request(1150).
-% request(1151).
-% request(1152).
-% request(1153).
-% request(1154).
-% request(1155).
-% request(1156).
-% request(1158).
-% request(1160).
-% request(1161).
-% request(1162).
-% request(1163).
-% request(1164).
-% request(1165).
-% request(1168).
-% request(1169).
-% request(1170).
-% request(1171).
-% request(1172).
-% request(1173).
-% request(1174).
-% request(1175).
-% request(1176).
-% request(1177).
-% request(1178).
-% request(1180).
-% request(1181).
-% request(1182).
-% request(1183).
-% request(1185).
-% request(1186).
-% request(1189).
-% request(1190).
-% request(1191).
-% request(1192).
-% request(1193).
-% request(1194).
-% request(1195).
-% request(1196).
-% request(1197).
-% request(1198).
-% request(1199).
-% request(1200).
-% request(1201).
-% request(1202).
-% request(1203).
-% request(1204).
-% request(1205).
-% request(1207).
-% request(1208).
-% request(1209).
-% request(1210).
-% request(1211).
-% request(1212).
-% request(1213).
-% request(1214).
-% request(1215).
-% request(1217).
-% request(1218).
-% request(1221).
-% request(1222).
-% request(1225).
-% request(1226).
-% request(1229).
-% request(1230).
-% request(1231).
-% request(1232).
-% request(1233).
-% request(1234).
-% request(1236).
-% request(1237).
-% request(1239).
-% request(1240).
-% request(1241).
-% request(1242).
-% request(1243).
-% request(1244).
-% request(1246).
-% request(1249).
-% request(1251).
-% request(1252).
-% request(1254).
-% request(1256).
-% request(1259).
-% request(1260).
-% request(1261).
-% request(1262).
-% request(1263).
-% request(1264).
-% request(1265).
-% request(1266).
-% request(1267).
-% request(1269).
-% request(1271).
-% request(1272).
-% request(1273).
-% request(1274).
-% request(1275).
-% request(1276).
-% request(1277).
-% request(1278).
-% request(1279).
-% request(1280).
-% request(1281).
-% request(1282).
-% request(1283).
-% request(1284).
-% request(1285).
-% request(1286).
-% request(1289).
-% request(1290).
-% request(1291).
-% request(1292).
-% request(1293).
-% request(1294).
-% request(1295).
-% request(1296).
-% request(1297).
-% request(1298).
-% request(1300).
-% request(1301).
-% request(1303).
-% request(1304).
-% request(1306).
-% request(1309).
-% request(1310).
-% request(1312).
-% request(1314).
-% request(1315).
-% request(1316).
-% request(1317).
-% request(1319).
-% request(1321).
-% request(1322).
-% request(1323).
-% request(1324).
-% request(1326).
-% request(1327).
-% request(1328).
-% request(1329).
-% request(1330).
-% request(1331).
-% request(1332).
-% request(1333).
-% request(1334).
-% request(1335).
-% request(1337).
-% request(1339).
-% request(1341).
-% request(1342).
-% request(1344).
-% request(1345).
-% request(1346).
-% request(1347).
-% request(1348).
-% request(1349).
-% request(1351).
-% request(1352).
-% request(1353).
-% request(1354).
-% request(1355).
-% request(1356).
-% request(1357).
-% request(1358).
-% request(1360).
-% request(1361).
-% request(1362).
-% request(1363).
-% request(1364).
-% request(1365).
-% request(1366).
-% request(1367).
-% request(1369).
-% request(1370).
-% request(1371).
-% request(1372).
-% request(1374).
-% request(1375).
-% request(1376).
-% request(1377).
-% request(1378).
-% request(1379).
-% request(1380).
-% request(1381).
-% request(1382).
-% request(1384).
-% request(1385).
-% request(1386).
-% request(1387).
-% request(1388).
-% request(1390).
-% request(1391).
-% request(1392).
-% request(1393).
-% request(1394).
-% request(1395).
-% request(1396).
-% request(1398).
-% request(1399).
-% request(1400).
-% request(1401).
-% request(1403).
-% request(1405).
-% request(1406).
-% request(1407).
-% request(1408).
-% request(1409).
-% request(1410).
-% request(1411).
-% request(1412).
-% request(1413).
-% request(1414).
-% request(1415).
-% request(1417).
-% request(1418).
-% request(1419).
-% request(1420).
-% request(1422).
-% request(1425).
-% request(1426).
-% request(1427).
-% request(1428).
-% request(1429).
-% request(1431).
-% request(1432).
-% request(1433).
-% request(1434).
-% request(1435).
-% request(1437).
-% request(1438).
-% request(1440).
-% request(1441).
-% request(1442).
-% request(1443).
-% request(1444).
-% request(1445).
-% request(1447).
-% request(1448).
-% request(1449).
-% request(1452).
-% request(1454).
-% request(1455).
-% request(1456).
-% request(1457).
-% request(1459).
-% request(1460).
-% request(1461).
-% request(1462).
-% request(1463).
-% request(1464).
-% request(1465).
-% request(1467).
-% request(1468).
-% request(1469).
-% request(1470).
-% request(1471).
-% request(1472).
-% request(1473).
-% request(1474).
-% request(1475).
-% request(1477).
-% request(1478).
-% request(1479).
-% request(1480).
-% request(1481).
-% request(1483).
-% request(1484).
-% request(1485).
-% request(1486).
-% request(1487).
-% request(1488).
-% request(1489).
-% request(1490).
-% request(1491).
-% request(1492).
-% request(1493).
-% request(1494).
-% request(1496).
-% request(1497).
-% request(1498).
-% request(1499).
-% request(1500).
-% request(1501).
-% request(1502).
-% request(1503).
-% request(1504).
-% request(1505).
-% request(1506).
-% request(1507).
-% request(1508).
-% request(1509).
-% request(1510).
-% request(1512).
-% request(1513).
-% request(1514).
-% request(1516).
-% request(1518).
-% request(1519).
-% request(1521).
-% request(1522).
-% request(1524).
-% request(1526).
-% request(1527).
-% request(1528).
-% request(1529).
-% request(1530).
-% request(1531).
-% request(1532).
-% request(1533).
-% request(1534).
-% request(1535).
-% request(1536).
-% request(1537).
-% request(1538).
-% request(1539).
-% request(1540).
-% request(1541).
-% request(1542).
-% request(1544).
-% request(1545).
-% request(1546).
-% request(1547).
-% request(1548).
-% request(1549).
-% request(1550).
-% request(1552).
-% request(1553).
-% request(1554).
-% request(1556).
-% request(1558).
-% request(1560).
-% request(1561).
-% request(1562).
-% request(1565).
-% request(1567).
-% request(1568).
-% request(1569).
-% request(1570).
-% request(1571).
-% request(1572).
-% request(1573).
-% request(1574).
-% request(1575).
-% request(1576).
-% request(1578).
-% request(1579).
-% request(1580).
-% request(1581).
-% request(1582).
-% request(1583).
-% request(1584).
-% request(1585).
-% request(1586).
-% request(1588).
-% request(1589).
-% request(1590).
-% request(1591).
-% request(1592).
-% request(1593).
-% request(1594).
-% request(1595).
-% request(1596).
-% request(1597).
-% request(1598).
-% request(1599).
-% request(1601).
-% request(1603).
-% request(1604).
-% request(1605).
-% request(1606).
-% request(1608).
-% request(1609).
-% request(1610).
-% request(1611).
-% request(1612).
-% request(1613).
-% request(1614).
-% request(1615).
-% request(1616).
-% request(1617).
-% request(1618).
-% request(1620).
-% request(1621).
-% request(1624).
-% request(1625).
-% request(1626).
-% request(1629).
-% request(1630).
-% request(1633).
-% request(1634).
-% request(1635).
-% request(1636).
-% request(1637).
-% request(1639).
-% request(1640).
-% request(1641).
-% request(1643).
-% request(1644).
-% request(1645).
-% request(1646).
-% request(1647).
-% request(1649).
-% request(1650).
-% request(1651).
-% request(1652).
-% request(1654).
-% request(1655).
-% request(1658).
-% request(1659).
-% request(1660).
-% request(1661).
-% request(1662).
-% request(1663).
-% request(1664).
-% request(1665).
-% request(1666).
-% request(1667).
-% request(1669).
-% request(1671).
-% request(1673).
-% request(1674).
-% request(1675).
-% request(1676).
-% request(1677).
-% request(1678).
-% request(1679).
-% request(1680).
-% request(1681).
-% request(1683).
-% request(1684).
-% request(1685).
-% request(1686).
-% request(1687).
-% request(1688).
-% request(1689).
-% request(1690).
-% request(1691).
-% request(1692).
-% request(1694).
-% request(1696).
-% request(1697).
-% request(1699).
-% request(1702).
-% request(1704).
-% request(1705).
-% request(1707).
-% request(1708).
-% request(1710).
-% request(1711).
-% request(1712).
-% request(1713).
-% request(1714).
-% request(1718).
-% request(1720).
-% request(1721).
-% request(1722).
-% request(1724).
-% request(1725).
-% request(1727).
-% request(1728).
-% request(1729).
-% request(1730).
-% request(1731).
-% request(1733).
-% request(1734).
-% request(1735).
-% request(1736).
-% request(1737).
-% request(1738).
-% request(1740).
-% request(1741).
-% request(1742).
-% request(1743).
-% request(1744).
-% request(1745).
-% request(1747).
-% request(1748).
-% request(1749).
-% request(1750).
-% request(1751).
-% request(1753).
-% request(1754).
-% request(1755).
-% request(1756).
-% request(1757).
-% request(1758).
-% request(1759).
-% request(1761).
-% request(1762).
-% request(1764).
-% request(1765).
-% request(1766).
-% request(1767).
-% request(1768).
-% request(1769).
-% request(1772).
-% request(1773).
-% request(1774).
-% request(1775).
+% % request(801).
+% % request(803).
+% % request(804).
+% % request(805).
+% % request(806).
+% % request(807).
+% % request(808).
+% % request(809).
+% % request(810).
+% % request(811).
+% % request(812).
+% % request(813).
+% % request(814).
+% % request(815).
+% % request(816).
+% % request(817).
+% % request(818).
+% % request(819).
+% % request(821).
+% % request(822).
+% % request(823).
+% % request(824).
+% % request(826).
+% % request(827).
+% % request(828).
+% % request(829).
+% % request(830).
+% % request(833).
+% % request(834).
+% % request(835).
+% % request(836).
+% % request(837).
+% % request(838).
+% % request(841).
+% % request(843).
+% % request(844).
+% % request(845).
+% % request(846).
+% % request(847).
+% % request(848).
+% % request(849).
+% % request(851).
+% % request(852).
+% % request(854).
+% % request(855).
+% % request(857).
+% % request(859).
+% % request(860).
+% % request(861).
+% % request(862).
+% % request(864).
+% % request(866).
+% % request(867).
+% % request(868).
+% % request(869).
+% % request(871).
+% % request(873).
+% % request(874).
+% % request(875).
+% % request(876).
+% % request(878).
+% % request(879).
+% % request(881).
+% % request(882).
+% % request(883).
+% % request(884).
+% % request(885).
+% % request(886).
+% % request(887).
+% % request(888).
+% % request(889).
+% % request(890).
+% % request(891).
+% % request(892).
+% % request(894).
+% % request(895).
+% % request(896).
+% % request(897).
+% % request(899).
+% % request(900).
+% % request(901).
+% % request(902).
+% % request(904).
+% % request(905).
+% % request(906).
+% % request(907).
+% % request(908).
+% % request(909).
+% % request(910).
+% % request(911).
+% % request(912).
+% % request(914).
+% % request(915).
+% % request(916).
+% % request(917).
+% % request(918).
+% % request(919).
+% % request(920).
+% % request(921).
+% % request(922).
+% % request(924).
+% % request(925).
+% % request(927).
+% % request(928).
+% % request(929).
+% % request(930).
+% % request(931).
+% % request(933).
+% % request(935).
+% % request(938).
+% % request(939).
+% % request(940).
+% % request(942).
+% % request(943).
+% % request(944).
+% % request(946).
+% % request(948).
+% % request(949).
+% % request(950).
+% % request(951).
+% % request(954).
+% % request(955).
+% % request(957).
+% % request(959).
+% % request(961).
+% % request(962).
+% % request(965).
+% % request(966).
+% % request(967).
+% % request(969).
+% % request(970).
+% % request(971).
+% % request(972).
+% % request(973).
+% % request(974).
+% % request(975).
+% % request(976).
+% % request(977).
+% % request(978).
+% % request(980).
+% % request(981).
+% % request(983).
+% % request(984).
+% % request(985).
+% % request(986).
+% % request(987).
+% % request(990).
+% % request(991).
+% % request(993).
+% % request(994).
+% % request(995).
+% % request(997).
+% % request(998).
+% % request(999).
+% % request(1000).
+% % request(1001).
+% % request(1002).
+% % request(1003).
+% % request(1004).
+% % request(1005).
+% % request(1006).
+% % request(1007).
+% % request(1008).
+% % request(1009).
+% % request(1011).
+% % request(1012).
+% % request(1013).
+% % request(1014).
+% % request(1015).
+% % request(1016).
+% % request(1017).
+% % request(1018).
+% % request(1019).
+% % request(1020).
+% % request(1021).
+% % request(1022).
+% % request(1023).
+% % request(1024).
+% % request(1026).
+% % request(1027).
+% % request(1028).
+% % request(1034).
+% % request(1035).
+% % request(1036).
+% % request(1037).
+% % request(1038).
+% % request(1040).
+% % request(1041).
+% % request(1043).
+% % request(1044).
+% % request(1045).
+% % request(1046).
+% % request(1047).
+% % request(1048).
+% % request(1049).
+% % request(1050).
+% % request(1051).
+% % request(1053).
+% % request(1054).
+% % request(1055).
+% % request(1057).
+% % request(1060).
+% % request(1061).
+% % request(1062).
+% % request(1063).
+% % request(1064).
+% % request(1065).
+% % request(1067).
+% % request(1068).
+% % request(1069).
+% % request(1070).
+% % request(1071).
+% % request(1072).
+% % request(1073).
+% % request(1074).
+% % request(1075).
+% % request(1076).
+% % request(1077).
+% % request(1078).
+% % request(1079).
+% % request(1080).
+% % request(1081).
+% % request(1084).
+% % request(1085).
+% % request(1086).
+% % request(1087).
+% % request(1088).
+% % request(1089).
+% % request(1090).
+% % request(1092).
+% % request(1093).
+% % request(1094).
+% % request(1095).
+% % request(1096).
+% % request(1097).
+% % request(1098).
+% % request(1099).
+% % request(1101).
+% % request(1103).
+% % request(1104).
+% % request(1105).
+% % request(1106).
+% % request(1107).
+% % request(1108).
+% % request(1109).
+% % request(1110).
+% % request(1113).
+% % request(1115).
+% % request(1116).
+% % request(1117).
+% % request(1118).
+% % request(1119).
+% % request(1120).
+% % request(1121).
+% % request(1122).
+% % request(1124).
+% % request(1125).
+% % request(1126).
+% % request(1127).
+% % request(1128).
+% % request(1129).
+% % request(1130).
+% % request(1131).
+% % request(1132).
+% % request(1133).
+% % request(1135).
+% % request(1136).
+% % request(1138).
+% % request(1139).
+% % request(1140).
+% % request(1141).
+% % request(1142).
+% % request(1143).
+% % request(1144).
+% % request(1145).
+% % request(1148).
+% % request(1149).
+% % request(1150).
+% % request(1151).
+% % request(1152).
+% % request(1153).
+% % request(1154).
+% % request(1155).
+% % request(1156).
+% % request(1158).
+% % request(1160).
+% % request(1161).
+% % request(1162).
+% % request(1163).
+% % request(1164).
+% % request(1165).
+% % request(1168).
+% % request(1169).
+% % request(1170).
+% % request(1171).
+% % request(1172).
+% % request(1173).
+% % request(1174).
+% % request(1175).
+% % request(1176).
+% % request(1177).
+% % request(1178).
+% % request(1180).
+% % request(1181).
+% % request(1182).
+% % request(1183).
+% % request(1185).
+% % request(1186).
+% % request(1189).
+% % request(1190).
+% % request(1191).
+% % request(1192).
+% % request(1193).
+% % request(1194).
+% % request(1195).
+% % request(1196).
+% % request(1197).
+% % request(1198).
+% % request(1199).
+% % request(1200).
+% % request(1201).
+% % request(1202).
+% % request(1203).
+% % request(1204).
+% % request(1205).
+% % request(1207).
+% % request(1208).
+% % request(1209).
+% % request(1210).
+% % request(1211).
+% % request(1212).
+% % request(1213).
+% % request(1214).
+% % request(1215).
+% % request(1217).
+% % request(1218).
+% % request(1221).
+% % request(1222).
+% % request(1225).
+% % request(1226).
+% % request(1229).
+% % request(1230).
+% % request(1231).
+% % request(1232).
+% % request(1233).
+% % request(1234).
+% % request(1236).
+% % request(1237).
+% % request(1239).
+% % request(1240).
+% % request(1241).
+% % request(1242).
+% % request(1243).
+% % request(1244).
+% % request(1246).
+% % request(1249).
+% % request(1251).
+% % request(1252).
+% % request(1254).
+% % request(1256).
+% % request(1259).
+% % request(1260).
+% % request(1261).
+% % request(1262).
+% % request(1263).
+% % request(1264).
+% % request(1265).
+% % request(1266).
+% % request(1267).
+% % request(1269).
+% % request(1271).
+% % request(1272).
+% % request(1273).
+% % request(1274).
+% % request(1275).
+% % request(1276).
+% % request(1277).
+% % request(1278).
+% % request(1279).
+% % request(1280).
+% % request(1281).
+% % request(1282).
+% % request(1283).
+% % request(1284).
+% % request(1285).
+% % request(1286).
+% % request(1289).
+% % request(1290).
+% % request(1291).
+% % request(1292).
+% % request(1293).
+% % request(1294).
+% % request(1295).
+% % request(1296).
+% % request(1297).
+% % request(1298).
+% % request(1300).
+% % request(1301).
+% % request(1303).
+% % request(1304).
+% % request(1306).
+% % request(1309).
+% % request(1310).
+% % request(1312).
+% % request(1314).
+% % request(1315).
+% % request(1316).
+% % request(1317).
+% % request(1319).
+% % request(1321).
+% % request(1322).
+% % request(1323).
+% % request(1324).
+% % request(1326).
+% % request(1327).
+% % request(1328).
+% % request(1329).
+% % request(1330).
+% % request(1331).
+% % request(1332).
+% % request(1333).
+% % request(1334).
+% % request(1335).
+% % request(1337).
+% % request(1339).
+% % request(1341).
+% % request(1342).
+% % request(1344).
+% % request(1345).
+% % request(1346).
+% % request(1347).
+% % request(1348).
+% % request(1349).
+% % request(1351).
+% % request(1352).
+% % request(1353).
+% % request(1354).
+% % request(1355).
+% % request(1356).
+% % request(1357).
+% % request(1358).
+% % request(1360).
+% % request(1361).
+% % request(1362).
+% % request(1363).
+% % request(1364).
+% % request(1365).
+% % request(1366).
+% % request(1367).
+% % request(1369).
+% % request(1370).
+% % request(1371).
+% % request(1372).
+% % request(1374).
+% % request(1375).
+% % request(1376).
+% % request(1377).
+% % request(1378).
+% % request(1379).
+% % request(1380).
+% % request(1381).
+% % request(1382).
+% % request(1384).
+% % request(1385).
+% % request(1386).
+% % request(1387).
+% % request(1388).
+% % request(1390).
+% % request(1391).
+% % request(1392).
+% % request(1393).
+% % request(1394).
+% % request(1395).
+% % request(1396).
+% % request(1398).
+% % request(1399).
+% % request(1400).
+% % request(1401).
+% % request(1403).
+% % request(1405).
+% % request(1406).
+% % request(1407).
+% % request(1408).
+% % request(1409).
+% % request(1410).
+% % request(1411).
+% % request(1412).
+% % request(1413).
+% % request(1414).
+% % request(1415).
+% % request(1417).
+% % request(1418).
+% % request(1419).
+% % request(1420).
+% % request(1422).
+% % request(1425).
+% % request(1426).
+% % request(1427).
+% % request(1428).
+% % request(1429).
+% % request(1431).
+% % request(1432).
+% % request(1433).
+% % request(1434).
+% % request(1435).
+% % request(1437).
+% % request(1438).
+% % request(1440).
+% % request(1441).
+% % request(1442).
+% % request(1443).
+% % request(1444).
+% % request(1445).
+% % request(1447).
+% % request(1448).
+% % request(1449).
+% % request(1452).
+% % request(1454).
+% % request(1455).
+% % request(1456).
+% % request(1457).
+% % request(1459).
+% % request(1460).
+% % request(1461).
+% % request(1462).
+% % request(1463).
+% % request(1464).
+% % request(1465).
+% % request(1467).
+% % request(1468).
+% % request(1469).
+% % request(1470).
+% % request(1471).
+% % request(1472).
+% % request(1473).
+% % request(1474).
+% % request(1475).
+% % request(1477).
+% % request(1478).
+% % request(1479).
+% % request(1480).
+% % request(1481).
+% % request(1483).
+% % request(1484).
+% % request(1485).
+% % request(1486).
+% % request(1487).
+% % request(1488).
+% % request(1489).
+% % request(1490).
+% % request(1491).
+% % request(1492).
+% % request(1493).
+% % request(1494).
+% % request(1496).
+% % request(1497).
+% % request(1498).
+% % request(1499).
+% % request(1500).
+% % request(1501).
+% % request(1502).
+% % request(1503).
+% % request(1504).
+% % request(1505).
+% % request(1506).
+% % request(1507).
+% % request(1508).
+% % request(1509).
+% % request(1510).
+% % request(1512).
+% % request(1513).
+% % request(1514).
+% % request(1516).
+% % request(1518).
+% % request(1519).
+% % request(1521).
+% % request(1522).
+% % request(1524).
+% % request(1526).
+% % request(1527).
+% % request(1528).
+% % request(1529).
+% % request(1530).
+% % request(1531).
+% % request(1532).
+% % request(1533).
+% % request(1534).
+% % request(1535).
+% % request(1536).
+% % request(1537).
+% % request(1538).
+% % request(1539).
+% % request(1540).
+% % request(1541).
+% % request(1542).
+% % request(1544).
+% % request(1545).
+% % request(1546).
+% % request(1547).
+% % request(1548).
+% % request(1549).
+% % request(1550).
+% % request(1552).
+% % request(1553).
+% % request(1554).
+% % request(1556).
+% % request(1558).
+% % request(1560).
+% % request(1561).
+% % request(1562).
+% % request(1565).
+% % request(1567).
+% % request(1568).
+% % request(1569).
+% % request(1570).
+% % request(1571).
+% % request(1572).
+% % request(1573).
+% % request(1574).
+% % request(1575).
+% % request(1576).
+% % request(1578).
+% % request(1579).
+% % request(1580).
+% % request(1581).
+% % request(1582).
+% % request(1583).
+% % request(1584).
+% % request(1585).
+% % request(1586).
+% % request(1588).
+% % request(1589).
+% % request(1590).
+% % request(1591).
+% % request(1592).
+% % request(1593).
+% % request(1594).
+% % request(1595).
+% % request(1596).
+% % request(1597).
+% % request(1598).
+% % request(1599).
+% % request(1601).
+% % request(1603).
+% % request(1604).
+% % request(1605).
+% % request(1606).
+% % request(1608).
+% % request(1609).
+% % request(1610).
+% % request(1611).
+% % request(1612).
+% % request(1613).
+% % request(1614).
+% % request(1615).
+% % request(1616).
+% % request(1617).
+% % request(1618).
+% % request(1620).
+% % request(1621).
+% % request(1624).
+% % request(1625).
+% % request(1626).
+% % request(1629).
+% % request(1630).
+% % request(1633).
+% % request(1634).
+% % request(1635).
+% % request(1636).
+% % request(1637).
+% % request(1639).
+% % request(1640).
+% % request(1641).
+% % request(1643).
+% % request(1644).
+% % request(1645).
+% % request(1646).
+% % request(1647).
+% % request(1649).
+% % request(1650).
+% % request(1651).
+% % request(1652).
+% % request(1654).
+% % request(1655).
+% % request(1658).
+% % request(1659).
+% % request(1660).
+% % request(1661).
+% % request(1662).
+% % request(1663).
+% % request(1664).
+% % request(1665).
+% % request(1666).
+% % request(1667).
+% % request(1669).
+% % request(1671).
+% % request(1673).
+% % request(1674).
+% % request(1675).
+% % request(1676).
+% % request(1677).
+% % request(1678).
+% % request(1679).
+% % request(1680).
+% % request(1681).
+% % request(1683).
+% % request(1684).
+% % request(1685).
+% % request(1686).
+% % request(1687).
+% % request(1688).
+% % request(1689).
+% % request(1690).
+% % request(1691).
+% % request(1692).
+% % request(1694).
+% % request(1696).
+% % request(1697).
+% % request(1699).
+% % request(1702).
+% % request(1704).
+% % request(1705).
+% % request(1707).
+% % request(1708).
+% % request(1710).
+% % request(1711).
+% % request(1712).
+% % request(1713).
+% % request(1714).
+% % request(1718).
+% % request(1720).
+% % request(1721).
+% % request(1722).
+% % request(1724).
+% % request(1725).
+% % request(1727).
+% % request(1728).
+% % request(1729).
+% % request(1730).
+% % request(1731).
+% % request(1733).
+% % request(1734).
+% % request(1735).
+% % request(1736).
+% % request(1737).
+% % request(1738).
+% % request(1740).
+% % request(1741).
+% % request(1742).
+% % request(1743).
+% % request(1744).
+% % request(1745).
+% % request(1747).
+% % request(1748).
+% % request(1749).
+% % request(1750).
+% % request(1751).
+% % request(1753).
+% % request(1754).
+% % request(1755).
+% % request(1756).
+% % request(1757).
+% % request(1758).
+% % request(1759).
+% % request(1761).
+% % request(1762).
+% % request(1764).
+% % request(1765).
+% % request(1766).
+% % request(1767).
+% % request(1768).
+% % request(1769).
+% % request(1772).
+% % request(1773).
+% % request(1774).
+% % request(1775).
 % % request(1776).
 % % request(1777).
 % % request(1778).
@@ -16876,7 +16876,8 @@ best(R) :- patient_id(R,P), score(R,S), 0 {request(X) : patient_id(X,P), score(X
 %% ONLY OPTION RULE
 onlyOption(R) :- patient_id(R,P), 0 {request(X) : patient_id(X,P), R != X} 0.
 %% SINGLE REQUEST RULE
-singleRequest(R) :- request(R), timeslot_id(R,T), 0 {request(X) : timeslot_id(X,T), R != X} 0.
+singleRequest(R) :- timeslot_id(R,T), 0 {request(X) : timeslot_id(X,T), R != X} 0.
+bestSingleRequest(R) :- patient_id(R,P), score(R,S), singleRequest(R), 0 {request(X) : patient_id(X,P), score(X,SX), singleRequest(X), SX > S, R != X} 0.
 
 % SET CREATION
 0 {grant(R)} 1 :- request(R), granted(R), not best(R).
@@ -16885,6 +16886,8 @@ singleRequest(R) :- request(R), timeslot_id(R,T), 0 {request(X) : timeslot_id(X,
 
 %% FRAME AXIOM
 claimed(R) :- request(R), granted(R), best(R).
+claimed(R) :- request(R), granted(R), not best(R), bestSingleRequest(R).
+
 
 % INTEGRITY CONSTRAINTS
 %% A timeslot can be appointed only to one patient
@@ -16897,8 +16900,11 @@ claimed(R) :- request(R), granted(R), best(R).
 :- grant(R), timeslot_id(R,T), score(R,S), request(X), timeslot_id(X,T), score(X,SX), onlyOption(X), not onlyOption(R), not granted(R), S < SX, R != X.
 %% If someone had an appointment before they also have to have an appointment after the rescheduling
 :- request(R), granted(R), patient_id(R,P), not claimed(R), 0 {grant(X) : patient_id(X,P)} 0. 
-%% If a patient wants a timeslot and is the only one to request it, the timeslot will be granted to him/her. If there are many such requests the best will be chosen.
-:- request(R), patient_id(R,P), score(R,S), singleRequest(R), 0 {request(X) : patient_id(X,P), score(X,SX), singleRequest(X), SX > S, R != X} 0, granted(Y), patient_id(Y,P), score(Y,SY), SY < S, Y != R, request(Z), patient_id(Z,P), Z != R, grant(Z), grant(Y).
+%% Only the best single request can be granted
+:- grant(R), singleRequest(R), not bestSingleRequest(R).
+%% If a patient wants a timeslot and is the only one to request it, the request will be granted if it is better than the already granted request if it exists.
+:- request(R), patient_id(R,P), score(R,S), bestSingleRequest(R), granted(X), patient_id(X,P), score(X, SX), R != X, S > SX, request(Y), patient_id(Y,P), Y != R, grant(Y), not grant(R).
+:- request(R), patient_id(R, P), bestSingleRequest(R), not appointed(P), request(Y), patient_id(Y,P), Y != R, grant(Y), not grant(R).
 
 % OPTIMIZATION
 #maximize{ S, R : grant(R), score(R, S)}.

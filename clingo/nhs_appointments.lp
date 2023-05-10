@@ -5703,15 +5703,6 @@ priority("22099883443",96).
 priority("14097883277",9).
 priority("19038830105",70).
 priority("14099500077",80).
-timeslot(20).
-timeslot(22).
-timeslot(23).
-timeslot(24).
-timeslot(25).
-timeslot(26).
-timeslot(27).
-timeslot(28).
-timeslot(29).
 timeslot(30).
 timeslot(32).
 timeslot(33).
@@ -6199,15 +6190,6 @@ timeslot(645).
 timeslot(646).
 timeslot(647).
 timeslot(648).
-timeslot(670).
-timeslot(671).
-timeslot(672).
-timeslot(673).
-timeslot(674).
-timeslot(675).
-timeslot(676).
-timeslot(677).
-timeslot(678).
 timeslot(680).
 timeslot(681).
 timeslot(682).
@@ -6720,12 +6702,6 @@ timeslot(1295).
 timeslot(1296).
 timeslot(1297).
 timeslot(1298).
-timeslot(1320).
-timeslot(1321).
-timeslot(1323).
-timeslot(1324).
-timeslot(1325).
-timeslot(1326).
 timeslot(1330).
 timeslot(1331).
 timeslot(1332).
@@ -6820,15 +6796,6 @@ timeslot(1435).
 timeslot(1438).
 timeslot(1439).
 timeslot(1440).
-date(20,"2023-05-10").
-date(22,"2023-05-10").
-date(23,"2023-05-10").
-date(24,"2023-05-10").
-date(25,"2023-05-10").
-date(26,"2023-05-10").
-date(27,"2023-05-10").
-date(28,"2023-05-10").
-date(29,"2023-05-10").
 date(30,"2023-05-11").
 date(32,"2023-05-11").
 date(33,"2023-05-11").
@@ -7316,15 +7283,6 @@ date(645,"2023-08-04").
 date(646,"2023-08-04").
 date(647,"2023-08-04").
 date(648,"2023-08-04").
-date(670,"2023-05-10").
-date(671,"2023-05-10").
-date(672,"2023-05-10").
-date(673,"2023-05-10").
-date(674,"2023-05-10").
-date(675,"2023-05-10").
-date(676,"2023-05-10").
-date(677,"2023-05-10").
-date(678,"2023-05-10").
 date(680,"2023-05-11").
 date(681,"2023-05-11").
 date(682,"2023-05-11").
@@ -7837,12 +7795,6 @@ date(1295,"2023-08-04").
 date(1296,"2023-08-04").
 date(1297,"2023-08-04").
 date(1298,"2023-08-04").
-date(1320,"2023-05-10").
-date(1321,"2023-05-10").
-date(1323,"2023-05-10").
-date(1324,"2023-05-10").
-date(1325,"2023-05-10").
-date(1326,"2023-05-10").
 date(1330,"2023-05-11").
 date(1331,"2023-05-11").
 date(1332,"2023-05-11").
@@ -7937,15 +7889,6 @@ date(1435,"2023-05-25").
 date(1438,"2023-05-25").
 date(1439,"2023-05-25").
 date(1440,"2023-05-26").
-time(20,"17:00:00").
-time(22,"10:00:00").
-time(23,"11:00:00").
-time(24,"12:00:00").
-time(25,"13:00:00").
-time(26,"14:00:00").
-time(27,"15:00:00").
-time(28,"16:00:00").
-time(29,"17:00:00").
 time(30,"17:00:00").
 time(32,"10:00:00").
 time(33,"11:00:00").
@@ -8433,15 +8376,6 @@ time(645,"13:00:00").
 time(646,"14:00:00").
 time(647,"15:00:00").
 time(648,"16:00:00").
-time(670,"17:00:00").
-time(671,"09:00:00").
-time(672,"10:00:00").
-time(673,"11:00:00").
-time(674,"12:00:00").
-time(675,"13:00:00").
-time(676,"14:00:00").
-time(677,"15:00:00").
-time(678,"16:00:00").
 time(680,"17:00:00").
 time(681,"09:00:00").
 time(682,"10:00:00").
@@ -8954,12 +8888,6 @@ time(1295,"13:00:00").
 time(1296,"14:00:00").
 time(1297,"15:00:00").
 time(1298,"16:00:00").
-time(1320,"17:00:00").
-time(1321,"09:00:00").
-time(1323,"11:00:00").
-time(1324,"12:00:00").
-time(1325,"13:00:00").
-time(1326,"14:00:00").
 time(1330,"17:00:00").
 time(1331,"09:00:00").
 time(1332,"10:00:00").
@@ -9054,15 +8982,6 @@ time(1435,"13:00:00").
 time(1438,"16:00:00").
 time(1439,"17:00:00").
 time(1440,"17:00:00").
-timeslot_available(20).
-timeslot_available(22).
-timeslot_available(23).
-timeslot_available(24).
-timeslot_available(25).
-timeslot_available(26).
-timeslot_available(27).
-timeslot_available(28).
-timeslot_available(29).
 timeslot_available(30).
 timeslot_available(32).
 timeslot_available(33).
@@ -9550,15 +9469,6 @@ timeslot_available(645).
 timeslot_available(646).
 timeslot_available(647).
 timeslot_available(648).
-timeslot_available(670).
-timeslot_available(671).
-timeslot_available(672).
-timeslot_available(673).
-timeslot_available(674).
-timeslot_available(675).
-timeslot_available(676).
-timeslot_available(677).
-timeslot_available(678).
 timeslot_available(680).
 timeslot_available(681).
 timeslot_available(682).
@@ -10071,12 +9981,6 @@ timeslot_available(1295).
 timeslot_available(1296).
 timeslot_available(1297).
 timeslot_available(1298).
-timeslot_available(1320).
-timeslot_available(1321).
-timeslot_available(1323).
-timeslot_available(1324).
-timeslot_available(1325).
-timeslot_available(1326).
 timeslot_available(1330).
 timeslot_available(1331).
 timeslot_available(1332).
@@ -10171,15 +10075,6 @@ timeslot_available(1435).
 timeslot_available(1438).
 timeslot_available(1439).
 timeslot_available(1440).
-doctor_id(20,"21107799617").
-doctor_id(22,"21107799617").
-doctor_id(23,"21107799617").
-doctor_id(24,"21107799617").
-doctor_id(25,"21107799617").
-doctor_id(26,"21107799617").
-doctor_id(27,"21107799617").
-doctor_id(28,"21107799617").
-doctor_id(29,"21107799617").
 doctor_id(30,"21107799617").
 doctor_id(32,"21107799617").
 doctor_id(33,"21107799617").
@@ -10667,15 +10562,6 @@ doctor_id(645,"21107799617").
 doctor_id(646,"21107799617").
 doctor_id(647,"21107799617").
 doctor_id(648,"21107799617").
-doctor_id(670,"20011137468").
-doctor_id(671,"20011137468").
-doctor_id(672,"20011137468").
-doctor_id(673,"20011137468").
-doctor_id(674,"20011137468").
-doctor_id(675,"20011137468").
-doctor_id(676,"20011137468").
-doctor_id(677,"20011137468").
-doctor_id(678,"20011137468").
 doctor_id(680,"20011137468").
 doctor_id(681,"20011137468").
 doctor_id(682,"20011137468").
@@ -11188,12 +11074,6 @@ doctor_id(1295,"20011137468").
 doctor_id(1296,"20011137468").
 doctor_id(1297,"20011137468").
 doctor_id(1298,"20011137468").
-doctor_id(1320,"30030918848").
-doctor_id(1321,"30030918848").
-doctor_id(1323,"30030918848").
-doctor_id(1324,"30030918848").
-doctor_id(1325,"30030918848").
-doctor_id(1326,"30030918848").
 doctor_id(1330,"30030918848").
 doctor_id(1331,"30030918848").
 doctor_id(1332,"30030918848").
@@ -11306,7 +11186,6 @@ request(19).
 request(20).
 request(21).
 request(22).
-request(23).
 request(24).
 request(27).
 request(28).
@@ -11331,7 +11210,6 @@ request(52).
 request(53).
 request(54).
 request(55).
-request(57).
 request(58).
 request(59).
 request(60).
@@ -11340,7 +11218,6 @@ request(63).
 request(64).
 request(65).
 request(66).
-request(67).
 request(68).
 request(69).
 request(70).
@@ -11387,7 +11264,6 @@ request(120).
 request(121).
 request(122).
 request(124).
-request(125).
 request(126).
 request(127).
 request(129).
@@ -11451,7 +11327,6 @@ request(208).
 request(209).
 request(210).
 request(211).
-request(212).
 request(213).
 request(214).
 request(215).
@@ -11502,7 +11377,6 @@ request(278).
 request(279).
 request(281).
 request(282).
-request(284).
 request(285).
 request(286).
 request(287).
@@ -11524,7 +11398,6 @@ request(306).
 request(307).
 request(308).
 request(309).
-request(310).
 request(311).
 request(312).
 request(313).
@@ -11597,7 +11470,6 @@ request(400).
 request(401).
 request(403).
 request(404).
-request(405).
 request(406).
 request(407).
 request(408).
@@ -11656,7 +11528,6 @@ request(473).
 request(474).
 request(475).
 request(477).
-request(478).
 request(480).
 request(481).
 request(482).
@@ -11809,7 +11680,6 @@ request(665).
 request(666).
 request(667).
 request(668).
-request(669).
 request(670).
 request(671).
 request(672).
@@ -11932,7 +11802,6 @@ request(821).
 request(822).
 request(823).
 request(824).
-request(826).
 request(827).
 request(828).
 request(829).
@@ -12044,7 +11913,6 @@ request(970).
 request(971).
 request(972).
 request(973).
-request(974).
 request(975).
 request(976).
 request(977).
@@ -12193,7 +12061,6 @@ request(1152).
 request(1153).
 request(1154).
 request(1155).
-request(1156).
 request(1158).
 request(1160).
 request(1161).
@@ -12237,7 +12104,6 @@ request(1204).
 request(1205).
 request(1207).
 request(1208).
-request(1209).
 request(1210).
 request(1211).
 request(1212).
@@ -12320,7 +12186,6 @@ request(1316).
 request(1317).
 request(1319).
 request(1321).
-request(1322).
 request(1323).
 request(1324).
 request(1326).
@@ -12337,7 +12202,6 @@ request(1337).
 request(1339).
 request(1341).
 request(1342).
-request(1344).
 request(1345).
 request(1346).
 request(1347).
@@ -12472,7 +12336,6 @@ request(1500).
 request(1501).
 request(1502).
 request(1503).
-request(1504).
 request(1505).
 request(1506).
 request(1507).
@@ -12533,7 +12396,6 @@ request(1575).
 request(1576).
 request(1578).
 request(1579).
-request(1580).
 request(1581).
 request(1582).
 request(1583).
@@ -12615,7 +12477,6 @@ request(1678).
 request(1679).
 request(1680).
 request(1681).
-request(1683).
 request(1684).
 request(1685).
 request(1686).
@@ -12626,7 +12487,6 @@ request(1690).
 request(1691).
 request(1692).
 request(1694).
-request(1696).
 request(1697).
 request(1699).
 request(1702).
@@ -12673,7 +12533,6 @@ request(1755).
 request(1756).
 request(1757).
 request(1758).
-request(1759).
 request(1761).
 request(1762).
 request(1764).
@@ -12691,7 +12550,6 @@ request(1777).
 request(1778).
 request(1779).
 request(1780).
-request(1781).
 request(1782).
 request(1783).
 request(1784).
@@ -12736,7 +12594,6 @@ request(1832).
 request(1835).
 request(1836).
 request(1837).
-request(1838).
 request(1839).
 request(1841).
 request(1842).
@@ -12773,7 +12630,6 @@ request(1880).
 request(1881).
 request(1883).
 request(1885).
-request(1886).
 request(1887).
 request(1888).
 request(1890).
@@ -12790,7 +12646,6 @@ request(1902).
 request(1903).
 request(1904).
 request(1905).
-request(1907).
 request(1908).
 request(1909).
 request(1910).
@@ -12887,8 +12742,6 @@ request(2031).
 request(2032).
 request(2034).
 request(2036).
-request(2037).
-request(2038).
 request(2039).
 request(2041).
 request(2042).
@@ -13000,7 +12853,6 @@ request(2185).
 request(2186).
 request(2187).
 request(2188).
-request(2189).
 request(2191).
 request(2192).
 request(2195).
@@ -13012,13 +12864,11 @@ request(2202).
 request(2204).
 request(2205).
 request(2206).
-request(2207).
 request(2208).
 request(2209).
 request(2210).
 request(2211).
 request(2212).
-request(2213).
 request(2214).
 request(2215).
 request(2216).
@@ -13028,7 +12878,6 @@ request(2220).
 request(2222).
 request(2223).
 request(2225).
-request(2226).
 request(2227).
 request(2228).
 request(2229).
@@ -13070,7 +12919,6 @@ request(2277).
 request(2278).
 request(2281).
 request(2282).
-request(2283).
 request(2287).
 request(2288).
 request(2289).
@@ -13104,7 +12952,6 @@ request(2326).
 request(2328).
 request(2329).
 request(2330).
-request(2332).
 request(2333).
 request(2334).
 request(2336).
@@ -13234,7 +13081,6 @@ request(2506).
 request(2507).
 request(2508).
 request(2509).
-request(2511).
 request(2512).
 request(2513).
 request(2514).
@@ -13267,7 +13113,6 @@ request(2546).
 request(2547).
 request(2548).
 request(2549).
-request(2550).
 request(2551).
 request(2552).
 request(2553).
@@ -13330,13 +13175,11 @@ request(2635).
 request(2636).
 request(2637).
 request(2638).
-request(2639).
 request(2641).
 request(2642).
 request(2643).
 request(2644).
 request(2646).
-request(2647).
 request(2648).
 request(2650).
 request(2652).
@@ -13483,7 +13326,6 @@ request(2830).
 request(2831).
 request(2832).
 request(2834).
-request(2835).
 request(2836).
 request(2839).
 request(2841).
@@ -13613,7 +13455,6 @@ request(3009).
 request(3010).
 request(3011).
 request(3012).
-request(3014).
 request(3015).
 request(3016).
 request(3017).
@@ -13635,7 +13476,6 @@ request(3035).
 request(3037).
 request(3039).
 request(3040).
-request(3041).
 request(3042).
 request(3043).
 request(3044).
@@ -13691,7 +13531,6 @@ request(3104).
 request(3105).
 request(3106).
 request(3108).
-request(3109).
 request(3110).
 request(3112).
 request(3113).
@@ -13707,7 +13546,6 @@ request(3127).
 request(3128).
 request(3129).
 request(3130).
-request(3131).
 request(3132).
 request(3133).
 request(3134).
@@ -13735,7 +13573,6 @@ request(3164).
 request(3165).
 request(3166).
 request(3167).
-request(3168).
 request(3169).
 request(3170).
 request(3172).
@@ -13782,7 +13619,6 @@ request(3226).
 request(3227).
 request(3228).
 request(3229).
-request(3230).
 request(3232).
 request(3233).
 request(3234).
@@ -13851,7 +13687,6 @@ request(3312).
 request(3313).
 request(3314).
 request(3315).
-request(3316).
 request(3317).
 request(3318).
 request(3319).
@@ -13860,7 +13695,6 @@ request(3321).
 request(3322).
 request(3323).
 request(3326).
-request(3327).
 request(3328).
 request(3329).
 request(3330).
@@ -13872,7 +13706,6 @@ request(3336).
 request(3337).
 request(3339).
 request(3340).
-request(3341).
 request(3342).
 request(3343).
 request(3344).
@@ -13925,7 +13758,6 @@ request(3400).
 request(3401).
 request(3402).
 request(3403).
-request(3404).
 request(3405).
 request(3406).
 request(3407).
@@ -13964,7 +13796,6 @@ request(3447).
 request(3451).
 request(3452).
 request(3453).
-request(3454).
 request(3455).
 request(3459).
 request(3461).
@@ -14033,7 +13864,6 @@ request(3540).
 request(3541).
 request(3542).
 request(3543).
-request(3544).
 request(3545).
 request(3546).
 request(3547).
@@ -14105,7 +13935,6 @@ request(3634).
 request(3635).
 request(3640).
 request(3641).
-request(3643).
 request(3645).
 request(3646).
 request(3647).
@@ -14168,7 +13997,6 @@ request(3715).
 request(3716).
 request(3717).
 request(3718).
-request(3719).
 request(3720).
 request(3721).
 request(3722).
@@ -14207,7 +14035,6 @@ request(3766).
 request(3767).
 request(3769).
 request(3771).
-request(3772).
 request(3773).
 request(3774).
 request(3775).
@@ -14257,7 +14084,6 @@ request(3826).
 request(3827).
 request(3828).
 request(3830).
-request(3833).
 request(3834).
 request(3836).
 request(3839).
@@ -14369,7 +14195,6 @@ request(3975).
 request(3976).
 request(3977).
 request(3978).
-request(3979).
 request(3981).
 request(3982).
 request(3983).
@@ -14466,13 +14291,10 @@ request(4098).
 request(4099).
 request(4100).
 request(4101).
-request(4102).
 request(4103).
 request(4104).
-request(4105).
 request(4107).
 request(4109).
-request(4110).
 request(4111).
 request(4114).
 request(4115).
@@ -14519,7 +14341,6 @@ request(4170).
 request(4171).
 request(4173).
 request(4174).
-request(4176).
 request(4177).
 request(4178).
 request(4179).
@@ -14582,7 +14403,6 @@ request(4249).
 request(4250).
 request(4252).
 request(4253).
-request(4254).
 request(4255).
 request(4256).
 request(4258).
@@ -14596,7 +14416,6 @@ request(4270).
 request(4271).
 request(4272).
 request(4273).
-request(4274).
 request(4275).
 request(4276).
 request(4277).
@@ -14652,7 +14471,6 @@ patient_id(19,"25022346958").
 patient_id(20,"13110131136").
 patient_id(21,"30077743984").
 patient_id(22,"20058506203").
-patient_id(23,"18031420161").
 patient_id(24,"26128138646").
 patient_id(27,"30058780468").
 patient_id(28,"01088107824").
@@ -14677,7 +14495,6 @@ patient_id(52,"10059969427").
 patient_id(53,"02018707147").
 patient_id(54,"03077400087").
 patient_id(55,"28119543990").
-patient_id(57,"01109218998").
 patient_id(58,"27077201278").
 patient_id(59,"17050420326").
 patient_id(60,"29040614819").
@@ -14686,7 +14503,6 @@ patient_id(63,"31051629017").
 patient_id(64,"29011531885").
 patient_id(65,"09091538232").
 patient_id(66,"12039296228").
-patient_id(67,"09018385493").
 patient_id(68,"26071117753").
 patient_id(69,"01068958691").
 patient_id(70,"25077086871").
@@ -14733,7 +14549,6 @@ patient_id(120,"29089017536").
 patient_id(121,"28101466895").
 patient_id(122,"14080320360").
 patient_id(124,"01081642702").
-patient_id(125,"07099431293").
 patient_id(126,"28061824596").
 patient_id(127,"25028226584").
 patient_id(129,"01080351917").
@@ -14797,7 +14612,6 @@ patient_id(208,"13051641341").
 patient_id(209,"11119160429").
 patient_id(210,"20070461361").
 patient_id(211,"11098605907").
-patient_id(212,"18019227695").
 patient_id(213,"03069131922").
 patient_id(214,"10107804162").
 patient_id(215,"27088084911").
@@ -14848,7 +14662,6 @@ patient_id(278,"14098535884").
 patient_id(279,"02079445983").
 patient_id(281,"08049025789").
 patient_id(282,"14108856692").
-patient_id(284,"06011181283").
 patient_id(285,"06121401704").
 patient_id(286,"21088472580").
 patient_id(287,"20108530880").
@@ -14870,7 +14683,6 @@ patient_id(306,"13088637346").
 patient_id(307,"16039766775").
 patient_id(308,"11010239397").
 patient_id(309,"02059042487").
-patient_id(310,"09097319884").
 patient_id(311,"11069982038").
 patient_id(312,"27037743039").
 patient_id(313,"21041770864").
@@ -14943,7 +14755,6 @@ patient_id(400,"24049142177").
 patient_id(401,"30038141138").
 patient_id(403,"21092297528").
 patient_id(404,"10030494743").
-patient_id(405,"28067914292").
 patient_id(406,"11070149585").
 patient_id(407,"24049543242").
 patient_id(408,"14040793011").
@@ -15002,7 +14813,6 @@ patient_id(473,"08090962351").
 patient_id(474,"14040793011").
 patient_id(475,"14077836048").
 patient_id(477,"12058172227").
-patient_id(478,"09010559814").
 patient_id(480,"07010395288").
 patient_id(481,"05079483615").
 patient_id(482,"11060019780").
@@ -15155,7 +14965,6 @@ patient_id(665,"30129275191").
 patient_id(666,"23042351934").
 patient_id(667,"24037710530").
 patient_id(668,"28069758655").
-patient_id(669,"12058172227").
 patient_id(670,"30120668691").
 patient_id(671,"03100010721").
 patient_id(672,"05067853928").
@@ -15278,7 +15087,6 @@ patient_id(821,"29099854092").
 patient_id(822,"06087310279").
 patient_id(823,"21037162027").
 patient_id(824,"22081196184").
-patient_id(826,"11067904950").
 patient_id(827,"12039296228").
 patient_id(828,"10059969427").
 patient_id(829,"09111959202").
@@ -15390,7 +15198,6 @@ patient_id(970,"23092136649").
 patient_id(971,"06092135927").
 patient_id(972,"11029786479").
 patient_id(973,"13022384765").
-patient_id(974,"30100642187").
 patient_id(975,"09109063389").
 patient_id(976,"10040127630").
 patient_id(977,"17051642811").
@@ -15539,7 +15346,6 @@ patient_id(1152,"11029786479").
 patient_id(1153,"08081884085").
 patient_id(1154,"28010807072").
 patient_id(1155,"14028692177").
-patient_id(1156,"21119177802").
 patient_id(1158,"22032259628").
 patient_id(1160,"09069488220").
 patient_id(1161,"16017524808").
@@ -15583,7 +15389,6 @@ patient_id(1204,"14039727491").
 patient_id(1205,"14107384555").
 patient_id(1207,"02030440487").
 patient_id(1208,"27070457026").
-patient_id(1209,"09121917349").
 patient_id(1210,"23127564104").
 patient_id(1211,"28110952455").
 patient_id(1212,"25111317241").
@@ -15666,7 +15471,6 @@ patient_id(1316,"28128079556").
 patient_id(1317,"29019490670").
 patient_id(1319,"25022346958").
 patient_id(1321,"25010783402").
-patient_id(1322,"18019227695").
 patient_id(1323,"09038902202").
 patient_id(1324,"29018109362").
 patient_id(1326,"14108856692").
@@ -15683,7 +15487,6 @@ patient_id(1337,"02030440487").
 patient_id(1339,"14118577627").
 patient_id(1341,"03029282344").
 patient_id(1342,"14097883277").
-patient_id(1344,"14017935652").
 patient_id(1345,"21088472580").
 patient_id(1346,"09047051629").
 patient_id(1347,"13018154552").
@@ -15818,7 +15621,6 @@ patient_id(1500,"18031420161").
 patient_id(1501,"10020315874").
 patient_id(1502,"12088334169").
 patient_id(1503,"02119076046").
-patient_id(1504,"23127564104").
 patient_id(1505,"30019613428").
 patient_id(1506,"15048952293").
 patient_id(1507,"30087755895").
@@ -15879,7 +15681,6 @@ patient_id(1575,"11067495157").
 patient_id(1576,"03049820248").
 patient_id(1578,"11020757610").
 patient_id(1579,"05081665670").
-patient_id(1580,"23042351934").
 patient_id(1581,"18080394945").
 patient_id(1582,"26010196462").
 patient_id(1583,"24038189155").
@@ -15961,7 +15762,6 @@ patient_id(1678,"30038141138").
 patient_id(1679,"20021997349").
 patient_id(1680,"27037039529").
 patient_id(1681,"13108526289").
-patient_id(1683,"08129807254").
 patient_id(1684,"11020757610").
 patient_id(1685,"01028362703").
 patient_id(1686,"08081884085").
@@ -15972,7 +15772,6 @@ patient_id(1690,"14040793011").
 patient_id(1691,"20101336756").
 patient_id(1692,"12100163620").
 patient_id(1694,"05120047773").
-patient_id(1696,"24049142177").
 patient_id(1697,"25010783402").
 patient_id(1699,"21072282672").
 patient_id(1702,"27097335122").
@@ -16019,7 +15818,6 @@ patient_id(1755,"26011698565").
 patient_id(1756,"16047562232").
 patient_id(1757,"11099996438").
 patient_id(1758,"02119076046").
-patient_id(1759,"04059166209").
 patient_id(1761,"09097319884").
 patient_id(1762,"27070457026").
 patient_id(1764,"28079446317").
@@ -16037,7 +15835,6 @@ patient_id(1777,"24127107035").
 patient_id(1778,"11047540965").
 patient_id(1779,"01042330314").
 patient_id(1780,"13128157784").
-patient_id(1781,"20101336756").
 patient_id(1782,"21017301876").
 patient_id(1783,"24089795470").
 patient_id(1784,"14120663928").
@@ -16082,7 +15879,6 @@ patient_id(1832,"21099920528").
 patient_id(1835,"20110069968").
 patient_id(1836,"10037444956").
 patient_id(1837,"29030210461").
-patient_id(1838,"26018442058").
 patient_id(1839,"18090948466").
 patient_id(1841,"03038946806").
 patient_id(1842,"03100010721").
@@ -16119,7 +15915,6 @@ patient_id(1880,"08049025789").
 patient_id(1881,"29030210461").
 patient_id(1883,"22119367732").
 patient_id(1885,"18090948466").
-patient_id(1886,"22028871451").
 patient_id(1887,"24121074538").
 patient_id(1888,"31018150362").
 patient_id(1890,"12117772322").
@@ -16136,7 +15931,6 @@ patient_id(1902,"29108345744").
 patient_id(1903,"22030112555").
 patient_id(1904,"11111521859").
 patient_id(1905,"27100672917").
-patient_id(1907,"02041146198").
 patient_id(1908,"20068461092").
 patient_id(1909,"24118196898").
 patient_id(1910,"01111020507").
@@ -16233,8 +16027,6 @@ patient_id(2031,"15081910042").
 patient_id(2032,"05129652474").
 patient_id(2034,"18031420161").
 patient_id(2036,"23090738677").
-patient_id(2037,"08028917196").
-patient_id(2038,"30010625231").
 patient_id(2039,"13010997065").
 patient_id(2041,"23081825574").
 patient_id(2042,"13011684092").
@@ -16346,7 +16138,6 @@ patient_id(2185,"03100010721").
 patient_id(2186,"09067961681").
 patient_id(2187,"06109032828").
 patient_id(2188,"07031868420").
-patient_id(2189,"20029211859").
 patient_id(2191,"04047911278").
 patient_id(2192,"31121354042").
 patient_id(2195,"16019939079").
@@ -16358,13 +16149,11 @@ patient_id(2202,"02030440487").
 patient_id(2204,"06088987299").
 patient_id(2205,"25020172406").
 patient_id(2206,"10097219355").
-patient_id(2207,"22100475114").
 patient_id(2208,"20111086425").
 patient_id(2209,"28058204539").
 patient_id(2210,"28128079556").
 patient_id(2211,"19100215177").
 patient_id(2212,"28099086598").
-patient_id(2213,"26088453993").
 patient_id(2214,"04128889021").
 patient_id(2215,"24118196898").
 patient_id(2216,"30017894202").
@@ -16374,7 +16163,6 @@ patient_id(2220,"07050732069").
 patient_id(2222,"10078706461").
 patient_id(2223,"09058472060").
 patient_id(2225,"09058472060").
-patient_id(2226,"26042222609").
 patient_id(2227,"18050928987").
 patient_id(2228,"20021997349").
 patient_id(2229,"09109575994").
@@ -16416,7 +16204,6 @@ patient_id(2277,"11080212696").
 patient_id(2278,"03050224041").
 patient_id(2281,"14080076459").
 patient_id(2282,"02019458898").
-patient_id(2283,"24037710530").
 patient_id(2287,"27067204472").
 patient_id(2288,"18070326451").
 patient_id(2289,"25010783402").
@@ -16450,7 +16237,6 @@ patient_id(2326,"27067204472").
 patient_id(2328,"30120668691").
 patient_id(2329,"13010997065").
 patient_id(2330,"26042222609").
-patient_id(2332,"14031426712").
 patient_id(2333,"12090959219").
 patient_id(2334,"04099610232").
 patient_id(2336,"17062098433").
@@ -16580,7 +16366,6 @@ patient_id(2506,"22110116310").
 patient_id(2507,"25057362250").
 patient_id(2508,"14097883277").
 patient_id(2509,"07030390962").
-patient_id(2511,"06092135927").
 patient_id(2512,"09061171519").
 patient_id(2513,"01058603679").
 patient_id(2514,"28027908798").
@@ -16613,7 +16398,6 @@ patient_id(2546,"12052174906").
 patient_id(2547,"07101206956").
 patient_id(2548,"23127564104").
 patient_id(2549,"01077494480").
-patient_id(2550,"19039025598").
 patient_id(2551,"28067914292").
 patient_id(2552,"17111940452").
 patient_id(2553,"14120363172").
@@ -16676,13 +16460,11 @@ patient_id(2635,"11092195715").
 patient_id(2636,"03069131922").
 patient_id(2637,"03091690606").
 patient_id(2638,"07120061598").
-patient_id(2639,"27100672917").
 patient_id(2641,"28011123206").
 patient_id(2642,"27129692185").
 patient_id(2643,"13088637346").
 patient_id(2644,"28080444293").
 patient_id(2646,"14107384555").
-patient_id(2647,"27018315062").
 patient_id(2648,"19100215177").
 patient_id(2650,"04047911278").
 patient_id(2652,"11098605907").
@@ -16829,7 +16611,6 @@ patient_id(2830,"15118904703").
 patient_id(2831,"06042279726").
 patient_id(2832,"16080129998").
 patient_id(2834,"04030410023").
-patient_id(2835,"16017524808").
 patient_id(2836,"22070464775").
 patient_id(2839,"04120436425").
 patient_id(2841,"09069780352").
@@ -16959,7 +16740,6 @@ patient_id(3009,"04049296355").
 patient_id(3010,"28078553097").
 patient_id(3011,"02041146198").
 patient_id(3012,"02030619114").
-patient_id(3014,"14097883277").
 patient_id(3015,"11118810404").
 patient_id(3016,"11098605907").
 patient_id(3017,"27011336602").
@@ -16981,7 +16761,6 @@ patient_id(3035,"26088453993").
 patient_id(3037,"10027869865").
 patient_id(3039,"28128223196").
 patient_id(3040,"28078553097").
-patient_id(3041,"21068948633").
 patient_id(3042,"31018150362").
 patient_id(3043,"10037444956").
 patient_id(3044,"14120363172").
@@ -17037,7 +16816,6 @@ patient_id(3104,"02098359256").
 patient_id(3105,"11037136923").
 patient_id(3106,"27081053848").
 patient_id(3108,"10089680994").
-patient_id(3109,"29081613027").
 patient_id(3110,"16047562232").
 patient_id(3112,"13017485296").
 patient_id(3113,"05060836052").
@@ -17053,7 +16831,6 @@ patient_id(3127,"09061629920").
 patient_id(3128,"14012313954").
 patient_id(3129,"30017558823").
 patient_id(3130,"19127861268").
-patient_id(3131,"02109273496").
 patient_id(3132,"16047004938").
 patient_id(3133,"16052172711").
 patient_id(3134,"26071117753").
@@ -17081,7 +16858,6 @@ patient_id(3164,"22078087834").
 patient_id(3165,"03058211354").
 patient_id(3166,"22060784323").
 patient_id(3167,"21049083476").
-patient_id(3168,"10089759343").
 patient_id(3169,"27067204472").
 patient_id(3170,"24038189155").
 patient_id(3172,"07031868420").
@@ -17128,7 +16904,6 @@ patient_id(3226,"22099883443").
 patient_id(3227,"10129967880").
 patient_id(3228,"01042330314").
 patient_id(3229,"04057387062").
-patient_id(3230,"29120346720").
 patient_id(3232,"16047562232").
 patient_id(3233,"14067792540").
 patient_id(3234,"25048518093").
@@ -17197,7 +16972,6 @@ patient_id(3312,"08028665381").
 patient_id(3313,"25020246770").
 patient_id(3314,"14120363172").
 patient_id(3315,"04128343458").
-patient_id(3316,"20028822318").
 patient_id(3317,"07059524921").
 patient_id(3318,"26022102664").
 patient_id(3319,"07041381968").
@@ -17206,7 +16980,6 @@ patient_id(3321,"26011698565").
 patient_id(3322,"12052174906").
 patient_id(3323,"24038189155").
 patient_id(3326,"27107498886").
-patient_id(3327,"28058204539").
 patient_id(3328,"26020434564").
 patient_id(3329,"20119976809").
 patient_id(3330,"22027991417").
@@ -17218,7 +16991,6 @@ patient_id(3336,"19057250375").
 patient_id(3337,"01100916244").
 patient_id(3339,"21037162027").
 patient_id(3340,"14120663928").
-patient_id(3341,"10040127630").
 patient_id(3342,"16058164738").
 patient_id(3343,"27067204472").
 patient_id(3344,"31018150362").
@@ -17271,7 +17043,6 @@ patient_id(3400,"02030637355").
 patient_id(3401,"22071804987").
 patient_id(3402,"13097065935").
 patient_id(3403,"29038269592").
-patient_id(3404,"13122170841").
 patient_id(3405,"28039318283").
 patient_id(3406,"09088404224").
 patient_id(3407,"14031426712").
@@ -17310,7 +17081,6 @@ patient_id(3447,"29090376079").
 patient_id(3451,"14080320360").
 patient_id(3452,"19027298546").
 patient_id(3453,"06117971249").
-patient_id(3454,"09112194957").
 patient_id(3455,"25112151714").
 patient_id(3459,"30019613428").
 patient_id(3461,"31070211466").
@@ -17379,7 +17149,6 @@ patient_id(3540,"16039766775").
 patient_id(3541,"03038946806").
 patient_id(3542,"04099610232").
 patient_id(3543,"01028362703").
-patient_id(3544,"22111163782").
 patient_id(3545,"12039296228").
 patient_id(3546,"18031420161").
 patient_id(3547,"18031420161").
@@ -17451,7 +17220,6 @@ patient_id(3634,"26010596455").
 patient_id(3635,"30111463565").
 patient_id(3640,"05120736508").
 patient_id(3641,"26020434564").
-patient_id(3643,"28011123206").
 patient_id(3645,"28058204539").
 patient_id(3646,"09038902202").
 patient_id(3647,"13018154552").
@@ -17514,7 +17282,6 @@ patient_id(3715,"11038432289").
 patient_id(3716,"09111959202").
 patient_id(3717,"23092136649").
 patient_id(3718,"25112151714").
-patient_id(3719,"08129807254").
 patient_id(3720,"22028871451").
 patient_id(3721,"21119177802").
 patient_id(3722,"29051478898").
@@ -17553,7 +17320,6 @@ patient_id(3766,"22069887283").
 patient_id(3767,"26102166860").
 patient_id(3769,"30081333095").
 patient_id(3771,"24127107035").
-patient_id(3772,"08028917196").
 patient_id(3773,"22019110851").
 patient_id(3774,"06027047726").
 patient_id(3775,"29051478898").
@@ -17603,7 +17369,6 @@ patient_id(3826,"04030410023").
 patient_id(3827,"10129967880").
 patient_id(3828,"04047911278").
 patient_id(3830,"26022102664").
-patient_id(3833,"23011685957").
 patient_id(3834,"02097398123").
 patient_id(3836,"08051947979").
 patient_id(3839,"30100642187").
@@ -17715,7 +17480,6 @@ patient_id(3975,"07010969371").
 patient_id(3976,"28080444293").
 patient_id(3977,"10060994232").
 patient_id(3978,"05108639294").
-patient_id(3979,"04097311189").
 patient_id(3981,"30088476616").
 patient_id(3982,"25068085718").
 patient_id(3983,"22119367732").
@@ -17812,13 +17576,10 @@ patient_id(4098,"22070464775").
 patient_id(4099,"02108857158").
 patient_id(4100,"29061821012").
 patient_id(4101,"14080320360").
-patient_id(4102,"16017524808").
 patient_id(4103,"13037740761").
 patient_id(4104,"14080076459").
-patient_id(4105,"25111317241").
 patient_id(4107,"15118904703").
 patient_id(4109,"04079699320").
-patient_id(4110,"04057387062").
 patient_id(4111,"01039360530").
 patient_id(4114,"30088476616").
 patient_id(4115,"27118304321").
@@ -17865,7 +17626,6 @@ patient_id(4170,"15112084056").
 patient_id(4171,"02108857158").
 patient_id(4173,"30038141138").
 patient_id(4174,"28089389648").
-patient_id(4176,"13121435732").
 patient_id(4177,"11080212696").
 patient_id(4178,"13030319134").
 patient_id(4179,"07061869637").
@@ -17928,7 +17688,6 @@ patient_id(4249,"29030210461").
 patient_id(4250,"17050411028").
 patient_id(4252,"26010596455").
 patient_id(4253,"25022346958").
-patient_id(4254,"02030440487").
 patient_id(4255,"12058172227").
 patient_id(4256,"09010559814").
 patient_id(4258,"09077231687").
@@ -17942,7 +17701,6 @@ patient_id(4270,"14029025534").
 patient_id(4271,"30017894202").
 patient_id(4272,"27118364218").
 patient_id(4273,"28021382909").
-patient_id(4274,"29011531885").
 patient_id(4275,"04041509805").
 patient_id(4276,"28061824596").
 patient_id(4277,"14097883277").
@@ -17998,7 +17756,6 @@ timeslot_id(19,837).
 timeslot_id(20,1241).
 timeslot_id(21,110).
 timeslot_id(22,965).
-timeslot_id(23,1324).
 timeslot_id(24,87).
 timeslot_id(27,730).
 timeslot_id(28,555).
@@ -18023,7 +17780,6 @@ timeslot_id(52,984).
 timeslot_id(53,785).
 timeslot_id(54,358).
 timeslot_id(55,467).
-timeslot_id(57,674).
 timeslot_id(58,503).
 timeslot_id(59,965).
 timeslot_id(60,1009).
@@ -18032,7 +17788,6 @@ timeslot_id(63,817).
 timeslot_id(64,247).
 timeslot_id(65,1000).
 timeslot_id(66,257).
-timeslot_id(67,25).
 timeslot_id(68,850).
 timeslot_id(69,54).
 timeslot_id(70,153).
@@ -18079,7 +17834,6 @@ timeslot_id(120,689).
 timeslot_id(121,530).
 timeslot_id(122,517).
 timeslot_id(124,1159).
-timeslot_id(125,28).
 timeslot_id(126,267).
 timeslot_id(127,463).
 timeslot_id(129,1101).
@@ -18143,7 +17897,6 @@ timeslot_id(208,1027).
 timeslot_id(209,1159).
 timeslot_id(210,189).
 timeslot_id(211,1049).
-timeslot_id(212,1324).
 timeslot_id(213,808).
 timeslot_id(214,722).
 timeslot_id(215,101).
@@ -18194,7 +17947,6 @@ timeslot_id(278,546).
 timeslot_id(279,403).
 timeslot_id(281,686).
 timeslot_id(282,727).
-timeslot_id(284,29).
 timeslot_id(285,67).
 timeslot_id(286,519).
 timeslot_id(287,82).
@@ -18216,7 +17968,6 @@ timeslot_id(306,1184).
 timeslot_id(307,1270).
 timeslot_id(308,1193).
 timeslot_id(309,695).
-timeslot_id(310,1325).
 timeslot_id(311,400).
 timeslot_id(312,1013).
 timeslot_id(313,1155).
@@ -18289,7 +18040,6 @@ timeslot_id(400,479).
 timeslot_id(401,432).
 timeslot_id(403,1138).
 timeslot_id(404,73).
-timeslot_id(405,670).
 timeslot_id(406,246).
 timeslot_id(407,1153).
 timeslot_id(408,1036).
@@ -18348,7 +18098,6 @@ timeslot_id(473,247).
 timeslot_id(474,769).
 timeslot_id(475,555).
 timeslot_id(477,506).
-timeslot_id(478,670).
 timeslot_id(480,737).
 timeslot_id(481,475).
 timeslot_id(482,1429).
@@ -18501,7 +18250,6 @@ timeslot_id(665,1099).
 timeslot_id(666,1218).
 timeslot_id(667,106).
 timeslot_id(668,1270).
-timeslot_id(669,673).
 timeslot_id(670,61).
 timeslot_id(671,737).
 timeslot_id(672,1230).
@@ -18624,7 +18372,6 @@ timeslot_id(821,257).
 timeslot_id(822,1102).
 timeslot_id(823,551).
 timeslot_id(824,133).
-timeslot_id(826,1325).
 timeslot_id(827,1028).
 timeslot_id(828,1159).
 timeslot_id(829,230).
@@ -18736,7 +18483,6 @@ timeslot_id(970,603).
 timeslot_id(971,541).
 timeslot_id(972,545).
 timeslot_id(973,98).
-timeslot_id(974,22).
 timeslot_id(975,904).
 timeslot_id(976,423).
 timeslot_id(977,647).
@@ -18885,7 +18631,6 @@ timeslot_id(1152,876).
 timeslot_id(1153,893).
 timeslot_id(1154,546).
 timeslot_id(1155,309).
-timeslot_id(1156,677).
 timeslot_id(1158,1293).
 timeslot_id(1160,363).
 timeslot_id(1161,1281).
@@ -18929,7 +18674,6 @@ timeslot_id(1204,1196).
 timeslot_id(1205,1406).
 timeslot_id(1207,832).
 timeslot_id(1208,1159).
-timeslot_id(1209,24).
 timeslot_id(1210,1220).
 timeslot_id(1211,714).
 timeslot_id(1212,829).
@@ -19012,7 +18756,6 @@ timeslot_id(1316,472).
 timeslot_id(1317,873).
 timeslot_id(1319,389).
 timeslot_id(1321,695).
-timeslot_id(1322,676).
 timeslot_id(1323,703).
 timeslot_id(1324,1416).
 timeslot_id(1326,565).
@@ -19029,7 +18772,6 @@ timeslot_id(1337,817).
 timeslot_id(1339,813).
 timeslot_id(1341,972).
 timeslot_id(1342,807).
-timeslot_id(1344,1324).
 timeslot_id(1345,1351).
 timeslot_id(1346,441).
 timeslot_id(1347,633).
@@ -19164,7 +18906,6 @@ timeslot_id(1500,1032).
 timeslot_id(1501,1393).
 timeslot_id(1502,269).
 timeslot_id(1503,561).
-timeslot_id(1504,27).
 timeslot_id(1505,762).
 timeslot_id(1506,440).
 timeslot_id(1507,639).
@@ -19225,7 +18966,6 @@ timeslot_id(1575,893).
 timeslot_id(1576,487).
 timeslot_id(1578,1285).
 timeslot_id(1579,1338).
-timeslot_id(1580,1326).
 timeslot_id(1581,74).
 timeslot_id(1582,899).
 timeslot_id(1583,926).
@@ -19307,7 +19047,6 @@ timeslot_id(1678,447).
 timeslot_id(1679,186).
 timeslot_id(1680,711).
 timeslot_id(1681,250).
-timeslot_id(1683,673).
 timeslot_id(1684,1099).
 timeslot_id(1685,170).
 timeslot_id(1686,1171).
@@ -19318,7 +19057,6 @@ timeslot_id(1690,1408).
 timeslot_id(1691,1251).
 timeslot_id(1692,935).
 timeslot_id(1694,139).
-timeslot_id(1696,673).
 timeslot_id(1697,755).
 timeslot_id(1699,1059).
 timeslot_id(1702,844).
@@ -19365,7 +19103,6 @@ timeslot_id(1755,629).
 timeslot_id(1756,989).
 timeslot_id(1757,1377).
 timeslot_id(1758,1199).
-timeslot_id(1759,24).
 timeslot_id(1761,428).
 timeslot_id(1762,1292).
 timeslot_id(1764,146).
@@ -19383,7 +19120,6 @@ timeslot_id(1777,1243).
 timeslot_id(1778,809).
 timeslot_id(1779,949).
 timeslot_id(1780,506).
-timeslot_id(1781,29).
 timeslot_id(1782,550).
 timeslot_id(1783,1011).
 timeslot_id(1784,225).
@@ -19428,7 +19164,6 @@ timeslot_id(1832,1135).
 timeslot_id(1835,1062).
 timeslot_id(1836,887).
 timeslot_id(1837,118).
-timeslot_id(1838,1325).
 timeslot_id(1839,630).
 timeslot_id(1841,65).
 timeslot_id(1842,583).
@@ -19465,7 +19200,6 @@ timeslot_id(1880,741).
 timeslot_id(1881,1214).
 timeslot_id(1883,207).
 timeslot_id(1885,325).
-timeslot_id(1886,677).
 timeslot_id(1887,428).
 timeslot_id(1888,1141).
 timeslot_id(1890,1158).
@@ -19482,7 +19216,6 @@ timeslot_id(1902,174).
 timeslot_id(1903,1038).
 timeslot_id(1904,798).
 timeslot_id(1905,1251).
-timeslot_id(1907,1324).
 timeslot_id(1908,1396).
 timeslot_id(1909,964).
 timeslot_id(1910,978).
@@ -19579,8 +19312,6 @@ timeslot_id(2031,776).
 timeslot_id(2032,1204).
 timeslot_id(2034,1121).
 timeslot_id(2036,590).
-timeslot_id(2037,674).
-timeslot_id(2038,23).
 timeslot_id(2039,793).
 timeslot_id(2041,1371).
 timeslot_id(2042,983).
@@ -19692,7 +19423,6 @@ timeslot_id(2185,114).
 timeslot_id(2186,213).
 timeslot_id(2187,786).
 timeslot_id(2188,1421).
-timeslot_id(2189,678).
 timeslot_id(2191,550).
 timeslot_id(2192,997).
 timeslot_id(2195,1009).
@@ -19704,13 +19434,11 @@ timeslot_id(2202,1141).
 timeslot_id(2204,1147).
 timeslot_id(2205,231).
 timeslot_id(2206,168).
-timeslot_id(2207,677).
 timeslot_id(2208,1387).
 timeslot_id(2209,1146).
 timeslot_id(2210,767).
 timeslot_id(2211,1400).
 timeslot_id(2212,153).
-timeslot_id(2213,1326).
 timeslot_id(2214,615).
 timeslot_id(2215,903).
 timeslot_id(2216,1276).
@@ -19720,7 +19448,6 @@ timeslot_id(2220,681).
 timeslot_id(2222,543).
 timeslot_id(2223,90).
 timeslot_id(2225,73).
-timeslot_id(2226,670).
 timeslot_id(2227,85).
 timeslot_id(2228,864).
 timeslot_id(2229,1268).
@@ -19762,7 +19489,6 @@ timeslot_id(2277,383).
 timeslot_id(2278,90).
 timeslot_id(2281,929).
 timeslot_id(2282,578).
-timeslot_id(2283,23).
 timeslot_id(2287,148).
 timeslot_id(2288,346).
 timeslot_id(2289,1285).
@@ -19796,7 +19522,6 @@ timeslot_id(2326,310).
 timeslot_id(2328,543).
 timeslot_id(2329,38).
 timeslot_id(2330,760).
-timeslot_id(2332,671).
 timeslot_id(2333,87).
 timeslot_id(2334,61).
 timeslot_id(2336,597).
@@ -19926,7 +19651,6 @@ timeslot_id(2506,86).
 timeslot_id(2507,683).
 timeslot_id(2508,785).
 timeslot_id(2509,149).
-timeslot_id(2511,672).
 timeslot_id(2512,875).
 timeslot_id(2513,132).
 timeslot_id(2514,517).
@@ -19959,7 +19683,6 @@ timeslot_id(2546,1377).
 timeslot_id(2547,888).
 timeslot_id(2548,197).
 timeslot_id(2549,60).
-timeslot_id(2550,1324).
 timeslot_id(2551,492).
 timeslot_id(2552,1084).
 timeslot_id(2553,1125).
@@ -20022,13 +19745,11 @@ timeslot_id(2635,1381).
 timeslot_id(2636,767).
 timeslot_id(2637,532).
 timeslot_id(2638,929).
-timeslot_id(2639,676).
 timeslot_id(2641,1396).
 timeslot_id(2642,1351).
 timeslot_id(2643,280).
 timeslot_id(2644,721).
 timeslot_id(2646,818).
-timeslot_id(2647,26).
 timeslot_id(2648,647).
 timeslot_id(2650,424).
 timeslot_id(2652,1260).
@@ -20175,7 +19896,6 @@ timeslot_id(2830,757).
 timeslot_id(2831,127).
 timeslot_id(2832,1242).
 timeslot_id(2834,1415).
-timeslot_id(2835,678).
 timeslot_id(2836,289).
 timeslot_id(2839,764).
 timeslot_id(2841,270).
@@ -20305,7 +20025,6 @@ timeslot_id(3009,775).
 timeslot_id(3010,189).
 timeslot_id(3011,705).
 timeslot_id(3012,803).
-timeslot_id(3014,1321).
 timeslot_id(3015,322).
 timeslot_id(3016,87).
 timeslot_id(3017,816).
@@ -20327,7 +20046,6 @@ timeslot_id(3035,300).
 timeslot_id(3037,82).
 timeslot_id(3039,600).
 timeslot_id(3040,1259).
-timeslot_id(3041,671).
 timeslot_id(3042,66).
 timeslot_id(3043,178).
 timeslot_id(3044,1297).
@@ -20383,7 +20101,6 @@ timeslot_id(3104,751).
 timeslot_id(3105,1358).
 timeslot_id(3106,1406).
 timeslot_id(3108,726).
-timeslot_id(3109,26).
 timeslot_id(3110,1351).
 timeslot_id(3112,1176).
 timeslot_id(3113,947).
@@ -20399,7 +20116,6 @@ timeslot_id(3127,589).
 timeslot_id(3128,101).
 timeslot_id(3129,446).
 timeslot_id(3130,1219).
-timeslot_id(3131,26).
 timeslot_id(3132,906).
 timeslot_id(3133,1259).
 timeslot_id(3134,609).
@@ -20427,7 +20143,6 @@ timeslot_id(3164,1101).
 timeslot_id(3165,605).
 timeslot_id(3166,485).
 timeslot_id(3167,1118).
-timeslot_id(3168,676).
 timeslot_id(3169,1140).
 timeslot_id(3170,258).
 timeslot_id(3172,583).
@@ -20474,7 +20189,6 @@ timeslot_id(3226,1380).
 timeslot_id(3227,1219).
 timeslot_id(3228,1105).
 timeslot_id(3229,232).
-timeslot_id(3230,26).
 timeslot_id(3232,539).
 timeslot_id(3233,547).
 timeslot_id(3234,333).
@@ -20543,7 +20257,6 @@ timeslot_id(3312,970).
 timeslot_id(3313,1342).
 timeslot_id(3314,896).
 timeslot_id(3315,1385).
-timeslot_id(3316,674).
 timeslot_id(3317,1165).
 timeslot_id(3318,64).
 timeslot_id(3319,316).
@@ -20552,7 +20265,6 @@ timeslot_id(3321,1113).
 timeslot_id(3322,958).
 timeslot_id(3323,464).
 timeslot_id(3326,929).
-timeslot_id(3327,1320).
 timeslot_id(3328,406).
 timeslot_id(3329,1161).
 timeslot_id(3330,813).
@@ -20564,7 +20276,6 @@ timeslot_id(3336,797).
 timeslot_id(3337,68).
 timeslot_id(3339,718).
 timeslot_id(3340,1429).
-timeslot_id(3341,1323).
 timeslot_id(3342,1213).
 timeslot_id(3343,892).
 timeslot_id(3344,1333).
@@ -20617,7 +20328,6 @@ timeslot_id(3400,518).
 timeslot_id(3401,1352).
 timeslot_id(3402,1142).
 timeslot_id(3403,850).
-timeslot_id(3404,24).
 timeslot_id(3405,350).
 timeslot_id(3406,599).
 timeslot_id(3407,230).
@@ -20656,7 +20366,6 @@ timeslot_id(3447,722).
 timeslot_id(3451,891).
 timeslot_id(3452,544).
 timeslot_id(3453,698).
-timeslot_id(3454,26).
 timeslot_id(3455,872).
 timeslot_id(3459,484).
 timeslot_id(3461,1369).
@@ -20725,7 +20434,6 @@ timeslot_id(3540,1017).
 timeslot_id(3541,189).
 timeslot_id(3542,1409).
 timeslot_id(3543,282).
-timeslot_id(3544,1325).
 timeslot_id(3545,124).
 timeslot_id(3546,1075).
 timeslot_id(3547,378).
@@ -20797,7 +20505,6 @@ timeslot_id(3634,638).
 timeslot_id(3635,303).
 timeslot_id(3640,1173).
 timeslot_id(3641,1093).
-timeslot_id(3643,672).
 timeslot_id(3645,799).
 timeslot_id(3646,1044).
 timeslot_id(3647,775).
@@ -20860,7 +20567,6 @@ timeslot_id(3715,1200).
 timeslot_id(3716,127).
 timeslot_id(3717,1346).
 timeslot_id(3718,270).
-timeslot_id(3719,27).
 timeslot_id(3720,915).
 timeslot_id(3721,1254).
 timeslot_id(3722,843).
@@ -20899,7 +20605,6 @@ timeslot_id(3766,1256).
 timeslot_id(3767,228).
 timeslot_id(3769,639).
 timeslot_id(3771,792).
-timeslot_id(3772,673).
 timeslot_id(3773,184).
 timeslot_id(3774,1142).
 timeslot_id(3775,903).
@@ -20949,7 +20654,6 @@ timeslot_id(3826,1116).
 timeslot_id(3827,357).
 timeslot_id(3828,537).
 timeslot_id(3830,1062).
-timeslot_id(3833,1323).
 timeslot_id(3834,954).
 timeslot_id(3836,180).
 timeslot_id(3839,441).
@@ -21061,7 +20765,6 @@ timeslot_id(3975,1145).
 timeslot_id(3976,364).
 timeslot_id(3977,864).
 timeslot_id(3978,340).
-timeslot_id(3979,673).
 timeslot_id(3981,303).
 timeslot_id(3982,506).
 timeslot_id(3983,1194).
@@ -21158,13 +20861,10 @@ timeslot_id(4098,836).
 timeslot_id(4099,133).
 timeslot_id(4100,368).
 timeslot_id(4101,93).
-timeslot_id(4102,29).
 timeslot_id(4103,1213).
 timeslot_id(4104,442).
-timeslot_id(4105,672).
 timeslot_id(4107,1187).
 timeslot_id(4109,683).
-timeslot_id(4110,1325).
 timeslot_id(4111,441).
 timeslot_id(4114,553).
 timeslot_id(4115,38).
@@ -21211,7 +20911,6 @@ timeslot_id(4170,736).
 timeslot_id(4171,1139).
 timeslot_id(4173,854).
 timeslot_id(4174,947).
-timeslot_id(4176,1325).
 timeslot_id(4177,827).
 timeslot_id(4178,1196).
 timeslot_id(4179,285).
@@ -21274,7 +20973,6 @@ timeslot_id(4249,59).
 timeslot_id(4250,1281).
 timeslot_id(4252,274).
 timeslot_id(4253,922).
-timeslot_id(4254,675).
 timeslot_id(4255,1041).
 timeslot_id(4256,172).
 timeslot_id(4258,1159).
@@ -21288,7 +20986,6 @@ timeslot_id(4270,814).
 timeslot_id(4271,475).
 timeslot_id(4272,844).
 timeslot_id(4273,1152).
-timeslot_id(4274,677).
 timeslot_id(4275,446).
 timeslot_id(4276,590).
 timeslot_id(4277,154).
@@ -21344,7 +21041,6 @@ preference(19,1).
 preference(20,1).
 preference(21,1).
 preference(22,1).
-preference(23,1).
 preference(24,1).
 preference(27,1).
 preference(28,1).
@@ -21369,7 +21065,6 @@ preference(52,1).
 preference(53,1).
 preference(54,1).
 preference(55,1).
-preference(57,2).
 preference(58,1).
 preference(59,1).
 preference(60,1).
@@ -21378,7 +21073,6 @@ preference(63,1).
 preference(64,1).
 preference(65,1).
 preference(66,1).
-preference(67,1).
 preference(68,1).
 preference(69,1).
 preference(70,1).
@@ -21425,7 +21119,6 @@ preference(120,1).
 preference(121,1).
 preference(122,1).
 preference(124,1).
-preference(125,1).
 preference(126,1).
 preference(127,1).
 preference(129,2).
@@ -21489,7 +21182,6 @@ preference(208,1).
 preference(209,1).
 preference(210,1).
 preference(211,1).
-preference(212,1).
 preference(213,1).
 preference(214,1).
 preference(215,1).
@@ -21540,7 +21232,6 @@ preference(278,1).
 preference(279,2).
 preference(281,1).
 preference(282,2).
-preference(284,2).
 preference(285,1).
 preference(286,1).
 preference(287,2).
@@ -21562,7 +21253,6 @@ preference(306,3).
 preference(307,1).
 preference(308,2).
 preference(309,1).
-preference(310,2).
 preference(311,1).
 preference(312,1).
 preference(313,1).
@@ -21635,7 +21325,6 @@ preference(400,1).
 preference(401,3).
 preference(403,2).
 preference(404,1).
-preference(405,1).
 preference(406,1).
 preference(407,2).
 preference(408,1).
@@ -21694,7 +21383,6 @@ preference(473,1).
 preference(474,3).
 preference(475,2).
 preference(477,2).
-preference(478,3).
 preference(480,1).
 preference(481,1).
 preference(482,2).
@@ -21847,7 +21535,6 @@ preference(665,2).
 preference(666,2).
 preference(667,3).
 preference(668,1).
-preference(669,3).
 preference(670,1).
 preference(671,1).
 preference(672,1).
@@ -21970,7 +21657,6 @@ preference(821,3).
 preference(822,2).
 preference(823,1).
 preference(824,1).
-preference(826,3).
 preference(827,3).
 preference(828,3).
 preference(829,1).
@@ -22082,7 +21768,6 @@ preference(970,2).
 preference(971,2).
 preference(972,4).
 preference(973,1).
-preference(974,1).
 preference(975,1).
 preference(976,4).
 preference(977,2).
@@ -22231,7 +21916,6 @@ preference(1152,5).
 preference(1153,3).
 preference(1154,4).
 preference(1155,3).
-preference(1156,1).
 preference(1158,3).
 preference(1160,4).
 preference(1161,2).
@@ -22275,7 +21959,6 @@ preference(1204,1).
 preference(1205,2).
 preference(1207,2).
 preference(1208,2).
-preference(1209,3).
 preference(1210,1).
 preference(1211,3).
 preference(1212,3).
@@ -22358,7 +22041,6 @@ preference(1316,3).
 preference(1317,2).
 preference(1319,4).
 preference(1321,4).
-preference(1322,3).
 preference(1323,3).
 preference(1324,2).
 preference(1326,4).
@@ -22375,7 +22057,6 @@ preference(1337,3).
 preference(1339,5).
 preference(1341,1).
 preference(1342,4).
-preference(1344,4).
 preference(1345,4).
 preference(1346,1).
 preference(1347,2).
@@ -22510,7 +22191,6 @@ preference(1500,6).
 preference(1501,2).
 preference(1502,2).
 preference(1503,3).
-preference(1504,3).
 preference(1505,2).
 preference(1506,3).
 preference(1507,4).
@@ -22571,7 +22251,6 @@ preference(1575,3).
 preference(1576,4).
 preference(1578,4).
 preference(1579,3).
-preference(1580,4).
 preference(1581,6).
 preference(1582,3).
 preference(1583,3).
@@ -22653,7 +22332,6 @@ preference(1678,5).
 preference(1679,4).
 preference(1680,2).
 preference(1681,2).
-preference(1683,2).
 preference(1684,5).
 preference(1685,2).
 preference(1686,6).
@@ -22664,7 +22342,6 @@ preference(1690,5).
 preference(1691,7).
 preference(1692,2).
 preference(1694,5).
-preference(1696,3).
 preference(1697,5).
 preference(1699,5).
 preference(1702,1).
@@ -22711,7 +22388,6 @@ preference(1755,3).
 preference(1756,1).
 preference(1757,2).
 preference(1758,5).
-preference(1759,4).
 preference(1761,5).
 preference(1762,6).
 preference(1764,4).
@@ -22729,7 +22405,6 @@ preference(1777,3).
 preference(1778,4).
 preference(1779,5).
 preference(1780,2).
-preference(1781,8).
 preference(1782,5).
 preference(1783,1).
 preference(1784,6).
@@ -22774,7 +22449,6 @@ preference(1832,1).
 preference(1835,3).
 preference(1836,4).
 preference(1837,7).
-preference(1838,5).
 preference(1839,4).
 preference(1841,3).
 preference(1842,3).
@@ -22811,7 +22485,6 @@ preference(1880,6).
 preference(1881,8).
 preference(1883,8).
 preference(1885,5).
-preference(1886,6).
 preference(1887,2).
 preference(1888,5).
 preference(1890,2).
@@ -22828,7 +22501,6 @@ preference(1902,4).
 preference(1903,3).
 preference(1904,7).
 preference(1905,6).
-preference(1907,6).
 preference(1908,3).
 preference(1909,4).
 preference(1910,4).
@@ -22925,8 +22597,6 @@ preference(2031,4).
 preference(2032,4).
 preference(2034,8).
 preference(2036,2).
-preference(2037,2).
-preference(2038,2).
 preference(2039,4).
 preference(2041,2).
 preference(2042,5).
@@ -23038,7 +22708,6 @@ preference(2185,5).
 preference(2186,3).
 preference(2187,4).
 preference(2188,3).
-preference(2189,2).
 preference(2191,1).
 preference(2192,4).
 preference(2195,4).
@@ -23050,13 +22719,11 @@ preference(2202,5).
 preference(2204,4).
 preference(2205,9).
 preference(2206,2).
-preference(2207,8).
 preference(2208,2).
 preference(2209,2).
 preference(2210,5).
 preference(2211,3).
 preference(2212,6).
-preference(2213,3).
 preference(2214,4).
 preference(2215,6).
 preference(2216,5).
@@ -23066,7 +22733,6 @@ preference(2220,4).
 preference(2222,3).
 preference(2223,3).
 preference(2225,4).
-preference(2226,2).
 preference(2227,6).
 preference(2228,5).
 preference(2229,2).
@@ -23108,7 +22774,6 @@ preference(2277,2).
 preference(2278,8).
 preference(2281,4).
 preference(2282,4).
-preference(2283,6).
 preference(2287,5).
 preference(2288,4).
 preference(2289,6).
@@ -23142,7 +22807,6 @@ preference(2326,6).
 preference(2328,4).
 preference(2329,5).
 preference(2330,3).
-preference(2332,3).
 preference(2333,6).
 preference(2334,4).
 preference(2336,2).
@@ -23272,7 +22936,6 @@ preference(2506,4).
 preference(2507,7).
 preference(2508,8).
 preference(2509,4).
-preference(2511,3).
 preference(2512,4).
 preference(2513,2).
 preference(2514,4).
@@ -23305,7 +22968,6 @@ preference(2546,3).
 preference(2547,9).
 preference(2548,6).
 preference(2549,4).
-preference(2550,3).
 preference(2551,3).
 preference(2552,4).
 preference(2553,4).
@@ -23368,13 +23030,11 @@ preference(2635,4).
 preference(2636,9).
 preference(2637,5).
 preference(2638,3).
-preference(2639,9).
 preference(2641,4).
 preference(2642,6).
 preference(2643,8).
 preference(2644,4).
 preference(2646,8).
-preference(2647,5).
 preference(2648,5).
 preference(2650,2).
 preference(2652,4).
@@ -23521,7 +23181,6 @@ preference(2830,4).
 preference(2831,5).
 preference(2832,3).
 preference(2834,1).
-preference(2835,5).
 preference(2836,2).
 preference(2839,10).
 preference(2841,5).
@@ -23651,7 +23310,6 @@ preference(3009,6).
 preference(3010,3).
 preference(3011,8).
 preference(3012,6).
-preference(3014,10).
 preference(3015,4).
 preference(3016,5).
 preference(3017,4).
@@ -23673,7 +23331,6 @@ preference(3035,5).
 preference(3037,3).
 preference(3039,3).
 preference(3040,4).
-preference(3041,2).
 preference(3042,9).
 preference(3043,8).
 preference(3044,6).
@@ -23729,7 +23386,6 @@ preference(3104,5).
 preference(3105,3).
 preference(3106,4).
 preference(3108,4).
-preference(3109,6).
 preference(3110,3).
 preference(3112,3).
 preference(3113,7).
@@ -23745,7 +23401,6 @@ preference(3127,7).
 preference(3128,4).
 preference(3129,6).
 preference(3130,3).
-preference(3131,4).
 preference(3132,7).
 preference(3133,4).
 preference(3134,5).
@@ -23773,7 +23428,6 @@ preference(3164,5).
 preference(3165,4).
 preference(3166,7).
 preference(3167,2).
-preference(3168,2).
 preference(3169,7).
 preference(3170,8).
 preference(3172,6).
@@ -23820,7 +23474,6 @@ preference(3226,4).
 preference(3227,3).
 preference(3228,6).
 preference(3229,9).
-preference(3230,3).
 preference(3232,4).
 preference(3233,5).
 preference(3234,4).
@@ -23889,7 +23542,6 @@ preference(3312,6).
 preference(3313,4).
 preference(3314,7).
 preference(3315,6).
-preference(3316,4).
 preference(3317,11).
 preference(3318,6).
 preference(3319,8).
@@ -23898,7 +23550,6 @@ preference(3321,6).
 preference(3322,5).
 preference(3323,10).
 preference(3326,4).
-preference(3327,5).
 preference(3328,3).
 preference(3329,4).
 preference(3330,6).
@@ -23910,7 +23561,6 @@ preference(3336,5).
 preference(3337,5).
 preference(3339,3).
 preference(3340,9).
-preference(3341,9).
 preference(3342,8).
 preference(3343,8).
 preference(3344,10).
@@ -23963,7 +23613,6 @@ preference(3400,3).
 preference(3401,5).
 preference(3402,7).
 preference(3403,3).
-preference(3404,3).
 preference(3405,6).
 preference(3406,3).
 preference(3407,8).
@@ -24002,7 +23651,6 @@ preference(3447,3).
 preference(3451,4).
 preference(3452,6).
 preference(3453,7).
-preference(3454,7).
 preference(3455,3).
 preference(3459,6).
 preference(3461,4).
@@ -24071,7 +23719,6 @@ preference(3540,7).
 preference(3541,5).
 preference(3542,6).
 preference(3543,5).
-preference(3544,7).
 preference(3545,7).
 preference(3546,10).
 preference(3547,11).
@@ -24143,7 +23790,6 @@ preference(3634,8).
 preference(3635,3).
 preference(3640,8).
 preference(3641,4).
-preference(3643,5).
 preference(3645,7).
 preference(3646,9).
 preference(3647,6).
@@ -24206,7 +23852,6 @@ preference(3715,2).
 preference(3716,6).
 preference(3717,5).
 preference(3718,4).
-preference(3719,4).
 preference(3720,8).
 preference(3721,8).
 preference(3722,11).
@@ -24245,7 +23890,6 @@ preference(3766,4).
 preference(3767,6).
 preference(3769,3).
 preference(3771,8).
-preference(3772,4).
 preference(3773,6).
 preference(3774,6).
 preference(3775,12).
@@ -24295,7 +23939,6 @@ preference(3826,3).
 preference(3827,4).
 preference(3828,4).
 preference(3830,8).
-preference(3833,4).
 preference(3834,11).
 preference(3836,8).
 preference(3839,3).
@@ -24407,7 +24050,6 @@ preference(3975,5).
 preference(3976,7).
 preference(3977,3).
 preference(3978,5).
-preference(3979,4).
 preference(3981,10).
 preference(3982,10).
 preference(3983,10).
@@ -24504,13 +24146,10 @@ preference(4098,7).
 preference(4099,4).
 preference(4100,10).
 preference(4101,6).
-preference(4102,6).
 preference(4103,4).
 preference(4104,7).
-preference(4105,15).
 preference(4107,6).
 preference(4109,5).
-preference(4110,11).
 preference(4111,5).
 preference(4114,11).
 preference(4115,5).
@@ -24557,7 +24196,6 @@ preference(4170,4).
 preference(4171,5).
 preference(4173,9).
 preference(4174,5).
-preference(4176,6).
 preference(4177,4).
 preference(4178,8).
 preference(4179,8).
@@ -24620,7 +24258,6 @@ preference(4249,10).
 preference(4250,6).
 preference(4252,10).
 preference(4253,5).
-preference(4254,11).
 preference(4255,11).
 preference(4256,12).
 preference(4258,4).
@@ -24634,7 +24271,6 @@ preference(4270,8).
 preference(4271,9).
 preference(4272,5).
 preference(4273,9).
-preference(4274,5).
 preference(4275,13).
 preference(4276,12).
 preference(4277,12).
@@ -24690,7 +24326,6 @@ score(19,69).
 score(20,38).
 score(21,39).
 score(22,58).
-score(23,95).
 score(24,91).
 score(27,80).
 score(28,68).
@@ -24715,7 +24350,6 @@ score(52,75).
 score(53,92).
 score(54,40).
 score(55,76).
-score(57,60).
 score(58,57).
 score(59,86).
 score(60,100).
@@ -24724,7 +24358,6 @@ score(63,63).
 score(64,66).
 score(65,78).
 score(66,54).
-score(67,76).
 score(68,65).
 score(69,37).
 score(70,91).
@@ -24771,7 +24404,6 @@ score(120,90).
 score(121,43).
 score(122,61).
 score(124,97).
-score(125,82).
 score(126,78).
 score(127,31).
 score(129,79).
@@ -24835,7 +24467,6 @@ score(208,51).
 score(209,85).
 score(210,76).
 score(211,78).
-score(212,75).
 score(213,85).
 score(214,100).
 score(215,50).
@@ -24886,7 +24517,6 @@ score(278,43).
 score(279,28).
 score(281,53).
 score(282,77).
-score(284,53).
 score(285,82).
 score(286,45).
 score(287,75).
@@ -24908,7 +24538,6 @@ score(306,67).
 score(307,32).
 score(308,82).
 score(309,75).
-score(310,54).
 score(311,57).
 score(312,56).
 score(313,73).
@@ -24981,7 +24610,6 @@ score(400,63).
 score(401,73).
 score(403,34).
 score(404,72).
-score(405,47).
 score(406,34).
 score(407,61).
 score(408,52).
@@ -25040,7 +24668,6 @@ score(473,86).
 score(474,32).
 score(475,76).
 score(477,56).
-score(478,26).
 score(480,84).
 score(481,80).
 score(482,37).
@@ -25193,7 +24820,6 @@ score(665,72).
 score(666,63).
 score(667,57).
 score(668,100).
-score(669,51).
 score(670,78).
 score(671,64).
 score(672,36).
@@ -25316,7 +24942,6 @@ score(821,28).
 score(822,56).
 score(823,33).
 score(824,50).
-score(826,14).
 score(827,34).
 score(828,55).
 score(829,66).
@@ -25428,7 +25053,6 @@ score(970,44).
 score(971,70).
 score(972,48).
 score(973,55).
-score(974,48).
 score(975,54).
 score(976,61).
 score(977,79).
@@ -25577,7 +25201,6 @@ score(1152,47).
 score(1153,39).
 score(1154,19).
 score(1155,49).
-score(1156,42).
 score(1158,20).
 score(1160,38).
 score(1161,66).
@@ -25621,7 +25244,6 @@ score(1204,67).
 score(1205,38).
 score(1207,24).
 score(1208,80).
-score(1209,44).
 score(1210,35).
 score(1211,39).
 score(1212,18).
@@ -25704,7 +25326,6 @@ score(1316,75).
 score(1317,30).
 score(1319,47).
 score(1321,17).
-score(1322,55).
 score(1323,20).
 score(1324,32).
 score(1326,69).
@@ -25721,7 +25342,6 @@ score(1337,19).
 score(1339,24).
 score(1341,58).
 score(1342,14).
-score(1344,31).
 score(1345,23).
 score(1346,57).
 score(1347,63).
@@ -25856,7 +25476,6 @@ score(1500,70).
 score(1501,16).
 score(1502,71).
 score(1503,74).
-score(1504,15).
 score(1505,20).
 score(1506,18).
 score(1507,18).
@@ -25917,7 +25536,6 @@ score(1575,58).
 score(1576,72).
 score(1578,42).
 score(1579,33).
-score(1580,55).
 score(1581,58).
 score(1582,11).
 score(1583,76).
@@ -25999,7 +25617,6 @@ score(1678,69).
 score(1679,36).
 score(1680,60).
 score(1681,26).
-score(1683,31).
 score(1684,41).
 score(1685,37).
 score(1686,34).
@@ -26010,7 +25627,6 @@ score(1690,28).
 score(1691,67).
 score(1692,19).
 score(1694,16).
-score(1696,43).
 score(1697,15).
 score(1699,38).
 score(1702,42).
@@ -26057,7 +25673,6 @@ score(1755,77).
 score(1756,80).
 score(1757,49).
 score(1758,70).
-score(1759,62).
 score(1761,45).
 score(1762,70).
 score(1764,14).
@@ -26075,7 +25690,6 @@ score(1777,46).
 score(1778,56).
 score(1779,66).
 score(1780,42).
-score(1781,66).
 score(1782,13).
 score(1783,74).
 score(1784,25).
@@ -26120,7 +25734,6 @@ score(1832,89).
 score(1835,64).
 score(1836,63).
 score(1837,31).
-score(1838,9).
 score(1839,62).
 score(1841,46).
 score(1842,44).
@@ -26157,7 +25770,6 @@ score(1880,28).
 score(1881,30).
 score(1883,50).
 score(1885,61).
-score(1886,74).
 score(1887,80).
 score(1888,53).
 score(1890,47).
@@ -26174,7 +25786,6 @@ score(1902,10).
 score(1903,58).
 score(1904,63).
 score(1905,44).
-score(1907,44).
 score(1908,38).
 score(1909,73).
 score(1910,46).
@@ -26271,8 +25882,6 @@ score(2031,13).
 score(2032,47).
 score(2034,69).
 score(2036,16).
-score(2037,60).
-score(2038,77).
 score(2039,14).
 score(2041,66).
 score(2042,72).
@@ -26384,7 +25993,6 @@ score(2185,40).
 score(2186,32).
 score(2187,44).
 score(2188,60).
-score(2189,65).
 score(2191,83).
 score(2192,54).
 score(2195,9).
@@ -26396,13 +26004,11 @@ score(2202,15).
 score(2204,13).
 score(2205,54).
 score(2206,44).
-score(2207,13).
 score(2208,85).
 score(2209,42).
 score(2210,71).
 score(2211,62).
 score(2212,10).
-score(2213,60).
 score(2214,66).
 score(2215,71).
 score(2216,15).
@@ -26412,7 +26018,6 @@ score(2220,72).
 score(2222,62).
 score(2223,60).
 score(2225,57).
-score(2226,27).
 score(2227,64).
 score(2228,34).
 score(2229,40).
@@ -26454,7 +26059,6 @@ score(2277,57).
 score(2278,32).
 score(2281,69).
 score(2282,70).
-score(2283,52).
 score(2287,36).
 score(2288,60).
 score(2289,14).
@@ -26488,7 +26092,6 @@ score(2326,35).
 score(2328,55).
 score(2329,13).
 score(2330,22).
-score(2332,60).
 score(2333,63).
 score(2334,39).
 score(2336,46).
@@ -26618,7 +26221,6 @@ score(2506,39).
 score(2507,43).
 score(2508,10).
 score(2509,24).
-score(2511,65).
 score(2512,26).
 score(2513,16).
 score(2514,61).
@@ -26651,7 +26253,6 @@ score(2546,23).
 score(2547,53).
 score(2548,10).
 score(2549,48).
-score(2550,46).
 score(2551,27).
 score(2552,60).
 score(2553,57).
@@ -26714,13 +26315,11 @@ score(2635,59).
 score(2636,59).
 score(2637,30).
 score(2638,56).
-score(2639,42).
 score(2641,23).
 score(2642,13).
 score(2643,60).
 score(2644,36).
 score(2646,27).
-score(2647,54).
 score(2648,58).
 score(2650,68).
 score(2652,56).
@@ -26867,7 +26466,6 @@ score(2830,32).
 score(2831,35).
 score(2832,16).
 score(2834,35).
-score(2835,57).
 score(2836,59).
 score(2839,4).
 score(2841,63).
@@ -26997,7 +26595,6 @@ score(3009,74).
 score(3010,30).
 score(3011,42).
 score(3012,54).
-score(3014,9).
 score(3015,15).
 score(3016,54).
 score(3017,34).
@@ -27019,7 +26616,6 @@ score(3035,56).
 score(3037,25).
 score(3039,74).
 score(3040,27).
-score(3041,53).
 score(3042,50).
 score(3043,59).
 score(3044,55).
@@ -27075,7 +26671,6 @@ score(3104,14).
 score(3105,46).
 score(3106,64).
 score(3108,54).
-score(3109,30).
 score(3110,60).
 score(3112,67).
 score(3113,12).
@@ -27091,7 +26686,6 @@ score(3127,11).
 score(3128,44).
 score(3129,53).
 score(3130,17).
-score(3131,42).
 score(3132,69).
 score(3133,27).
 score(3134,41).
@@ -27119,7 +26713,6 @@ score(3164,40).
 score(3165,62).
 score(3166,41).
 score(3167,37).
-score(3168,40).
 score(3169,34).
 score(3170,70).
 score(3172,55).
@@ -27166,7 +26759,6 @@ score(3226,75).
 score(3227,25).
 score(3228,64).
 score(3229,49).
-score(3230,64).
 score(3232,57).
 score(3233,57).
 score(3234,36).
@@ -27235,7 +26827,6 @@ score(3312,63).
 score(3313,36).
 score(3314,54).
 score(3315,53).
-score(3316,10).
 score(3317,70).
 score(3318,18).
 score(3319,9).
@@ -27244,7 +26835,6 @@ score(3321,72).
 score(3322,19).
 score(3323,70).
 score(3326,17).
-score(3327,33).
 score(3328,39).
 score(3329,29).
 score(3330,75).
@@ -27256,7 +26846,6 @@ score(3336,49).
 score(3337,58).
 score(3339,13).
 score(3340,23).
-score(3341,57).
 score(3342,63).
 score(3343,34).
 score(3344,50).
@@ -27309,7 +26898,6 @@ score(3400,28).
 score(3401,17).
 score(3402,25).
 score(3403,51).
-score(3404,20).
 score(3405,45).
 score(3406,79).
 score(3407,53).
@@ -27348,7 +26936,6 @@ score(3447,63).
 score(3451,38).
 score(3452,50).
 score(3453,41).
-score(3454,33).
 score(3455,11).
 score(3459,10).
 score(3461,76).
@@ -27417,7 +27004,6 @@ score(3540,6).
 score(3541,42).
 score(3542,36).
 score(3543,28).
-score(3544,59).
 score(3545,29).
 score(3546,68).
 score(3547,68).
@@ -27489,7 +27075,6 @@ score(3634,11).
 score(3635,46).
 score(3640,4).
 score(3641,37).
-score(3643,21).
 score(3645,32).
 score(3646,14).
 score(3647,53).
@@ -27552,7 +27137,6 @@ score(3715,36).
 score(3716,41).
 score(3717,35).
 score(3718,9).
-score(3719,24).
 score(3720,73).
 score(3721,16).
 score(3722,17).
@@ -27591,7 +27175,6 @@ score(3766,38).
 score(3767,34).
 score(3769,37).
 score(3771,40).
-score(3772,52).
 score(3773,15).
 score(3774,26).
 score(3775,16).
@@ -27641,7 +27224,6 @@ score(3826,15).
 score(3827,22).
 score(3828,61).
 score(3830,16).
-score(3833,51).
 score(3834,37).
 score(3836,67).
 score(3839,28).
@@ -27753,7 +27335,6 @@ score(3975,16).
 score(3976,32).
 score(3977,20).
 score(3978,22).
-score(3979,23).
 score(3981,48).
 score(3982,7).
 score(3983,49).
@@ -27850,13 +27431,10 @@ score(4098,48).
 score(4099,19).
 score(4100,52).
 score(4101,36).
-score(4102,56).
 score(4103,32).
 score(4104,66).
-score(4105,10).
 score(4107,30).
 score(4109,12).
-score(4110,48).
 score(4111,42).
 score(4114,48).
 score(4115,63).
@@ -27903,7 +27481,6 @@ score(4170,42).
 score(4171,18).
 score(4173,66).
 score(4174,56).
-score(4176,12).
 score(4177,50).
 score(4178,29).
 score(4179,16).
@@ -27966,7 +27543,6 @@ score(4249,30).
 score(4250,69).
 score(4252,11).
 score(4253,45).
-score(4254,12).
 score(4255,44).
 score(4256,19).
 score(4258,22).
@@ -27980,7 +27556,6 @@ score(4270,25).
 score(4271,12).
 score(4272,22).
 score(4273,68).
-score(4274,42).
 score(4275,21).
 score(4276,50).
 score(4277,9).
@@ -28036,7 +27611,6 @@ status(19,0).
 status(20,1).
 status(21,0).
 status(22,1).
-status(23,0).
 status(24,0).
 status(27,0).
 status(28,1).
@@ -28061,7 +27635,6 @@ status(52,0).
 status(53,0).
 status(54,0).
 status(55,0).
-status(57,0).
 status(58,0).
 status(59,0).
 status(60,0).
@@ -28070,7 +27643,6 @@ status(63,0).
 status(64,0).
 status(65,0).
 status(66,0).
-status(67,1).
 status(68,0).
 status(69,0).
 status(70,0).
@@ -28117,7 +27689,6 @@ status(120,1).
 status(121,0).
 status(122,0).
 status(124,0).
-status(125,1).
 status(126,0).
 status(127,0).
 status(129,0).
@@ -28181,7 +27752,6 @@ status(208,1).
 status(209,0).
 status(210,0).
 status(211,0).
-status(212,0).
 status(213,1).
 status(214,0).
 status(215,0).
@@ -28232,7 +27802,6 @@ status(278,0).
 status(279,0).
 status(281,0).
 status(282,0).
-status(284,0).
 status(285,0).
 status(286,0).
 status(287,0).
@@ -28254,7 +27823,6 @@ status(306,0).
 status(307,0).
 status(308,0).
 status(309,0).
-status(310,0).
 status(311,1).
 status(312,0).
 status(313,0).
@@ -28327,7 +27895,6 @@ status(400,0).
 status(401,0).
 status(403,0).
 status(404,0).
-status(405,0).
 status(406,0).
 status(407,0).
 status(408,0).
@@ -28386,7 +27953,6 @@ status(473,0).
 status(474,0).
 status(475,0).
 status(477,0).
-status(478,0).
 status(480,1).
 status(481,0).
 status(482,1).
@@ -28539,7 +28105,6 @@ status(665,0).
 status(666,0).
 status(667,0).
 status(668,1).
-status(669,0).
 status(670,0).
 status(671,0).
 status(672,0).
@@ -28662,7 +28227,6 @@ status(821,0).
 status(822,1).
 status(823,0).
 status(824,0).
-status(826,0).
 status(827,0).
 status(828,0).
 status(829,1).
@@ -28774,7 +28338,6 @@ status(970,0).
 status(971,0).
 status(972,0).
 status(973,0).
-status(974,0).
 status(975,0).
 status(976,0).
 status(977,0).
@@ -28923,7 +28486,6 @@ status(1152,0).
 status(1153,0).
 status(1154,0).
 status(1155,0).
-status(1156,0).
 status(1158,0).
 status(1160,1).
 status(1161,0).
@@ -28967,7 +28529,6 @@ status(1204,1).
 status(1205,0).
 status(1207,0).
 status(1208,0).
-status(1209,0).
 status(1210,0).
 status(1211,1).
 status(1212,0).
@@ -29050,7 +28611,6 @@ status(1316,0).
 status(1317,0).
 status(1319,0).
 status(1321,0).
-status(1322,0).
 status(1323,0).
 status(1324,0).
 status(1326,0).
@@ -29067,7 +28627,6 @@ status(1337,0).
 status(1339,1).
 status(1341,0).
 status(1342,0).
-status(1344,1).
 status(1345,0).
 status(1346,0).
 status(1347,0).
@@ -29202,7 +28761,6 @@ status(1500,0).
 status(1501,0).
 status(1502,0).
 status(1503,0).
-status(1504,0).
 status(1505,0).
 status(1506,0).
 status(1507,0).
@@ -29263,7 +28821,6 @@ status(1575,0).
 status(1576,1).
 status(1578,1).
 status(1579,0).
-status(1580,0).
 status(1581,0).
 status(1582,0).
 status(1583,0).
@@ -29345,7 +28902,6 @@ status(1678,1).
 status(1679,0).
 status(1680,0).
 status(1681,0).
-status(1683,1).
 status(1684,0).
 status(1685,1).
 status(1686,0).
@@ -29356,7 +28912,6 @@ status(1690,0).
 status(1691,0).
 status(1692,0).
 status(1694,0).
-status(1696,0).
 status(1697,0).
 status(1699,0).
 status(1702,0).
@@ -29403,7 +28958,6 @@ status(1755,0).
 status(1756,0).
 status(1757,0).
 status(1758,0).
-status(1759,0).
 status(1761,1).
 status(1762,1).
 status(1764,0).
@@ -29421,7 +28975,6 @@ status(1777,1).
 status(1778,0).
 status(1779,0).
 status(1780,1).
-status(1781,0).
 status(1782,0).
 status(1783,0).
 status(1784,0).
@@ -29466,7 +29019,6 @@ status(1832,0).
 status(1835,0).
 status(1836,0).
 status(1837,1).
-status(1838,0).
 status(1839,0).
 status(1841,0).
 status(1842,0).
@@ -29503,7 +29055,6 @@ status(1880,0).
 status(1881,0).
 status(1883,0).
 status(1885,0).
-status(1886,0).
 status(1887,0).
 status(1888,0).
 status(1890,0).
@@ -29520,7 +29071,6 @@ status(1902,0).
 status(1903,0).
 status(1904,1).
 status(1905,0).
-status(1907,0).
 status(1908,0).
 status(1909,1).
 status(1910,0).
@@ -29617,8 +29167,6 @@ status(2031,0).
 status(2032,0).
 status(2034,0).
 status(2036,0).
-status(2037,0).
-status(2038,0).
 status(2039,1).
 status(2041,0).
 status(2042,0).
@@ -29730,7 +29278,6 @@ status(2185,0).
 status(2186,0).
 status(2187,0).
 status(2188,0).
-status(2189,0).
 status(2191,0).
 status(2192,0).
 status(2195,1).
@@ -29742,13 +29289,11 @@ status(2202,0).
 status(2204,1).
 status(2205,0).
 status(2206,1).
-status(2207,0).
 status(2208,1).
 status(2209,0).
 status(2210,0).
 status(2211,0).
 status(2212,1).
-status(2213,0).
 status(2214,0).
 status(2215,0).
 status(2216,0).
@@ -29758,7 +29303,6 @@ status(2220,0).
 status(2222,0).
 status(2223,0).
 status(2225,1).
-status(2226,1).
 status(2227,0).
 status(2228,0).
 status(2229,0).
@@ -29800,7 +29344,6 @@ status(2277,0).
 status(2278,0).
 status(2281,0).
 status(2282,0).
-status(2283,0).
 status(2287,0).
 status(2288,0).
 status(2289,0).
@@ -29834,7 +29377,6 @@ status(2326,0).
 status(2328,1).
 status(2329,0).
 status(2330,0).
-status(2332,0).
 status(2333,0).
 status(2334,1).
 status(2336,0).
@@ -29964,7 +29506,6 @@ status(2506,0).
 status(2507,0).
 status(2508,1).
 status(2509,0).
-status(2511,0).
 status(2512,1).
 status(2513,0).
 status(2514,0).
@@ -29997,7 +29538,6 @@ status(2546,0).
 status(2547,0).
 status(2548,0).
 status(2549,0).
-status(2550,0).
 status(2551,0).
 status(2552,0).
 status(2553,0).
@@ -30060,13 +29600,11 @@ status(2635,0).
 status(2636,0).
 status(2637,0).
 status(2638,0).
-status(2639,0).
 status(2641,0).
 status(2642,0).
 status(2643,0).
 status(2644,0).
 status(2646,0).
-status(2647,0).
 status(2648,1).
 status(2650,0).
 status(2652,0).
@@ -30213,7 +29751,6 @@ status(2830,0).
 status(2831,1).
 status(2832,0).
 status(2834,1).
-status(2835,0).
 status(2836,0).
 status(2839,0).
 status(2841,1).
@@ -30343,7 +29880,6 @@ status(3009,0).
 status(3010,1).
 status(3011,0).
 status(3012,0).
-status(3014,0).
 status(3015,0).
 status(3016,0).
 status(3017,1).
@@ -30365,7 +29901,6 @@ status(3035,0).
 status(3037,0).
 status(3039,0).
 status(3040,0).
-status(3041,0).
 status(3042,0).
 status(3043,0).
 status(3044,0).
@@ -30421,7 +29956,6 @@ status(3104,0).
 status(3105,1).
 status(3106,0).
 status(3108,0).
-status(3109,0).
 status(3110,0).
 status(3112,0).
 status(3113,0).
@@ -30437,7 +29971,6 @@ status(3127,0).
 status(3128,1).
 status(3129,0).
 status(3130,1).
-status(3131,0).
 status(3132,0).
 status(3133,0).
 status(3134,0).
@@ -30465,7 +29998,6 @@ status(3164,1).
 status(3165,1).
 status(3166,0).
 status(3167,0).
-status(3168,1).
 status(3169,1).
 status(3170,0).
 status(3172,0).
@@ -30512,7 +30044,6 @@ status(3226,1).
 status(3227,0).
 status(3228,0).
 status(3229,0).
-status(3230,0).
 status(3232,0).
 status(3233,0).
 status(3234,0).
@@ -30581,7 +30112,6 @@ status(3312,0).
 status(3313,1).
 status(3314,0).
 status(3315,0).
-status(3316,1).
 status(3317,0).
 status(3318,1).
 status(3319,1).
@@ -30590,7 +30120,6 @@ status(3321,0).
 status(3322,0).
 status(3323,0).
 status(3326,0).
-status(3327,0).
 status(3328,0).
 status(3329,0).
 status(3330,0).
@@ -30602,7 +30131,6 @@ status(3336,0).
 status(3337,0).
 status(3339,0).
 status(3340,0).
-status(3341,0).
 status(3342,0).
 status(3343,0).
 status(3344,0).
@@ -30655,7 +30183,6 @@ status(3400,0).
 status(3401,0).
 status(3402,0).
 status(3403,1).
-status(3404,0).
 status(3405,1).
 status(3406,0).
 status(3407,0).
@@ -30694,7 +30221,6 @@ status(3447,0).
 status(3451,0).
 status(3452,0).
 status(3453,1).
-status(3454,0).
 status(3455,0).
 status(3459,0).
 status(3461,1).
@@ -30763,7 +30289,6 @@ status(3540,0).
 status(3541,0).
 status(3542,0).
 status(3543,0).
-status(3544,0).
 status(3545,0).
 status(3546,0).
 status(3547,0).
@@ -30835,7 +30360,6 @@ status(3634,0).
 status(3635,1).
 status(3640,0).
 status(3641,0).
-status(3643,0).
 status(3645,0).
 status(3646,0).
 status(3647,0).
@@ -30898,7 +30422,6 @@ status(3715,0).
 status(3716,0).
 status(3717,0).
 status(3718,0).
-status(3719,0).
 status(3720,0).
 status(3721,0).
 status(3722,0).
@@ -30937,7 +30460,6 @@ status(3766,0).
 status(3767,0).
 status(3769,1).
 status(3771,0).
-status(3772,0).
 status(3773,0).
 status(3774,0).
 status(3775,0).
@@ -30987,7 +30509,6 @@ status(3826,0).
 status(3827,1).
 status(3828,1).
 status(3830,0).
-status(3833,0).
 status(3834,0).
 status(3836,1).
 status(3839,0).
@@ -31099,7 +30620,6 @@ status(3975,0).
 status(3976,0).
 status(3977,0).
 status(3978,0).
-status(3979,0).
 status(3981,0).
 status(3982,0).
 status(3983,0).
@@ -31196,13 +30716,10 @@ status(4098,0).
 status(4099,1).
 status(4100,0).
 status(4101,1).
-status(4102,1).
 status(4103,0).
 status(4104,0).
-status(4105,0).
 status(4107,0).
 status(4109,0).
-status(4110,1).
 status(4111,0).
 status(4114,0).
 status(4115,0).
@@ -31249,7 +30766,6 @@ status(4170,0).
 status(4171,0).
 status(4173,0).
 status(4174,0).
-status(4176,0).
 status(4177,0).
 status(4178,0).
 status(4179,0).
@@ -31312,7 +30828,6 @@ status(4249,0).
 status(4250,0).
 status(4252,0).
 status(4253,1).
-status(4254,0).
 status(4255,0).
 status(4256,0).
 status(4258,1).
@@ -31326,7 +30841,6 @@ status(4270,0).
 status(4271,0).
 status(4272,0).
 status(4273,0).
-status(4274,0).
 status(4275,0).
 status(4276,0).
 status(4277,0).
