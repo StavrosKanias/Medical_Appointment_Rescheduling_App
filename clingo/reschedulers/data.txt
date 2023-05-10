@@ -1,4 +1,4 @@
-% Requests: Patient - TimeSlot - Score
+% Requests Patient - TimeSlot - Score
 request(1,24,78).
 request(1,17,98).
 request(2,75,48).
@@ -1000,7 +1000,7 @@ request(400,94,38).
 request(400,65,41).
 request(400,80,33).
 
-% Current Squedule:  Patient - TimeSlot
+% Current Squedule  Patient - TimeSlot
 currentSq(143,24).
 currentSq(100,52).
 currentSq(128,120).
@@ -1153,7 +1153,7 @@ currentSq(359,145).
 currentSq(322,51).
 
 
-%Maximum Score: Patient - Max Score
+%Maximum Score Patient - Max Score
 maxScore(1,98).
 maxScore(2,71).
 maxScore(4,95).
@@ -1516,53 +1516,49 @@ maxScore(399,70).
 maxScore(400,99).
 
 % EXAMPLE
-% request("21088977184",1,87).
-% request("21088977188",1,86).
-% request("21088977186",2,55).
-% request("21088977184",2,72).
-% request("21088977185",2,60).
-% request("21088977185",3,45).
-% request("21088977186",3,40).
-% request("21088977188",4,71).
-% request("21088977187",4,70).
-% currentSq("21088977184",2).
-% currentSq("21088977185",3).
-% currentSq("21088977188",4).
-% maxScore("21088977184",87).
-% maxScore("21088977185",60).
-% maxScore("21088977186",55).
-% maxScore("21088977187",70).
-% maxScore("21088977188",86).
+% request(21088977184,1,87).
+% request(21088977188,1,86).
+% request(21088977186,2,55).
+% request(21088977184,2,72).
+% request(21088977185,2,60).
+% request(21088977185,3,45).
+% request(21088977186,3,40).
+% request(21088977188,4,71).
+% request(21088977187,4,70).
+% currentSq(21088977184,2).
+% currentSq(21088977185,3).
+% currentSq(21088977188,4).
+% maxScore(21088977184,87).
+% maxScore(21088977185,60).
+% maxScore(21088977186,55).
+% maxScore(21088977187,70).
+% maxScore(21088977188,86).
 
 
 % RULES
-onlyOption(P,T) :- request(P,T,_), 0 {request(P,X,_) : T != X} 0.
-singleRequest(T) :- request(P,T,_), 0 {request(X,T,_) : P != X} 0.
+onlyOption(P,T) - request(P,T,_), 0 {request(P,X,_)  T != X} 0.
 
 % SET GENERATION
-0 {assign(P, T, S)} 1 :- request(P,T,S), currentSq(P,T), not maxScore(P,S).
-0 {assign(P, T, S)} 1 :- request(P,T,S), request(X,TX,SX), currentSq(P,TX), T != TX, SX < S.
-0 {assign(P, T, S)} 1 :- request(P,T,S), not currentSq(P,T).
+0 {assign(P, T, S)} 1 - request(P,T,S), currentSq(P,T), not maxScore(P,S).
+0 {assign(P, T, S)} 1 - request(P,T,S), request(X,TX,SX), currentSq(P,TX), T != TX, SX  S.
+0 {assign(P, T, S)} 1 - request(P,T,S), not currentSq(P,T).
 
 %% FRAME AXIOM
-claimed(P, T) :- currentSq(P,T), maxScore(P,S).
+claimed(P, T) - currentSq(P,T), maxScore(P,S).
 
 % INTEGRITY CONSTRAINTS
-%% A timeslot can be appointed only to one 
-:- assign(P1,T,_), assign(P2,T,_), P1 != P2.
+%% A timeslot can be appointed only to one patient
+- assign(P1,T,_), assign(P2,T,_), P1 != P2.
 %% Only one timeslot can be appointed to a patient
-:- assign(P,T1,_), assign(P,T2,_), T1 != T2.
+- assign(P,T1,_), assign(P,T2,_), T1 != T2.
 % If a request is claimed all the other requests for the same timeslot won't be considered in the optimizatioin process
-:- request(P,T,_), assign(P,T,_), request(PX,T,_), claimed(PX, T), P != PX.
+- request(P,T,_), assign(P,T,_), request(PX,T,_), claimed(PX, T), P != PX.
 % If someone had an appointment before they also have to have an appointment after the rescheduling
-:- currentSq(P,T), not claimed(P,T), 0 {request(X,_,_) :  assign(X,_,_)} 0.
+- currentSq(P,T), not claimed(P,T), 0 {request(X,_,_)   assign(X,_,_)} 0.
 %% If a patient has only one option it can't be ignored for the maximization of the common benefit
-:- assign(P1,T,S1), request(P2,T,S2), onlyOption(P2,T), not onlyOption(P1, T), not currentSq(P1,T), S1 < S2, P1 != P2.
-% If a request is the only one claiming a timeslot 
-:- request(P,T,S), singleRequest(T), 0 {request(P,X,SX) : singleRequest(X), SX > S, X != T} 0, 0 {request(P,Y,_): claimed(P,Y), Y != T} 0, not assign(P,T,S).
+- assign(P1,T,S1), request(P2,T,S2), onlyOption(P2,T), not onlyOption(P1), not currentSq(P1,T), S1  S2, P1 != P2.
 
 % OPTIMIZATION
-#maximize{ S, T, P : assign(P, T ,S)}.
+#maximize{ S, T, P  assign(P, T ,S)}.
 
-#show assign/3.
-#show claimed/2. 
+#show assign3.

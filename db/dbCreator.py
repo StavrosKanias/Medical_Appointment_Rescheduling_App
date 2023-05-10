@@ -107,11 +107,11 @@ def main():
 
         minimum_people = 500
         maximum_people = 800
-        minimum_doctors = 5
-        maximum_doctors = 8
+        minimum_doctors = 10
+        maximum_doctors = 20
         minimum_specialites = 10
         maximum_specialites = 15
-        demand = 2.5
+        demand = 3.0
         timeslot_availability = 0.8
 
         fab = DataFabricator(schema, minimum_people,

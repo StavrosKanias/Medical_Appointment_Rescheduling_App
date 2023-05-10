@@ -18,8 +18,9 @@ def main():
     kb = KnowledgeBase('NHS_APPOINTMENTS', schema,
                        dbInfo=db_info, dbConditions=dbConditions)
     # kb.fb = kb.extract({'TIMESLOT': ['ID', 'DATE']}, merge=True)
-    kb.delete('REQUEST', conditions={
-        "ID": [('=', 1)]})
+    # # for i in range(1000, 1200):
+    # kb.delete('REQUEST', conditions={
+    #     "ID": [('=', 3)]})
     kb.toFile('clingo/')
 
     # class Assign(Predicate):
@@ -33,13 +34,16 @@ def main():
     class Grant(Predicate):
         request = IntegerField
 
+    class Claimed(Predicate):
+        request = IntegerField
+
     subKB = {'REQUEST': ['ID', 'PATIENT_ID',
                          'TIMESLOT_ID', 'SCORE', 'STATUS']}
-    solutionGrant = kb.run('clingo/reschedulerMergedGrant.lp',
-                           [Grant], searchDuration=12, show=True, subKB=[subKB, True])
+    solutionGrant = kb.run('clingo/reschedulers/simplifiedReschedulerGrant.lp',
+                           [Grant, Claimed], searchDuration=12, show=True, subKB=[subKB, False], strOut=True)
 
-    # solutionMergedGrant = kb.run('clingo/reschedulerMergepdGrant.lp',
-    #                              [Grant], searchDuration=12, show=True, subKB=[subKB, True])
+    # solutionMergedGrant = kb.run('clingo/reschedulers/reschedulerMergedGrant.lp',
+    #                              [Grant, Claimed], searchDuration=12, show=True, subKB=[subKB, True], strOut=False)
     # # solution2 = kb.run('clingo/scheduler.lp',
     # #                    [Assign], show=True)
     # assigned = {x.request: 1 for x in solution1['Assign']}

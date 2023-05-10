@@ -94,12 +94,16 @@ class DataFabricator():
             else:
                 timeslot_requests[request['TIMESLOT_ID']].append(
                     (request['ID'], i, patient, score))
-
+        appointed = []
         for timeslot in timeslot_requests:
             timeslot_requests[timeslot] = sorted(
                 timeslot_requests[timeslot], key=lambda item: item[3])
             priority_patient = timeslot_requests[timeslot].pop(0)
-            requests[priority_patient[1]]['STATUS'] = 1
+            while priority_patient[2] in appointed and len(timeslot_requests[timeslot]):
+                priority_patient = timeslot_requests[timeslot].pop(0)
+            if priority_patient[2] not in appointed:
+                requests[priority_patient[1]]['STATUS'] = 1
+                appointed.append(priority_patient[2])
 
     def fabricatePerson(self, quantity):
         fake = Faker('el_GR')

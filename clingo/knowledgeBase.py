@@ -433,7 +433,7 @@ class KnowledgeBase():
                     kb.add(mergedPred(*v))
         return kb
 
-    def run(self, asp, outPreds=None, searchDuration=None, show=False, limit=False, subKB=None):
+    def run(self, asp, outPreds=None, searchDuration=None, show=False, limit=False, subKB=None, strOut=False):
         # Create a Control object that will unify models against the appropriate
         # predicates. Then load the asp file that encodes the problem domain.
         fname = asp.split('/')[-1]
@@ -465,9 +465,13 @@ class KnowledgeBase():
 
         def on_model(model):
             nonlocal solution
-            solution = [model.optimality_proven,
-                        model.symbols(shown=True), model.cost, model.number]
-            if solution[3] % 500 == 0:
+            if strOut:
+                solution = [model.optimality_proven,
+                            model.symbols(shown=True), model.cost, model.number]
+            else:
+                solution = [model.optimality_proven,
+                            model.facts(atoms=True), model.cost, model.number]
+            if solution[3] % 100 == 0:
                 print(f'MODEL {solution[3]}\nBENEFIT {-solution[2][0]}')
             if datetime.now() > end:
                 Control.interrupt(ctrl)
@@ -492,19 +496,24 @@ class KnowledgeBase():
 
                 print('\nOUTPUT\n')
                 for p in outPreds:
-                    out = list(solution[1].query(p).all())
-                    for o in out:
-                        print(str(o))
+                    if strOut:
+                        print(solution[1])
+                    else:
+                        out = list(solution[1].query(p).all())
+                        for o in out:
+                            print(str(o))
                 print('\nSTATISTICS\n')
                 print(f'Benefit: {benefit}')
                 print(f'Total time: {round(total_time,5)}')
                 print(f'CPU time: {round(cpu_time,5)}')
 
-            # return list(solution.query(outPred).all())
-            for p in outPreds:
-                out = list(solution[1].query(p).all())
-                output[p.__name__] = out
-            return output
+            if strOut:
+                return solution[1]
+            else:
+                for p in outPreds:
+                    out = list(solution[1].query(p).all())
+                    output[p.__name__] = out
+                return output
 
     def clear(self):
         for e in self.schema:
