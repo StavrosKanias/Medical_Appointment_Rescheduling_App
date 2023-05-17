@@ -37,11 +37,14 @@ def main():
     class Claimed(Predicate):
         request = IntegerField
 
+    subKB = {'REQUEST': ['PATIENT_ID',
+                         'TIMESLOT_ID', 'SCORE', 'STATUS']}
+    # Add split data parameter in run. Run seperately for each specialty
+    solutionGrant = kb.run('clingo/reschedulers/simplifiedReschedulerGrant.lp',
+                           [Grant, Claimed], searchDuration=12, show=True, subKB=[subKB, False], strOut=False)
+
     subKB = {'REQUEST': ['ID', 'PATIENT_ID',
                          'TIMESLOT_ID', 'SCORE', 'STATUS']}
-    solutionGrant = kb.run('clingo/reschedulers/simplifiedReschedulerGrant.lp',
-                           [Grant, Claimed], searchDuration=12, show=True, subKB=[subKB, False], strOut=True)
-
     # solutionMergedGrant = kb.run('clingo/reschedulers/reschedulerMergedGrant.lp',
     #                              [Grant, Claimed], searchDuration=12, show=True, subKB=[subKB, True], strOut=False)
     # # solution2 = kb.run('clingo/scheduler.lp',

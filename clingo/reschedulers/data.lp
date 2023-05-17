@@ -1538,14 +1538,16 @@ maxScore(400,99).
 % RULES
 onlyOption(P,T) :- request(P,T,_), 0 {request(P,X,_) : T != X} 0.
 singleRequest(T) :- request(P,T,_), 0 {request(X,T,_) : P != X} 0.
+bestSingleRequest(P,T) :- request(P,T,S), singleRequest(T), 0 {request(P,TX,SX): singleRequest(TX), SX > S, T != TX} 0.
 
 % SET GENERATION
-0 {assign(P, T, S)} 1 :- request(P,T,S), currentSq(P,T), not maxScore(P,S).
+0 {assign(P, T, S)} 1 :- request(P,T,S), currentSq(P,T), not maxScore(P,S), not bestSingleRequest(P,T).
 0 {assign(P, T, S)} 1 :- request(P,T,S), request(X,TX,SX), currentSq(P,TX), T != TX, SX < S.
 0 {assign(P, T, S)} 1 :- request(P,T,S), not currentSq(P,T).
 
 %% FRAME AXIOM
 claimed(P, T) :- currentSq(P,T), maxScore(P,S).
+claimed(P, T) :- request(P,T,S), currentSq(P,T), not maxScore(P,S), bestSingleRequest(P,T).
 
 % INTEGRITY CONSTRAINTS
 %% A timeslot can be appointed only to one 
@@ -1558,8 +1560,11 @@ claimed(P, T) :- currentSq(P,T), maxScore(P,S).
 :- currentSq(P,T), not claimed(P,T), 0 {request(X,_,_) :  assign(X,_,_)} 0.
 %% If a patient has only one option it can't be ignored for the maximization of the common benefit
 :- assign(P1,T,S1), request(P2,T,S2), onlyOption(P2,T), not onlyOption(P1, T), not currentSq(P1,T), S1 < S2, P1 != P2.
-% If a request is the only one claiming a timeslot 
-:- request(P,T,S), singleRequest(T), 0 {request(P,X,SX) : singleRequest(X), SX > S, X != T} 0, 0 {request(P,Y,_): claimed(P,Y), Y != T} 0, not assign(P,T,S).
+% %% Only the best single request can be granted
+:- assign(P,T,_), singleRequest(T), not bestSingleRequest(P,T).
+% %% If a patient wants a timeslot and is the only one to request it, the request will be granted if it is better than the already granted request if it exists.
+:- request(P,T,S), bestSingleRequest(P,T), request(P,TX,SX), currentSq(P,T2), T != TX, S > SX, request(P,TY,_), TY != T, assign(P,TY,_), not assign(P,T,_).
+:- request(P,T,S), bestSingleRequest(P,T), not currentSq(P,T), request(P,TY,_), TY != T, assign(P,TY,_), not assign(P,T,_).
 
 % OPTIMIZATION
 #maximize{ S, T, P : assign(P, T ,S)}.
