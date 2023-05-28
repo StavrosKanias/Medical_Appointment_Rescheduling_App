@@ -8,7 +8,7 @@ from datetime import date, timedelta
 
 
 class DataFabricator():
-    def __init__(self, schema=None, minP=None, maxP=None, minD=None, maxD=None, minS=None, maxS=None, demand=None, tAvailability=None, seed=None):
+    def __init__(self, schema=None, minP=None, maxP=None, minD=None, maxD=None, minS=None, maxS=None, demand=None, tAvailability=None, tSpan=None, seed=None):
         if schema != None:
             self.schema = schema
             self.quantities = {}
@@ -17,9 +17,9 @@ class DataFabricator():
             self.quantities['PATIENT'] = self.quantities['PERSON'] - \
                 self.quantities['DOCTOR']
             self.quantities['SPECIALTY'] = random.randint(minS, maxS)
-            # 8 timeslots per day, per doctor for 5 days a week for 3 months
+            # 8 timeslots per day, per doctor for the given tSpan
             self.quantities['TIMESLOT'] = int(
-                self.quantities['DOCTOR'] * 8 * 5 * 2)
+                self.quantities['DOCTOR'] * 8 * tSpan)
             self.quantities['REQUEST'] = int(
                 demand * self.quantities['TIMESLOT'])
             self.tAvailability = tAvailability
@@ -98,9 +98,9 @@ class DataFabricator():
         for timeslot in timeslot_requests:
             timeslot_requests[timeslot] = sorted(
                 timeslot_requests[timeslot], key=lambda item: item[3])
-            priority_patient = timeslot_requests[timeslot].pop(0)
+            priority_patient = timeslot_requests[timeslot].pop()
             while priority_patient[2] in appointed and len(timeslot_requests[timeslot]):
-                priority_patient = timeslot_requests[timeslot].pop(0)
+                priority_patient = timeslot_requests[timeslot].pop()
             if priority_patient[2] not in appointed:
                 requests[priority_patient[1]]['STATUS'] = 1
                 appointed.append(priority_patient[2])
@@ -313,8 +313,6 @@ class DataFabricator():
         primaries = []
         patients = {}
         current_patient = None
-        # availabilities = self.loadNonForeign(
-        #     'TIMESLOT', 'TIMESLOT_AVAILABLE')
 
         # contains the coresponding column to the referenced enity for each foreign
         foreign_lists = {}
@@ -338,12 +336,9 @@ class DataFabricator():
                     if attribute == 'PATIENT_ID':
                         current_patient = foreign
                     elif attribute == 'TIMESLOT_ID':
-                        # available = availabilities[index]
-                        # while foreign in patients[current_patient] or not available:
                         while foreign in patients[current_patient]:
                             foreign, index = self.chooseForeign(
                                 foreign_lists, attribute, get_index=True)
-                            # available = availabilities[index]
                         patients[current_patient].append(foreign)
                     temp_dict[attribute] = foreign
 

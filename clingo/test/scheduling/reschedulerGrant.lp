@@ -86,6 +86,7 @@ request(7).
 request(8).
 request(9).
 request(10).
+patient_id(1,"21088977183").
 patient_id(2,"21088977184").
 patient_id(3,"21088977188").
 patient_id(4,"21088977184").
@@ -95,6 +96,7 @@ patient_id(7,"21088977185").
 patient_id(8,"21088977186").
 patient_id(9,"21088977188").
 patient_id(10,"21088977187").
+timeslot_id(1,1).
 timeslot_id(2,1).
 timeslot_id(3,1).
 timeslot_id(4,2).
@@ -104,6 +106,7 @@ timeslot_id(7,3).
 timeslot_id(8,3).
 timeslot_id(9,4).
 timeslot_id(10,4).
+preference(1,1).
 preference(2,1).
 preference(3,1).
 preference(4,2).
@@ -113,6 +116,7 @@ preference(7,2).
 preference(8,1).
 preference(9,2).
 preference(10,1).
+score(1,90).
 score(2,87).
 score(3,86).
 score(4,72).
@@ -122,6 +126,7 @@ score(7,45).
 score(8,40).
 score(9,71).
 score(10,70).
+status(1,1).
 status(2,0).
 status(3,0).
 status(4,1).
@@ -134,31 +139,20 @@ status(10,0).
 
 % RULES
 %% OWNERSHIP RULE
-owns(P, T, R) :- request(R), timeslot_id(R, T), patient_id(R, P), status(R, S), S = 1.
-%% BEST CHOICE RULE
-best(P, T) :- request(R), patient_id(R,P), timeslot_id(R,T), score(R,S), not request(X), patient_id(X,P), score(X,SX), X != R,  S < SX.
-%% APPOINTED RULE
-appointed(P) :- request(R), patient_id(R, P), timeslot_id(R, T), owns(R,T).
-%% ONLY OPTION RULE
-onlyOption(R,T) :- request(R), patient_id(R, P), timeslot_id(R,T), not request(X), patient_id(X, P), R != X.
+granted(R) :- status(R, S), S = 1.
+%% WAITING RULE
+best(R) :- request(R), patient_id(R,P), score(R,S), not request(X), patient_id(X,P), score(X,SX), X != R, S < SX.
 % SET CREATION
-0 {assign(P, T, R) : patient(P)} 1 :- timeslot(T), request(R), patient_id(R, P), timeslot_id(R, T), owns(P,_,X), not best(P,X).
-0 {assign(P, T, R) : patient(P)} 1 :- timeslot(T), request(R), patient_id(R, P), timeslot_id(R, T), timeslot(X), not owns(P,X,_).
+0 {grant(R)} 1 :- request(R), granted(R), not best(R).
+0 {grant(R)} 1 :- request(R), not granted(R).
 
 % INTEGRITY CONSTRAINTS
-%% The timeslot and the doctor has to be available
-:- assign(_, T, _), not timeslot_available(T). 
 %% A timeslot can be appointed only to one patient
-:- assign(P1,T,_), assign(P2,T,_), P1 != P2.
+:- grant(R1), timeslot_id(R1, T), grant(R2), timeslot_id(R2, T), R1 != R2.
 %% Only one timeslot can be appointed to a patient
-:- assign(P,T1,_), assign(P,T2,_), T1 != T2.
+:- grant(R1), patient_id(R1, P), grant(R2), patient_id(R2, P), R1 != R2.
 %% A patient cannot receive a timeslot corresponding to a lower request score than the one he or she already owns
-:- owns(P, T1, R1), score(R1, S1), assign(P, T2, R2), score(R2, S2), S1 > S2.
-%% If a person owns his/her best option it should always be assigned to them
-:- not assign(P,T,R), owns(P,T,R), best(P,T).
-%% A person's only option if it has a better score than the rest must be assigned to him/her.
-:- assign(P1,T,R1), score(R1,S1), request(R2), patient_id(R2,P2), score(R2,S2), onlyOption(P2,T), P1 != P2, S1 < S2.
-
+:- granted(R1), patient_id(R1, P), score(R1, S1), grant(R2), patient_id(R2,P), score(R2, S2), R1 != R2, S2 < S1.
 
 % OPTIMIZATION
-#maximize{ S, R, T, P : assign(P, T ,R), score(R, S)}.
+#maximize{ S, R : grant(R), score(R, S)}.

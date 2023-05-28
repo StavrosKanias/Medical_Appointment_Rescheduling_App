@@ -27,7 +27,7 @@ class DataModel():
             if (dbName,) in list_database:
                 print("'{}' Database exist".format(dbName))
                 self.connect()
-                if(self.isEmpty() and schema is not None):
+                if (self.isEmpty() and schema is not None):
                     self.createTables()
             else:
                 print("'{}' Database does not exist.".format(dbName))
@@ -50,7 +50,7 @@ class DataModel():
         query = "SELECT count(*) FROM pg_catalog.pg_tables where schemaname not in ('information_schema', 'pg_catalog')"
         self.cur.execute(query)
         rows = self.cur.fetchall()
-        if(rows[0][0]):
+        if (rows[0][0]):
             return False
         else:
             print('The database has no tables')
@@ -116,7 +116,7 @@ class DataModel():
                             f'Executing querie {subquery}... finished in {sql_time:.5f} sec')
 
             self.con.commit()
-            if(fetch):
+            if (fetch):
                 result = []
                 data = self.cur.fetchall()
                 if len(data):

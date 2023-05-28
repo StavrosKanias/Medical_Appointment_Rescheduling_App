@@ -4,3 +4,7 @@ db/data/*
 db/secondary/*
 # Exclude pycahe
 __pycache__/*
+# Exclude tests
+kr23.docx
+# Exclude vscode settings
+.vscode/*
