@@ -4,7 +4,9 @@ db/data/*
 db/secondary/*
 # Exclude pycahe
 __pycache__/*
-# Exclude tests
+# Exclude the docx files
 kr23.docx
+~$kr23.docx
+~WRL4051.tmp
 # Exclude vscode settings
 .vscode/*
