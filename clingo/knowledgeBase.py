@@ -336,13 +336,12 @@ class KnowledgeBase():
         for p in primaries:
             for v in values:
                 if self.isPrimary(entity, v):
-                    # Select needed for every attribute to change the primary key everywhere
-                    # The primary has to change first therefore two loops are needed
                     data = self.select(
-                        entity, {primary: [('=', p)]}, order=primary)[0]
+                        entity, {primary: [('=', p)]})[0]
                     data[0] = values[v]
-                    self.delete(entity, {primary: [('=', p)]}, fromDb=False)
-                    self.insert(entity, list(self.schema[entity.upper()]), [
+                    self.delete(
+                        entity, {primary: [('=', p)]}, fromDb=False)
+                    self.insert(entity, list(self.schema[entity]), [
                                 data], toDb=False)
                 elif self.schema[entity.upper()][v.upper()][0] == 'boolean':
                     if values[v]:

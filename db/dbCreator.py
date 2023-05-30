@@ -122,10 +122,10 @@ def main():
         # demand = float(input(" Demand (load factor): \n"))
         # timeslot_availability = float(input(" Timeslot availability: \n"))
 
-        minimum_people = 1200
-        maximum_people = 1200
-        minimum_doctors = 12
-        maximum_doctors = 12
+        minimum_people = 500
+        maximum_people = 500
+        minimum_doctors = 5
+        maximum_doctors = 5
         minimum_specialites = 10
         maximum_specialites = 15
         demand = 2.5

@@ -2,14 +2,14 @@
 %% GRANTED RULE
 granted(R) :- request(R,P,T,S,ST), ST = 1.
 %% APPOINTED RULE
-appointed(P) :- request(R,P,T,S,ST), granted(R).
+appointed(P) :- request(R,P,_,_,_), granted(R).
 %% BEST RULE
-best(R) :- request(R,P,T,S,ST), 0 {request(X,P,_,SX,_) : S < SX, R != X} 0.
+best(R) :- request(R,P,_,S,_), 0 {request(X,P,_,SX,_) : S < SX, R != X} 0.
 %% ONLY OPTION RULE
-onlyOption(R) :- request(R,P,T,S,ST), 0 {request(X,P,_,_,_) :  R != X} 0.
+onlyOption(R) :- request(R,P,_,_,_), 0 {request(X,P,_,_,_) :  R != X} 0.
 %% SINGLE REQUEST RULES
-singleRequest(R) :- request(R,P,T,S,ST), 0 {request(X,_,T,_,_) :  R != X} 0.
-bestSingleRequest(R) :- request(R,P,T,S,ST), singleRequest(R), 0 {request(X,P,_,SX,_): singleRequest(X), SX > S, R != X} 0.
+singleRequest(R) :- request(R,_,T,_,_), 0 {request(X,_,T,_,_) :  R != X} 0.
+bestSingleRequest(R) :- request(R,P,_,S,_), singleRequest(R), 0 {request(X,P,_,SX,_): singleRequest(X), SX > S, R != X} 0.
 
 % SET CREATION
 0 {grant(R,S)} 1 :- request(R,P,T,S,ST), granted(R), not best(R), not bestSingleRequest(R).
