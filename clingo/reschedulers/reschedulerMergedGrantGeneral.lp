@@ -25,7 +25,7 @@ claimed(R) :- granted(R), not best(R), bestSingleRequest(R).
 %% A timeslot can be appointed only to one patient
 :- request(R,P,T,S,ST), grant(R,_), request(X,_,T,_,_), grant(X,_), R != X.
 %% Only one timeslot can be appointed to a patient
-:- request(R,P,T,S,ST), grant(R,_), request(X,P,TX,_,_), grant(X,_), R != X.
+:- request(R,P,T,S,ST), grant(R,_), timeslot(T,D), doctor(D,S), request(X,P,TX,_,_), grant(X,_), timeslot(TX,DX), doctor(DX,SX), S = SX, R != X.
 % %% If a request is claimed all the other requests for the corresponding timeslot can't be granted
 :- request(R,P,T,S,ST), grant(R,_), request(X,_,T,_,_), claimed(X), R != X.
 % %% If a request has a lower score than someone's only option it won't be considered in the optimizatioin process

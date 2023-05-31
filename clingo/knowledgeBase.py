@@ -378,6 +378,8 @@ class KnowledgeBase():
                     apred = self.predicates[a.upper()]
                     cpred = getattr(apred, entity.lower()+'Id')
                 self.kb.query(apred).where(cpred == p).delete()
+                if len(self.schema[entity][a]) == 4:
+                    pass
         # Delete from db
         if fromDb:
             self.db.delete(entity.upper(), conditions)
