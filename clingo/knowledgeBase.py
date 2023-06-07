@@ -388,7 +388,6 @@ class KnowledgeBase():
                 if len(fattributes):
                     foreignPrims[a] = {}
                     for f in fattributes:
-                        print(f)
                         fe = f[0]
                         foreignPrims[a][fe] = []
                         fa = f[1]
@@ -398,25 +397,21 @@ class KnowledgeBase():
                             fe, conditions={fa: [('=', fv[0][0])]})
                         if len(fp):
                             foreignPrims[a][fe].extend(fp)
+                if self.isPrimary(entity, a):
+                    apred = self.predicates[entity.upper()]
+                    cpred = getattr(apred, primary.lower())
                 else:
-                    if self.isPrimary(entity, a):
-                        apred = self.predicates[entity.upper()]
-                        cpred = getattr(apred, primary.lower())
-                    else:
-                        apred = self.predicates[a.upper()]
-                        cpred = getattr(apred, entity.lower()+'Id')
-                    self.kb.query(apred).where(cpred == p).delete()
+                    apred = self.predicates[a.upper()]
+                    cpred = getattr(apred, entity.lower()+'Id')
+                self.kb.query(apred).where(cpred == p).delete()
         if cascade:
-            print(foreignPrims)
             # if cascade delete the foreign records
             for a in foreignPrims:
-                print(a)
                 for e in foreignPrims[a]:
-                    print(e, foreignPrims)
                     for p in foreignPrims[a][e]:
-                        print(p)
+                        fprim = self.getPrimary(e)
                         self.delete(e, conditions={
-                                    'ID': [('=', p)]}, fromDb=False)
+                                    fprim: [('=', p)]}, fromDb=False)
         # Delete from db
         if fromDb:
             self.db.delete(entity.upper(), conditions)
@@ -427,14 +422,14 @@ class KnowledgeBase():
         f = open(filename, "w")
         if merged:
             if entities:
-                subKb = self.extract(entities, merge=True)
+                subKb = self.extract(entities, merged=True)
                 content = FactBase.asp_str(subKb)
             else:
-                mergedKb = self.extract(list(self.schema), merge=True)
+                mergedKb = self.extract(list(self.schema), merged=True)
                 content = FactBase.asp_str(mergedKb)
         else:
             if entities:
-                subKb = self.extract(entities, merge=False)
+                subKb = self.extract(entities, merged=False)
                 content = FactBase.asp_str(subKb)
             else:
                 content = FactBase.asp_str(self.kb)
@@ -442,11 +437,11 @@ class KnowledgeBase():
         f.close()
 
     # Add conditions
-    def extract(self, predicates, merge=False):
+    def extract(self, predicates, merged=False):
         kb = FactBase()
         for e in predicates:
             content = {}
-            if merge:
+            if merged:
                 data = []
             for p in predicates[e]:
                 t = self.schema[e][p][0]
@@ -456,13 +451,13 @@ class KnowledgeBase():
                     apred = self.predicates[e.upper()]
                 else:
                     apred = self.predicates[p.upper()]
-                if merge:
+                if merged:
                     vpred = getattr(apred, p.lower())
                     data.append(list(self.kb.query(apred).select(vpred).all()))
                 else:
                     data = self.kb.query(apred).all()
                     kb.add(data)
-            if merge:
+            if merged:
                 mergedPred = type(e, (Predicate, ), content)
                 for i in range(len(data[0])):
                     v = []
@@ -471,7 +466,7 @@ class KnowledgeBase():
                     kb.add(mergedPred(*v))
         return kb
 
-    def run(self, asp, outPreds=None, searchDuration=None, show=False, limit=False, subKB=None, strOut=False):
+    def run(self, asp, outPreds=None, searchDuration=None, show=False, limit=False, subKB=None, subKBCond=None, merged=False, strOut=False):
         # Create a Control object that will unify models against the appropriate
         # predicates. Then load the asp file that encodes the problem domain.
         fname = asp.split('/')[-1]
@@ -489,9 +484,10 @@ class KnowledgeBase():
 
         # Add the instance data and ground the ASP program
         if subKB:
-            kb = self.extract(subKB[0], merge=subKB[1])
+            kb = self.extract(subKB, merged=merged)
             ctrl.add_facts(kb)
-            self.toFile('clingo/sub_', entities=subKB[0], merged=subKB[1])
+            self.toFile('clingo/sub_',
+                        entities=subKB, merged=merged)
         else:
             ctrl.add_facts(self.kb)
         ctrl.ground([("base", [])])
