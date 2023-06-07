@@ -11,6 +11,7 @@ class DataFabricator():
     def __init__(self, schema=None, minP=None, maxP=None, minD=None, maxD=None, minS=None, maxS=None, demand=None, tAvailability=None, tSpan=None, seed=None):
         if schema != None:
             self.schema = schema
+            self.tSpan = tSpan
             self.quantities = {}
             self.quantities['PERSON'] = random.randint(minP, maxP)
             self.quantities['DOCTOR'] = random.randint(minD, maxD)
@@ -241,10 +242,14 @@ class DataFabricator():
         list_of_dicts = []
         primaries = []
         start_date = date.today()
-        final_date = start_date + timedelta(days=90)
+        tSpan = self.tSpan
+        for i in range(self.tSpan):
+            if (start_date + timedelta(days=i+1)).weekday() in [5, 6]:
+                tSpan += 1
+        final_date = start_date + timedelta(days=tSpan)
         current_date = start_date
         appointment_times = ['09:00:00', '10:00:00', '11:00:00', '12:00:00',
-                             '13:00:00', '14:00:00', '15:00:00', '16:00:00', '17:00:00']
+                             '13:00:00', '14:00:00', '15:00:00', '16:00:00']
         available_appointments = appointment_times[:]
         doctor_finished = True
         current_appointment = None
@@ -257,6 +262,7 @@ class DataFabricator():
                 current_appointment = available_appointments.pop(0)
             else:
                 available_appointments = appointment_times[:]
+                current_appointment = available_appointments.pop(0)
                 if (current_date + timedelta(days=1)).weekday() not in [5, 6]:
                     current_date = current_date + timedelta(days=1)
                 else:
@@ -265,9 +271,6 @@ class DataFabricator():
             if current_date > final_date:
                 doctor_finished = True
                 current_date = start_date
-
-            if not (i % 1000):
-                print(i)
             temp_dict = {}
             for attribute in entity_diction.keys():
                 type = entity_diction[attribute][0]
@@ -281,7 +284,6 @@ class DataFabricator():
                         foreign = self.chooseForeign(
                             foreign_lists, attribute, remove=True)
                         doctor_finished = False
-
                     temp_dict[attribute] = foreign
 
                 elif len(entity_diction[attribute]) < 4:

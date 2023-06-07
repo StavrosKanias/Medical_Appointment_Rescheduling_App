@@ -315,6 +315,7 @@ class KnowledgeBase():
                     apred = self.predicates[a.upper()]
                     cpred = getattr(apred, entity.lower()+'Id')
                     vpred = getattr(apred, a.lower())
+                    print(vpred)
                     query = self.kb.query(apred).where(
                         cpred == p).select(vpred)
                     record.append(list(query.all())[0])
@@ -363,23 +364,59 @@ class KnowledgeBase():
             self.db.update(entity.upper(), conditions, values)
         return True
 
+    def getIncomingForeigns(self, entity, attribue):
+        schema = self.schema.copy()
+        schema.pop(entity)
+        inForeigns = []
+        for e in schema:
+            for a in self.schema[e]:
+                if len(self.schema[e.upper()][a]) == 4 and self.schema[e.upper()][a][2] == entity.upper() and self.schema[e.upper()][a][3] == attribue.upper():
+                    inForeigns.append((e, a))
+        return inForeigns
     # Delete from kb and db
-    def delete(self, entity, conditions=None, fromDb=True):
+
+    def delete(self, entity, conditions=None, fromDb=True, cascade=False):
         # Delete from kb
         primary = self.getPrimary(entity)
         primaries = self.getMatchingPrimaries(entity, conditions=conditions)
         attributes = list(self.schema[entity.upper()])
+        foreignPrims = {}
         for p in primaries:
             for a in attributes:
-                if self.isPrimary(entity, a):
-                    apred = self.predicates[entity.upper()]
-                    cpred = getattr(apred, primary.lower())
+                # If foreign get all matching foreign records
+                fattributes = self.getIncomingForeigns(entity, a)
+                if len(fattributes):
+                    foreignPrims[a] = {}
+                    for f in fattributes:
+                        print(f)
+                        fe = f[0]
+                        foreignPrims[a][fe] = []
+                        fa = f[1]
+                        fv = self.select(entity, conditions={
+                            'ID': [('=', p)]}, attributes=[a])
+                        fp = self.getMatchingPrimaries(
+                            fe, conditions={fa: [('=', fv[0][0])]})
+                        if len(fp):
+                            foreignPrims[a][fe].extend(fp)
                 else:
-                    apred = self.predicates[a.upper()]
-                    cpred = getattr(apred, entity.lower()+'Id')
-                self.kb.query(apred).where(cpred == p).delete()
-                if len(self.schema[entity][a]) == 4:
-                    pass
+                    if self.isPrimary(entity, a):
+                        apred = self.predicates[entity.upper()]
+                        cpred = getattr(apred, primary.lower())
+                    else:
+                        apred = self.predicates[a.upper()]
+                        cpred = getattr(apred, entity.lower()+'Id')
+                    self.kb.query(apred).where(cpred == p).delete()
+        if cascade:
+            print(foreignPrims)
+            # if cascade delete the foreign records
+            for a in foreignPrims:
+                print(a)
+                for e in foreignPrims[a]:
+                    print(e, foreignPrims)
+                    for p in foreignPrims[a][e]:
+                        print(p)
+                        self.delete(e, conditions={
+                                    'ID': [('=', p)]}, fromDb=False)
         # Delete from db
         if fromDb:
             self.db.delete(entity.upper(), conditions)
