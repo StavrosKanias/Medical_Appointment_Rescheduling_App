@@ -8,13 +8,15 @@ from dbCreator import schema
 
 def main():
 
+    # dbConditions = {'SPECIALTY': {
+    #     "TITLE": ['text', [('=', 'Anesthesiology')]]}}
     dbConditions = {'TIMESLOT': {
         "DATE": ['date', [('>', '+0')]], "TIMESLOT_AVAILABLE": ['boolean', [('=', True)]]}}
     db_info = ['kanon2000', 'nhs', 'kanon2000']
     kb = KnowledgeBase('NHS_APPOINTMENTS', schema,
                        dbInfo=db_info, dbConditions=dbConditions)
-    kb.delete('DOCTOR', conditions={
-        "ID": [('=', '20017620376')]}, cascade=True, fromDb=False)
+    # kb.delete('DOCTOR', conditions={
+    #     "ID": [('=', '20017620376')]}, cascade=True, fromDb=False)
     kb.toFile('clingo/')
 
     class Claimed(Predicate):
@@ -28,7 +30,7 @@ def main():
 
         subKB = {'REQUEST': ['ID', 'PATIENT_ID',
                              'TIMESLOT_ID', 'SCORE', 'STATUS'], 'TIMESLOT': ['ID', 'DOCTOR_ID'], 'DOCTOR': ['ID', 'SPECIALTY_TITLE']}
-        solution = kb.run('clingo/reschedulers/reschedulerMergedGrant.lp',
+        solution = kb.run('clingo/reschedulers/reschedulerMergedGrantGeneral.lp',
                           [Grant, Claimed], searchDuration=12, show=True, subKB=subKB, merged=True, strOut=False)
 
     else:
@@ -37,7 +39,7 @@ def main():
 
         subKB = {'REQUEST': ['PATIENT_ID',
                              'TIMESLOT_ID', 'SCORE', 'STATUS'], 'TIMESLOT': ['DOCTOR_ID'], 'DOCTOR': ['SPECIALTY_TITLE']}
-        solution = kb.run('clingo/reschedulers/reschedulerGrant.lp',
+        solution = kb.run('clingo/reschedulers/reschedulerGrantGeneral.lp',
                           [Grant, Claimed], searchDuration=12, show=True, subKB=subKB,  merged=False, strOut=False)
     update = {}
     granted = {x.request: 1 for x in solution['Grant']}
@@ -55,7 +57,7 @@ def main():
                   ('=', u)]}, values={'STATUS': update[u]}, toDb=False)
 
 
-# TODO: Create tests per specialty per doctor and general (add conditions to extract)
+# TODO: Create tests per specialty per doctor and general groupings propagate db conditions with joins
 
 
 if __name__ == "__main__":

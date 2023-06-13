@@ -172,6 +172,7 @@ class KnowledgeBase():
                 if len(attrlst) == 4:
                     jlst.append((a, attrlst[2], attrlst[3]))
             joins[e] = jlst
+        print(joins)
         return joins
 
         # Translate db data to clingo predicates
@@ -298,7 +299,7 @@ class KnowledgeBase():
             allPrims = set(self.kb.query(entPred).select(primPred).all())
             return allPrims ^ true
 
-    # Select from kb (Can be extended to use joins and grouping)
+    # Select from kb
     def select(self, entity, conditions=None, attributes=None, order=None):
         data = []
         primaries = self.getMatchingPrimaries(entity, conditions=conditions)

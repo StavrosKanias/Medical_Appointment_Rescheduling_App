@@ -246,7 +246,7 @@ class DataFabricator():
         for i in range(self.tSpan):
             if (start_date + timedelta(days=i+1)).weekday() in [5, 6]:
                 tSpan += 1
-        final_date = start_date + timedelta(days=tSpan)
+        final_date = start_date + timedelta(days=tSpan+1)
         current_date = start_date
         appointment_times = ['09:00:00', '10:00:00', '11:00:00', '12:00:00',
                              '13:00:00', '14:00:00', '15:00:00', '16:00:00']
