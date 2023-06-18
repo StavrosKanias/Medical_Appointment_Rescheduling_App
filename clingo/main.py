@@ -8,10 +8,10 @@ from dbCreator import schema
 
 def main():
 
-    # dbConditions = {'SPECIALTY': {
-    #     "TITLE": ['text', [('=', 'Anesthesiology')]]}}
-    dbConditions = {'TIMESLOT': {
-        "DATE": ['date', [('>', '+0')]], "TIMESLOT_AVAILABLE": ['boolean', [('=', True)]]}}
+    dbConditions = {'SPECIALTY': {
+        "TITLE": ['text', [('=', 'Preventive_medicine')]]}}
+    # dbConditions = {'TIMESLOT': {
+    #     "DATE": ['date', [('>', '+0')]], "TIMESLOT_AVAILABLE": ['boolean', [('=', True)]]}}
     db_info = ['kanon2000', 'nhs', 'kanon2000']
     kb = KnowledgeBase('NHS_APPOINTMENTS', schema,
                        dbInfo=db_info, dbConditions=dbConditions)

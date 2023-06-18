@@ -164,14 +164,23 @@ class KnowledgeBase():
         return conditions
 
     def getJoins(self, schema):
-        joins = {}
+        inForeigns = {e: {} for e in self.schema}
+        ijoins = {e: {a: [] for a in self.schema[e]} for e in self.schema}
+        joins = {e: [] for e in self.schema}
         for e in self.schema:
-            jlst = []
             for a in self.schema[e]:
-                attrlst = self.schema[e][a]
-                if len(attrlst) == 4:
-                    jlst.append((a, attrlst[2], attrlst[3]))
-            joins[e] = jlst
+                inForeigns[e][a] = self.getInwardForeigns(e, a)
+                for i in inForeigns[e][a]:
+                    ijoins[i[0]][i[1]].append((e, a))
+
+        for i in ijoins:
+            for a in ijoins[i]:
+                for f in ijoins[i][a]:
+                    # outForeigns = self.getOutwardForeigns(f[0])
+                    # print(i, a, f, outForeigns)
+                    joins[i].append((i, a, f[0], f[1]))
+                    # joins[i].extend(outForeigns)
+                    joins[i].extend(joins[f[0]])
         print(joins)
         return joins
 
@@ -183,8 +192,9 @@ class KnowledgeBase():
             joins = self.joins[e]
             conditions = {}
             for j in joins:
-                if j[1] in self.conditions:
-                    conditions.update(self.getConditions(j[1]))
+                print(j)
+                if j[2] in self.conditions:
+                    conditions.update(self.getConditions(j[2]))
             if e in self.conditions:
                 conditions.update(self.getConditions(e))
             if conditions:
@@ -365,7 +375,7 @@ class KnowledgeBase():
             self.db.update(entity.upper(), conditions, values)
         return True
 
-    def getIncomingForeigns(self, entity, attribue):
+    def getInwardForeigns(self, entity, attribue):
         schema = self.schema.copy()
         schema.pop(entity)
         inForeigns = []
@@ -374,8 +384,16 @@ class KnowledgeBase():
                 if len(self.schema[e.upper()][a]) == 4 and self.schema[e.upper()][a][2] == entity.upper() and self.schema[e.upper()][a][3] == attribue.upper():
                     inForeigns.append((e, a))
         return inForeigns
-    # Delete from kb and db
 
+    def getOutwardForeigns(self, entity):
+        outForeigns = []
+        for a in self.schema[entity]:
+            if len(self.schema[entity.upper()][a]) == 4:
+                f = self.schema[entity.upper()][a]
+                outForeigns.append((entity, a, f[2], f[3]))
+        return outForeigns
+
+    # Delete from kb and db
     def delete(self, entity, conditions=None, fromDb=True, cascade=False):
         # Delete from kb
         primary = self.getPrimary(entity)
@@ -385,7 +403,7 @@ class KnowledgeBase():
         for p in primaries:
             for a in attributes:
                 # If foreign get all matching foreign records
-                fattributes = self.getIncomingForeigns(entity, a)
+                fattributes = self.getInwardForeigns(entity, a)
                 if len(fattributes):
                     foreignPrims[a] = {}
                     for f in fattributes:

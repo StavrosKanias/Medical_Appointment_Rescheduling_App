@@ -174,6 +174,7 @@ class DataModel():
             return False
 
     def select(self, table, attributes=None, conditions=None, joins=None):
+        print(joins)
         try:
             query = f"\nSELECT "
             if attributes:
@@ -192,18 +193,21 @@ class DataModel():
 
             if joins:
                 for j in joins:
-                    tableAttribute = j[0]
-                    foreignEntity = j[1]
-                    joinAttribute = j[2]
-                    query += f"JOIN {foreignEntity} ON {table}.{tableAttribute} = {foreignEntity}.{joinAttribute}\n"
+                    sEntity = j[0]
+                    sAttribute = j[1]
+                    tEntity = j[2]
+                    tAttribute = j[3]
+                    query += f"JOIN {tEntity} ON {sEntity}.{sAttribute} = {tEntity}.{tAttribute}\n"
 
             if conditions:
                 condstr = self.conditions(conditions, ' and ')
                 query += f"""WHERE({condstr}); \n"""
                 values = self.values(conditions)
+                print(query)
                 data = self.executeSQL(
                     query, values=values, fetch=True)
             else:
+                print(query)
                 data = self.executeSQL(query, fetch=True)
             return data
 
