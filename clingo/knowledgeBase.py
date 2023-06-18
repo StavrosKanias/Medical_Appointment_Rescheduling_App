@@ -14,17 +14,18 @@ class KnowledgeBase():
     def __init__(self, name, schema, dbInfo=None, dbConditions=None, data=None):
         self.name = name
         self.schema = schema
-        self.joins = self.getJoins(schema)
         self.kb = FactBase()
         self.TYPE2FIELD = {'integer': IntegerField,
                            'text': StringField, 'date': DateField, 'time': TimeField}
         self.predicates = self.createPredicates(schema)
+        self.joins = {}
         if dbInfo:
             self.bindToDb(dbInfo)
             if dbConditions:
                 self.conditions = dbConditions
             else:
                 self.conditions = {}
+            self.joins = self.getJoins()
             self.db2kb()
 
         elif data:
@@ -163,7 +164,7 @@ class KnowledgeBase():
                     conditions[f'{entity}.{attribute}'].append(condition)
         return conditions
 
-    def getJoins(self, schema):
+    def getJoins(self):
         inForeigns = {e: {} for e in self.schema}
         ijoins = {e: {a: [] for a in self.schema[e]} for e in self.schema}
         joins = {e: [] for e in self.schema}
@@ -176,23 +177,34 @@ class KnowledgeBase():
         for i in ijoins:
             for a in ijoins[i]:
                 for f in ijoins[i][a]:
-                    # outForeigns = self.getOutwardForeigns(f[0])
-                    # print(i, a, f, outForeigns)
-                    joins[i].append((i, a, f[0], f[1]))
-                    # joins[i].extend(outForeigns)
-                    joins[i].extend(joins[f[0]])
+                    jlst = [(i, a, f[0], f[1])]
+                    jlst.extend(joins[f[0]])
+                    for cj in joins[i]:
+                        for nj in jlst:
+                            if cj[2] == nj[2]:
+                                print('AAAAAAAA')
+                                if cj[2] in self.conditions and nj[2] not in self.conditions:
+                                    jlst.remove(nj)
+                                elif cj[2] not in self.conditions and nj[2] in self.conditions:
+                                    joins[i].remove(cj)
+                                elif cj[2] in self.conditions and nj[2] in self.conditions:
+                                    print(
+                                        f'Unable to use db conditions due to cyclical dependency of entity {cj[2]}')
+                                else:
+                                    jlst.remove(nj)
+                                    joins[i].remove(cj)
+
+                    joins[i].extend(jlst)
         print(joins)
         return joins
 
-        # Translate db data to clingo predicates
-
+    # Translate db data to clingo predicates
     def db2kb(self):
         for e in self.schema:
             attributes = list(self.schema[e])
             joins = self.joins[e]
             conditions = {}
             for j in joins:
-                print(j)
                 if j[2] in self.conditions:
                     conditions.update(self.getConditions(j[2]))
             if e in self.conditions:
