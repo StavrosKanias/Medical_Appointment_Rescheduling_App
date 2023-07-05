@@ -174,7 +174,6 @@ class DataModel():
             return False
 
     def select(self, table, attributes=None, conditions=None, joins=None):
-        print(joins)
         try:
             query = f"\nSELECT "
             if attributes:
@@ -203,11 +202,9 @@ class DataModel():
                 condstr = self.conditions(conditions, ' and ')
                 query += f"""WHERE({condstr}); \n"""
                 values = self.values(conditions)
-                print(query)
                 data = self.executeSQL(
                     query, values=values, fetch=True)
             else:
-                print(query)
                 data = self.executeSQL(query, fetch=True)
             return data
 

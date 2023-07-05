@@ -17,7 +17,10 @@ class KnowledgeBase():
         self.kb = FactBase()
         self.TYPE2FIELD = {'integer': IntegerField,
                            'text': StringField, 'date': DateField, 'time': TimeField}
-        self.predicates = self.createPredicates(schema)
+        self.splitPreds = self.createSplitPreds(schema)
+        for sp in self.splitPreds:
+            print(sp, [attr for attr in dir(self.splitPreds[sp]) if callable(
+                getattr(self.splitPreds[sp], attr)) and not (attr.startswith("__") or attr.startswith("_")) and attr not in ['Field', 'clone', 'sign']])
         self.joins = {}
         if dbInfo:
             self.bindToDb(dbInfo)
@@ -34,7 +37,7 @@ class KnowledgeBase():
                 d = data[entity]
                 self.insert(entity, attributes, d, toDb=False)
 
-    def createPredicate(self, attribute, t, primary):
+    def createSplitPred(self, attribute, t, primary):
         if t == 'boolean':
             content = primary.copy()
             predicateName = self.getPredicateName(attribute)
@@ -49,14 +52,14 @@ class KnowledgeBase():
                              (Predicate, ), content)
         return predicate
 
-    def createPredicates(self, schema):
+    def createSplitPreds(self, schema):
         predicates = {}
         for e in schema:
             predicates[e] = {}
             attributes = schema[e].copy()
             primary = self.createPrimaryPredicate(e, attributes,  predicates)
             for a in attributes:
-                predicates[a] = self.createPredicate(
+                predicates[a] = self.createSplitPred(
                     a, attributes[a][0], primary)
         return predicates
 
@@ -182,7 +185,6 @@ class KnowledgeBase():
                     for cj in joins[i]:
                         for nj in jlst:
                             if cj[2] == nj[2]:
-                                print('AAAAAAAA')
                                 if cj[2] in self.conditions and nj[2] not in self.conditions:
                                     jlst.remove(nj)
                                 elif cj[2] not in self.conditions and nj[2] in self.conditions:
@@ -321,35 +323,93 @@ class KnowledgeBase():
             allPrims = set(self.kb.query(entPred).select(primPred).all())
             return allPrims ^ true
 
-    # Select from kb
-    def select(self, entity, conditions=None, attributes=None, order=None):
-        data = []
-        primaries = self.getMatchingPrimaries(entity, conditions=conditions)
+    def getForeign(self, e1, e2):
+        es = None
+        ed = None
+        for j in self.joins[e1]:
+            if e2 == j[2]:
+                es = e1
+                fs = j[1]
+                ed = e2
+                fd = j[3]
+        if not es and not ed:
+            for j in self.joins[e2]:
+                if e1 == j[2]:
+                    es = e2
+                    fs = j[1]
+                    ed = e1
+                    fd = j[3]
+        elif not es and not ed:
+            print(
+                f'Unable to join the entities {e1} and {e2}. No foreign key found.')
+        return (es, fs, ed, fd)
+
+    def joinData(self, data, attributes=None):
+        jattr = [a for l in attributes.values() for a in l]
+        print(jattr)
+        jdata = [d for d in data[list(data.keys())[0]]]
+        for e1 in data:
+            for e2 in data:
+                if e1 != e2:
+                    # # Get foreign key
+                    f = self.getForeign(e1, e2)
+                    s = f[0]
+                    sf = f[1]
+                    d = f[2]
+                    df = f[3]
+                # Find the index of the foreign in the data for both source and destination
+                    if attributes:
+                        fsi = attributes[s].index(sf)
+                        fdi = attributes[d].index(df)
+                    else:
+                        fsi = list(self.schema[s].keys()).index(sf)
+                        fdi = list(self.schema[d].keys()).index(df)
+                # Hash the destination data according to the foreign
+                destData = [d[fdi] for d in data[d]]
+                # Join by appending destination data to source data if the foreigns match
+                for d in data[s]:
+                    if d[fsi] not in destData:
+                        pass
+                print(destData)
+        return data
+
+    # Select from kb (break into two selects one with join and one without) also delete the data csvs in dataModel
+    def select(self, entities, conditions=None, attributes=None, order=None):
+        data = {e: [] for e in entities}
+        primaries = {e: [] for e in entities}
+        for e in entities:
+            if e in conditions:
+                primaries[e].extend(self.getMatchingPrimaries(
+                    e, conditions=conditions[e]))
+            else:
+                primaries[e].extend(self.getMatchingPrimaries(e))
         if not attributes:
-            attributes = list(self.schema[entity.upper()])
-        for p in primaries:
-            record = []
-            for a in attributes:
-                if self.isPrimary(entity, a):
-                    record.append(p)
-                elif self.schema[entity.upper()][a.upper()][0] == 'boolean':
-                    record.append(True)
-                else:
-                    apred = self.predicates[a.upper()]
-                    cpred = getattr(apred, entity.lower()+'Id')
-                    vpred = getattr(apred, a.lower())
-                    print(vpred)
-                    query = self.kb.query(apred).where(
-                        cpred == p).select(vpred)
-                    record.append(list(query.all())[0])
-            data.append(record)
-            if order:
-                if order not in attributes:
-                    print(
-                        f"Unable to order by the attribute {order} since it doesn't appear in the attribute list.")
-                else:
-                    index = attributes.index(order)
-                    data = sorted(data, key=lambda item: item[index])
+            attributes = {e: list(self.schema[e.upper()]) for e in entities}
+        for e in entities:
+            for p in primaries[e]:
+                record = []
+                for a in attributes[e]:
+                    if self.isPrimary(e, a):
+                        record.append(p)
+                    elif self.schema[e.upper()][a.upper()][0] == 'boolean':
+                        record.append(True)
+                    else:
+                        apred = self.predicates[a.upper()]
+                        cpred = getattr(apred, e.lower()+'Id')
+                        vpred = getattr(apred, a.lower())
+                        query = self.kb.query(apred).where(
+                            cpred == p).select(vpred)
+                        record.append(list(query.all())[0])
+                data[e].append(record)
+        joinedData = self.joinData(data, attributes=attributes)
+        # print(joinedData)
+        # if order:
+        #     if order not in attributes:
+        #         print(
+        #             f"Unable to order by the attribute {order} since it doesn't appear in the attribute list.")
+        #     else:
+        #         index = attributes.index(order)
+        #         data = sorted(data, key=lambda item: item[index])
         return data
 
     # Update to kb and db
@@ -496,6 +556,27 @@ class KnowledgeBase():
                         v.append(d[i])
                     kb.add(mergedPred(*v))
         return kb
+
+    def split(self, mergedPred):
+        entity = type(mergedPred).__name__.upper()
+        attributes = list(self.schema[entity])
+        data = [getattr(mergedPred, attr) for attr in dir(mergedPred) if not callable(
+            getattr(mergedPred, attr)) and not attr.startswith("__")]
+        for a in attributes:
+            if self.isPrimary(entity, a):
+                p = self.splitPreds[entity.upper()]
+            else:
+                p = self.splitPreds[a]
+            for d in data:
+                if self.schema[entity.upper()][a.upper()][0] != 'boolean' or self.schema[entity.upper()][a.upper()][0] == 'boolean' and d[attributes.index(a)]:
+                    pv = self.getPrimaryData(entity, attributes, d)
+                    v = pv.copy()
+                    if not self.isPrimary(entity, a) and not self.schema[entity.upper()][a.upper()][0] == 'boolean':
+                        v.append(d[attributes.index(a)])
+        return p(*v)
+
+    def merge(self, predicate):
+        pass
 
     def run(self, asp, outPreds=None, searchDuration=None, show=False, limit=False, subKB=None, subKBCond=None, merged=False, strOut=False):
         # Create a Control object that will unify models against the appropriate
