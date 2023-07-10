@@ -29,6 +29,7 @@ class KnowledgeBase():
             else:
                 self.conditions = {}
             self.joins = self.getJoins()
+            self.getForeignPath('DOCTOR', 'REQUEST')
             self.db2kb()
 
         elif data:
@@ -51,24 +52,27 @@ class KnowledgeBase():
             predicates[e] = {}
             attributes = self.schema[e].copy()
             primary = self.createPrimaryPredicate(e, attributes,  predicates)
+            print(primary)
             for a in attributes:
-                predicates[a] = self.createSplitPred(
-                    a, attributes[a][0], primary)
+                predicates[a] = self.createSplitPred(a,
+                                                     {a: attributes[a][0]}, primary=primary)
         return predicates
 
-    def createSplitPred(self, attribute, t, primary):
-        if t == 'boolean':
+    def createSplitPred(self, name, attributes, primary=None):
+        predicateName = self.getSplitPredName(name)
+        if primary:
             content = primary.copy()
-            predicateName = self.getSplitPredName(attribute)
+        else:
+            content = {}
+
+        for a in attributes:
+            field = self.TYPE2FIELD[attributes[a]]
+            content[a.lower()] = field
+        if len(list(content)):
             predicate = type(predicateName,
                              (Predicate, ), content)
         else:
-            field = self.TYPE2FIELD[t]
-            content = primary.copy()
-            content[attribute.lower()] = field
-            predicateName = self.getSplitPredName(attribute)
-            predicate = type(predicateName,
-                             (Predicate, ), content)
+            print('Unable to create empty predicate')
         return predicate
 
     def createMergedPreds(self):
@@ -79,9 +83,10 @@ class KnowledgeBase():
             predicates[e] = self.createMergedPred(e)
         return predicates
 
-    def createMergedPred(self, entity):
-        attributes = list(self.schema[entity])
-        content = {a.lower(): self.TYPE2FIELD[self.schema[entity][a][0]]
+    def createMergedPred(self, entity, attributes=None):
+        if not attributes:
+            attributes = list(self.schema[entity])
+        content = {a.lower(): self.TYPE2FIELD[self.schema[entity.upper()][a.upper()][0]]
                    for a in attributes}
         predicateName = entity[0].upper() + entity[1:].lower()
         predicate = type(predicateName,
@@ -228,7 +233,6 @@ class KnowledgeBase():
         for e in self.schema:
             attributes = list(self.schema[e])
             joins = self.joins[e]
-            print(joins)
             conditions = {}
             for j in joins:
                 if j[2] in self.conditions:
@@ -281,110 +285,167 @@ class KnowledgeBase():
                         explst.append(pathAttribute <= c[1])
         return explst
 
+    def getForeignPath(self, e1, e2):
+        invPath = []
+        joins = self.joins[e1.upper()]
+        d = e2.upper()
+        while (True):
+            for j in joins:
+                if j[2] == d:
+                    invPath.append(d)
+                    d = j[0]
+            if d == e1.upper():
+                invPath.reverse()
+                return invPath
+            if not len(invPath):
+                joins = self.joins[e2.upper()]
+                d = e1.upper()
+                while (True):
+                    for j in joins:
+                        if j[2] == d:
+                            invPath.append(d)
+                            d = j[0]
+                    if d == e2.upper():
+                        invPath.reverse()
+                        return invPath
+                    if not len(invPath):
+                        print(f'Entities {e1}, {e2} are not connected.\n')
+                        return False
+
+    def isForeign(self, e, a):
+        if len(self.schema[e][a]) == 4:
+            return True
+        else:
+            return False
+
     def getForeign(self, e1, e2):
         fs = None
         fd = None
         for j in self.joins[e1]:
-            if e2 == j[2]:
+            if e2 == j[2] and j[1] in self.schema[e1] and self.isForeign(e1, j[1]):
                 fs = (e1, j[1])
                 fd = (e2, j[3])
         if not fs and not fd:
             for j in self.joins[e2]:
-                if e1 == j[2]:
+                if e1 == j[2] and j[1] in self.schema[e2] and self.isForeign(e2, j[1]):
                     fs = (e2, j[1])
                     fd = (e1, j[3])
         if not fs and not fd:
             print(
-                f'Unable to join the entities {e1} and {e2}. No foreign key found.')
+                f'Unable to join the entities {e1} and {e2} directly. No foreign key found.')
+            return False
         return (fs, fd)
 
     def getJoinPreds(self, e1, e2):
         e1 = e1.upper()
         e2 = e2.upper()
         f = self.getForeign(e1, e2)
-        p1 = self.mergedPreds[f[0][0]]
-        p2 = self.mergedPreds[f[1][0]]
-        print(f)
-        j1 = getattr(p1, f[0][1].lower())
-        j2 = getattr(p2, f[1][1].lower())
-        print(j1, j2)
-        return (j1, j2)
+        if f:
+            p1 = self.mergedPreds[f[0][0]]
+            p2 = self.mergedPreds[f[1][0]]
+            j1 = getattr(p1, f[0][1].lower())
+            j2 = getattr(p2, f[1][1].lower())
+            return (j1, j2)
+        else:
+            return False
 
     # Select from kb also delete the data csvs in dataModel
-    def select(self, ent, cond=None, attr=None, order=None, outPreds=None, getQuery=False):
-        if type(ent).__name__ == 'tuple' or type(ent).__name__ == 'list':
-            entpred = [self.mergedPreds[e.upper()] for e in ent]
-            if not attr:
-                attr = {e: list(self.schema[e.upper()]) for e in ent}
-            elif type(attr).__name__ != 'dict':
-                print(
-                    'Wrong input format for selection attributes. Dictionary input required.')
-                return False
-            attrlst = [getattr(self.mergedPreds[e.upper()],
-                               a.lower()) for e in attr for a in attr[e]]
-            if order:
-                if type(order).__name__ != 'dict':
-                    print(
-                        'Wrong input format for order attributes. Dictionary input required.')
-                    return False
-                ordlst = [getattr(self.mergedPreds[e.upper()], o.lower())
-                          for e in order for o in order[e]]
-            jlst = []
-            for e1 in ent:
-                for e2 in list(ent)[list(ent).index(e1) + 1:]:
-                    j = self.getJoinPreds(e1, e2)
+    def select(self, ent, cond=None, order=None, pOut=False, getQuery=False):
+        jent = [e.upper() for e in ent]
+        jlst = []
+        if cond:
+            for e in cond:
+                for je in list(ent):
+                    path = self.getForeignPath(je, e)
+                    if path:
+                        for p in path:
+                            if p not in jent:
+                                jent.append(p)
+        for e1 in jent:
+            for e2 in list(jent)[list(jent).index(e1) + 1:]:
+                j = self.getJoinPreds(e1, e2)
+                if (j):
                     jlst.append(j[0] == j[1])
-            query = self.kb.query(*entpred).join(*jlst)
 
-        else:
-            entpred = self.mergedPreds[ent.upper()]
-            if not attr:
-                attr = list(self.schema[ent.upper()])
-            elif type(attr).__name__ != 'list':
-                print(
-                    'Wrong input format for selection attributes. List input required.')
-                return False
-            attrlst = [getattr(self.mergedPreds[ent.upper()],
-                               a.lower()) for a in attr]
-            if order:
-                if type(order).__name__ != 'list':
-                    print(
-                        'Wrong input format for order attributes. List input required.')
-                    return False
-                ordlst = [getattr(self.mergedPreds[ent.upper()], o.lower())
-                          for o in order]
-            query = self.kb.query(entpred)
+        if type(ent).__name__ == 'dict':
+            entpred = [self.mergedPreds[e.upper()] for e in jent]
+            if pOut:
+                outPreds = [self.createMergedPred(e, ent[e]) for e in ent]
+            attrlst = [getattr(self.mergedPreds[e.upper()],
+                               a.lower()) for e in ent for a in ent[e]]
 
+        elif type(ent).__name__ == 'list':
+            entpred = [self.mergedPreds[e.upper()] for e in jent]
+            attr = {e: list(self.schema[e.upper()]) for e in ent}
+            if pOut:
+                attrlst = [self.mergedPreds[e.upper()] for e in ent]
+            else:
+                attrlst = [getattr(self.mergedPreds[e.upper()],
+                                   a.lower()) for e in attr for a in attr[e]]
         if not entpred:
             print('Unable to create query.')
             return False
 
+        else:
+            query = self.kb.query(*entpred)
+        if len(jlst):
+            query = query.join(*jlst)
+
         if cond:
+            cent = {c.upper(): cond[c] for c in cond}
             condlst = []
-            for e in ent:
-                if e in cond:
-                    condlst.extend(self.getCompExp(e, conditions=cond[e]))
+            for e in jent:
+                if e in cent:
+                    condlst.extend(self.getCompExp(e, conditions=cent[e]))
             query = query.where(*condlst)
 
-        if outPreds:
-            op = [self.mergedPreds[o.upper()] for o in outPreds]
-            query = query.select(*op)
-        else:
-            query = query.select(*attrlst)
+        query = query.select(*attrlst)
 
         if order:
+            if type(order).__name__ != 'dict':
+                print(
+                    'Wrong input format for order attributes. Dictionary input required.')
+                return False
+            ordlst = [getattr(self.mergedPreds[e.upper()], o.lower())
+                      for e in order for o in order[e]]
             query = query.order_by(*ordlst)
+
+        pdata = list(query.all())
+        outdata = []
+
+        if pOut and type(ent).__name__ == 'dict':
+            eind = []
+            so = 0
+            for e in ent:
+                eind.append(so)
+                s = so + len(ent[e])
+                so = s
+            eind.append(s)
+            for pd in pdata:
+                for e in ent:
+                    ei = eind[list(ent).index(e)]
+                    outdata.append(outPreds[ei](
+                        *pd[eind[ei]:eind[ei+1]]))
+            return outdata
+
+        else:
+            outdata = pdata.copy()
 
         if getQuery:
             qout = copy(query)
-            data = list(query.all())
-            return data, qout
+            return outdata, qout
         else:
-            data = list(query.all())
-            return data
+            return outdata
 
     def cascade(self):
         pass
+
+    def extract(self, ent, cond=None, order=None):
+        outKB = FactBase()
+        preds = self.select(ent, cond=cond, order=order, pOut=True)
+        for p in preds:
+            outKB.add(p)
+        return outKB
 
     # Update to kb and db
     def update(self, ent, val, cond=None, toDb=True):
@@ -398,13 +459,10 @@ class KnowledgeBase():
                 mpreds, qout = self.select(
                     ent, cond=cond, outPreds=[e], getQuery=True)
                 qout.delete()
-                print(mpreds)
                 for m in mpreds:
                     m = m.clone(**val[e])
-                    print(m)
                     self.kb.add(m)
 
-        # TODO fix the kb update to accept joins and implement cascade in update and delete
         # Update to db
         if toDb:
             self.db.update([e.upper() for e in ent], cond, val)
@@ -486,18 +544,34 @@ class KnowledgeBase():
 
 
 def main():
+    # TODO finish select and update
+    # TODO tomorrow finish update(cascade) and delete
+    # TODO Sunday finish db update and run with split and merge
+    # TODO Monday create tests per specialty per doctor and general
+    # TODO Tuesday create a simple html request interface
+    # TODO Wednesday final changes and comments
+    # TODO Thursday Τα έγγραφα του Τσάμπρα
+    # TODO 13 - 17 paper
 
     dbConditions = {'TIMESLOT': {
-        "DATE": ['date', [('>', '+0')]], "TIMESLOT_AVAILABLE": ['boolean', [('=', True)]]}, 'SPECIALTY': {
+        "TIMESLOT_AVAILABLE": ['boolean', [('=', True)]]}, 'SPECIALTY': {
         "TITLE": ['text', [('=', 'Preventive_medicine')]]}}
     db_info = ['kanon2000', 'nhs', 'kanon2000']
     kb = KnowledgeBase('NHS_APPOINTMENTS', schema,
                        dbInfo=db_info, dbConditions=dbConditions)
     # kb.showPreds()
-    data = kb.select(('Person', 'Doctor'), attr={'Doctor': ['id']}, cond={
-        'Doctor': {'doctor_available': [('=', True)]}}, order={'Doctor': ['id']})
-    kb.update(('Person', 'Doctor'), val={'Doctor': {'id': '1234'}}, cond={
-        'Doctor': {'doctor_available': [('=', True)]}})
+    data = kb.select({'Request': ['id'], 'Doctor': ['id']}, cond={
+        'Doctor': {'id': [('=', '04099610232')]}}, order={'Request': ['id']}, pOut=True)
+    # data = kb.select(['Request', 'Doctor'], cond={
+    #     'Doctor': {'id': [('=', '04099610232')]}}, order={'Request': ['id']}, pOut=True)
+    # newKB = kb.extract(['Request', 'Doctor'], cond={
+    #     'Doctor': {'id': [('=', '04099610232')]}})
+    newKB = kb.extract({'Request': ['id'], 'Doctor': ['id']}, cond={
+        'Doctor': {'id': [('=', '04099610232')]}}, order={'Request': ['id', 'timeslot_id']})
+
+    print(FactBase.asp_str(newKB))
+    # kb.update(('Person', 'Doctor'), val={'Doctor': {'id': '1234'}}, cond={
+    #     'Doctor': {'doctor_available': [('=', True)]}})
     kb.toFile('clingo/')
 
     # print(data)
