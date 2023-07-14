@@ -191,12 +191,12 @@ class DataModel():
             query += f"FROM {table}\n"
 
             if joins:
-                for j in joins:
+                for j in joins[j]:
                     sEntity = j[0]
                     sAttribute = j[1]
                     tEntity = j[2]
                     tAttribute = j[3]
-                    query += f"JOIN {tEntity} ON {sEntity}.{sAttribute} = {tEntity}.{tAttribute}\n"
+                    query += f"JOIN {tEntity} ON {tEntity}.{tAttribute} = {sEntity}.{sAttribute}\n"
 
             if conditions:
                 condstr = self.conditions(conditions, ' and ')

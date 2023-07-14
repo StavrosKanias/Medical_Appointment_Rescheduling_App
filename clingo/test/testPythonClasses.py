@@ -1,15 +1,15 @@
+import sys
+sys.path.append('./db')  # nopep8
+sys.path.append('./clingo')  # nopep8
 from clorm import monkey
 monkey.patch()  # nopep8 # must call this before importing clingo
+from copy import copy
+from dbCreator import schema
+from dataModel import DataModel
 from clorm import FactBase, Predicate, IntegerField, StringField
 from clorm.clingo import Control
 from datetime import datetime, timedelta
-import sys
-sys.path.append('./db')  # nopep8
-from dataModel import DataModel
-from dbCreator import schema
-sys.path.append('./clingo')  # nopep8
 from customPredicates import DateField, TimeField
-from copy import copy
 
 
 class KnowledgeBase():
@@ -22,14 +22,14 @@ class KnowledgeBase():
                            'text': StringField, 'date': DateField, 'time': TimeField}
         self.splitPreds = self.createSplitPreds()
         self.mergedPreds = self.createMergedPreds()
+        self.foreignPaths = self.getForeignPaths()
+        self.joins = self.getJoins()
         if dbInfo:
             self.bind2db(dbInfo)
             if dbConditions:
                 self.conditions = dbConditions
             else:
                 self.conditions = {}
-            self.joins = self.getJoins()
-            self.getForeignPath('DOCTOR', 'REQUEST')
             self.db2kb()
 
         elif data:
@@ -52,7 +52,6 @@ class KnowledgeBase():
             predicates[e] = {}
             attributes = self.schema[e].copy()
             primary = self.createPrimaryPredicate(e, attributes,  predicates)
-            print(primary)
             for a in attributes:
                 predicates[a] = self.createSplitPred(a,
                                                      {a: attributes[a][0]}, primary=primary)
@@ -197,35 +196,61 @@ class KnowledgeBase():
                     conditions[f'{entity}.{attribute}'].append(condition)
         return conditions
 
-    def getJoins(self):
+    def getForeignPaths(self):
         inForeigns = {e: {} for e in self.schema}
-        ijoins = {e: {a: [] for a in self.schema[e]} for e in self.schema}
-        joins = {e: [] for e in self.schema}
+        paths = {e: {} for e in self.schema}
         for e in self.schema:
             for a in self.schema[e]:
                 inForeigns[e][a] = self.getInwardForeigns(e, a)
                 for i in inForeigns[e][a]:
-                    ijoins[i[0]][i[1]].append((e, a))
+                    if i[1] not in paths[i[0]]:
+                        paths[i[0]][i[1]] = [(e, a)]
+                    else:
+                        paths[i[0]][i[1]].append((e, a))
 
-        for i in ijoins:
-            for a in ijoins[i]:
-                for f in ijoins[i][a]:
-                    jlst = [(i, a, f[0], f[1])]
-                    jlst.extend(joins[f[0]])
-                    for cj in joins[i]:
-                        for nj in jlst:
-                            if cj[2] == nj[2]:
-                                if cj[2] in self.conditions and nj[2] not in self.conditions:
-                                    jlst.remove(nj)
-                                elif cj[2] not in self.conditions and nj[2] in self.conditions:
-                                    joins[i].remove(cj)
-                                elif cj[2] in self.conditions and nj[2] in self.conditions:
-                                    print(
-                                        f'Unable to use db conditions due to cyclical dependency of entity {cj[2]}')
-                                else:
-                                    jlst.remove(nj)
-                                    joins[i].remove(cj)
-                    joins[i].extend(jlst)
+        for e in paths:
+            for a in paths[e]:
+                for f in paths[e][a]:
+                    if f[1] in paths[f[0]]:
+                        for nf in paths[f[0]][f[1]]:
+                            if nf not in paths[e][a]:
+                                paths[e][a].append(nf)
+        return paths
+
+    def getSecDep(self, paths):
+        sdep = {e: {a: []} for e in paths for a in paths[e]}
+        for e in paths:
+            for a in paths[e]:
+                for j in paths[e][a]:
+                    fe = j[0]
+                    for fa in paths[fe]:
+                        for fj in paths[fe][fa]:
+                            if fj not in paths[e][a]:
+                                sdep[e][a].append((fe, fa, *fj))
+                                print(sdep)
+                                fe = fj[0]
+                                fa = fj[1]
+        return sdep
+
+    def getJoins(self):
+        joins = {e: [] for e in self.schema}
+        sdep = self.getSecDep(self.paths)
+
+        # aj = {a: [j[2]] for a in join for j in join[a]}
+        # print(aj)
+        # for cj in join:
+        #     for nj in jlst:
+        #         if cj[2] == nj[2]:
+        #             if cj[2] in self.conditions and nj[2] not in self.conditions:
+        #                 jlst.remove(nj)
+        #             elif cj[2] not in self.conditions and nj[2] in self.conditions:
+        #                 joins[i].remove(cj)
+        #             elif cj[2] in self.conditions and nj[2] in self.conditions:
+        #                 print(
+        #                     f'Unable to use db conditions due to cyclical dependency of entity {cj[2]}')
+        #             else:
+        #                 jlst.remove(nj)
+        #                 joins[i].remove(cj)
         return joins
 
     # Translate db data to clingo predicates
@@ -234,9 +259,10 @@ class KnowledgeBase():
             attributes = list(self.schema[e])
             joins = self.joins[e]
             conditions = {}
-            for j in joins:
-                if j[2] in self.conditions:
-                    conditions.update(self.getConditions(j[2]))
+            for a in joins:
+                for j in joins[a]:
+                    if j[0] in self.conditions:
+                        conditions.update(self.getConditions(j[0]))
             if e in self.conditions:
                 conditions.update(self.getConditions(e))
             if conditions:
@@ -286,31 +312,26 @@ class KnowledgeBase():
         return explst
 
     def getForeignPath(self, e1, e2):
-        invPath = []
-        joins = self.joins[e1.upper()]
-        d = e2.upper()
-        while (True):
-            for j in joins:
-                if j[2] == d:
-                    invPath.append(d)
-                    d = j[0]
-            if d == e1.upper():
-                invPath.reverse()
-                return invPath
-            if not len(invPath):
-                joins = self.joins[e2.upper()]
-                d = e1.upper()
-                while (True):
-                    for j in joins:
-                        if j[2] == d:
-                            invPath.append(d)
-                            d = j[0]
-                    if d == e2.upper():
-                        invPath.reverse()
-                        return invPath
-                    if not len(invPath):
-                        print(f'Entities {e1}, {e2} are not connected.\n')
-                        return False
+        path = None
+        e1 = e1.upper()
+        e2 = e2.upper()
+        if e1 == e2:
+            print(f'Entity {e1} is given as both source and destination.')
+            return False
+        for a in self.joins[e1]:
+            print(a)
+            for j in self.joins[e1][a]:
+                print(e2, j)
+                if e2 == j[0]:
+                    print(self.joins[e1][a][:self.joins[e1][a].index(j)])
+                    path = (e1, *(l[0] for l in self.joins[e1]
+                            [a][:self.joins[e1][a].index(j)]))
+                    return path
+        if path:
+            return path
+        else:
+            print(f'There is no path from {e1} to {e2}.')
+            return False
 
     def isForeign(self, e, a):
         if len(self.schema[e][a]) == 4:
@@ -321,18 +342,16 @@ class KnowledgeBase():
     def getForeign(self, e1, e2):
         fs = None
         fd = None
-        for j in self.joins[e1]:
-            if e2 == j[2] and j[1] in self.schema[e1] and self.isForeign(e1, j[1]):
-                fs = (e1, j[1])
-                fd = (e2, j[3])
-        if not fs and not fd:
-            for j in self.joins[e2]:
-                if e1 == j[2] and j[1] in self.schema[e2] and self.isForeign(e2, j[1]):
-                    fs = (e2, j[1])
-                    fd = (e1, j[3])
+        e1 = e1.upper()
+        e2 = e2.upper()
+        for a in self.joins[e1]:
+            for j in self.joins[e1][a]:
+                if j[0] == e2:
+                    fs = (e1, j)
+                    fd = (e2, j[1])
         if not fs and not fd:
             print(
-                f'Unable to join the entities {e1} and {e2} directly. No foreign key found.')
+                f'No foreign key from {e1} to {e2}.')
             return False
         return (fs, fd)
 
@@ -357,10 +376,16 @@ class KnowledgeBase():
             for e in cond:
                 for je in list(ent):
                     path = self.getForeignPath(je, e)
+                    if not path:
+                        print('Faaalse', path)
                     if path:
                         for p in path:
                             if p not in jent:
                                 jent.append(p)
+                    else:
+                        print('Unable to link joined entities.')
+                        return False
+
         for e1 in jent:
             for e2 in list(jent)[list(jent).index(e1) + 1:]:
                 j = self.getJoinPreds(e1, e2)
@@ -390,7 +415,7 @@ class KnowledgeBase():
             query = self.kb.query(*entpred)
         if len(jlst):
             query = query.join(*jlst)
-
+        print(jlst)
         if cond:
             cent = {c.upper(): cond[c] for c in cond}
             condlst = []
@@ -450,18 +475,21 @@ class KnowledgeBase():
     # Update to kb and db
     def update(self, ent, val, cond=None, toDb=True):
         # Update to kb
-        if type(ent).__name__ == 'tuple' or type(ent).__name__ == 'list':
-            entpred = [self.mergedPreds[e.upper()] for e in ent]
-        else:
-            entpred = self.mergedPreds[ent.upper()]
+        entpred = []
+        fpaths = {fe: [] for fe in self.schema}
         for e in ent:
-            if e in val:
-                mpreds, qout = self.select(
-                    ent, cond=cond, outPreds=[e], getQuery=True)
-                qout.delete()
-                for m in mpreds:
-                    m = m.clone(**val[e])
-                    self.kb.add(m)
+            if e not in entpred:
+                entpred.append(self.mergedPreds[e.upper()])
+            for fe in self.schema:
+                fpaths[e.upper()].append(self.getForeignPath(e, fe))
+        # for e in ent:
+        #     if e in val:
+        #         mpreds, qout = self.select(
+        #             ent, cond=cond, outPreds=True, getQuery=True)
+        #         qout.delete()
+        #         for m in mpreds:
+        #             m = m.clone(**val[e])
+        #             self.kb.add(m)
 
         # Update to db
         if toDb:
@@ -566,10 +594,10 @@ def main():
     #     'Doctor': {'id': [('=', '04099610232')]}}, order={'Request': ['id']}, pOut=True)
     # newKB = kb.extract(['Request', 'Doctor'], cond={
     #     'Doctor': {'id': [('=', '04099610232')]}})
-    newKB = kb.extract({'Request': ['id'], 'Doctor': ['id']}, cond={
-        'Doctor': {'id': [('=', '04099610232')]}}, order={'Request': ['id', 'timeslot_id']})
+    # newKB = kb.extract({'Request': ['id'], 'Doctor': ['id']}, cond={
+    #     'Doctor': {'id': [('=', '04099610232')]}}, order={'Request': ['id', 'timeslot_id']})
 
-    print(FactBase.asp_str(newKB))
+    # print(FactBase.asp_str(newKB))
     # kb.update(('Person', 'Doctor'), val={'Doctor': {'id': '1234'}}, cond={
     #     'Doctor': {'doctor_available': [('=', True)]}})
     kb.toFile('clingo/')
