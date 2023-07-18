@@ -29,6 +29,7 @@ class KnowledgeBase():
             else:
                 self.conditions = {}
             self.joins = self.getJoins()
+            print(self.joins)
             self.db2kb()
 
         elif data:
@@ -197,7 +198,6 @@ class KnowledgeBase():
                                     joins[i].remove(cj)
 
                     joins[i].extend(jlst)
-        print(joins)
         return joins
 
     # Translate db data to clingo predicates
@@ -346,7 +346,6 @@ class KnowledgeBase():
 
     def joinData(self, data, attributes=None):
         jattr = [a for l in attributes.values() for a in l]
-        print(jattr)
         jdata = [d for d in data[list(data.keys())[0]]]
         for e1 in data:
             for e2 in data:
@@ -370,7 +369,6 @@ class KnowledgeBase():
                 for d in data[s]:
                     if d[fsi] not in destData:
                         pass
-                print(destData)
         return data
 
     # Select from kb (break into two selects one with join and one without) also delete the data csvs in dataModel

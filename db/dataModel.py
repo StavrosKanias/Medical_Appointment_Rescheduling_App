@@ -191,7 +191,7 @@ class DataModel():
             query += f"FROM {table}\n"
 
             if joins:
-                for j in joins[j]:
+                for j in joins:
                     sEntity = j[0]
                     sAttribute = j[1]
                     tEntity = j[2]

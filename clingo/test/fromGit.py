@@ -23,11 +23,12 @@ class KnowledgeBase():
         self.splitPreds = self.createSplitPreds()
         self.mergedPreds = self.createMergedPreds()
         self.foreignPaths = self.getForeignPaths()
+        self.joins = self.getJoins()
+        print(self.joins)
         if dbInfo:
             self.bind2db(dbInfo)
             if dbConditions:
                 self.conditions = dbConditions
-                self.joins = self.getJoins()
             else:
                 self.conditions = {}
             self.db2kb()
@@ -161,7 +162,7 @@ class KnowledgeBase():
             else:
                 print(
                     f'Unable to specify the type of condition attribute {attribute}')
-            attrcond = entcond[attribute]
+            attrcond = entcond[attribute][1]
             for condition in attrcond:
                 conditions[f'{entity}.{attribute}'] = []
                 if type in ['date', 'time'] and condition[1][0] in ['+', '-']:
@@ -215,47 +216,42 @@ class KnowledgeBase():
                         for nf in paths[f[0]][f[1]]:
                             if nf not in paths[e][a]:
                                 paths[e][a].append(nf)
-        self.clear2dDict(paths)
         return paths
 
-    def clear2dDict(self, dict):
-        for e in list(dict):
-            for a in list(dict[e]):
-                if not dict[e][a]:
-                    dict[e].pop(a)
-            if not dict[e]:
-                dict.pop(e)
+    def getSecDep(self, paths):
+        sdep = {e: {a: []} for e in paths for a in paths[e]}
+        for e in paths:
+            for a in paths[e]:
+                for j in paths[e][a]:
+                    fe = j[0]
+                    for fa in paths[fe]:
+                        for fj in paths[fe][fa]:
+                            if fj not in paths[e][a]:
+                                sdep[e][a].append((fe, fa, *fj))
+                                print(sdep)
+                                fe = fj[0]
+                                fa = fj[1]
+        return sdep
 
     def getJoins(self):
-        inForeigns = {e: {} for e in self.schema}
-        ijoins = {e: {a: [] for a in self.schema[e]} for e in self.schema}
         joins = {e: [] for e in self.schema}
-        for e in self.schema:
-            for a in self.schema[e]:
-                inForeigns[e][a] = self.getInwardForeigns(e, a)
-                for i in inForeigns[e][a]:
-                    ijoins[i[0]][i[1]].append((e, a))
+        # sdep = self.getSecDep(self.paths)
 
-        for i in ijoins:
-            for a in ijoins[i]:
-                for f in ijoins[i][a]:
-                    jlst = [(i, a, f[0], f[1])]
-                    jlst.extend(joins[f[0]])
-                    for cj in joins[i]:
-                        for nj in jlst:
-                            if cj[2] == nj[2]:
-                                if cj[0] in self.conditions and nj[0] not in self.conditions:
-                                    jlst.remove(nj)
-                                elif cj[0] not in self.conditions and nj[0] in self.conditions:
-                                    joins[i].remove(cj)
-                                elif cj[0] in self.conditions and nj[0] in self.conditions:
-                                    print(
-                                        f'Unable to use db conditions due to cyclical dependency of entity {cj[2]}')
-                                else:
-                                    jlst.remove(nj)
-                                    joins[i].remove(cj)
-
-                    joins[i].extend(jlst)
+        # aj = {a: [j[2]] for a in join for j in join[a]}
+        # print(aj)
+        # for cj in join:
+        #     for nj in jlst:
+        #         if cj[2] == nj[2]:
+        #             if cj[2] in self.conditions and nj[2] not in self.conditions:
+        #                 jlst.remove(nj)
+        #             elif cj[2] not in self.conditions and nj[2] in self.conditions:
+        #                 joins[i].remove(cj)
+        #             elif cj[2] in self.conditions and nj[2] in self.conditions:
+        #                 print(
+        #                     f'Unable to use db conditions due to cyclical dependency of entity {cj[2]}')
+        #             else:
+        #                 jlst.remove(nj)
+        #                 joins[i].remove(cj)
         return joins
 
     # Translate db data to clingo predicates
@@ -264,9 +260,10 @@ class KnowledgeBase():
             attributes = list(self.schema[e])
             joins = self.joins[e]
             conditions = {}
-            for j in joins:
-                if j[0] in self.conditions:
-                    conditions.update(self.getConditions(j[0]))
+            for a in joins:
+                for j in joins[a]:
+                    if j[0] in self.conditions:
+                        conditions.update(self.getConditions(j[0]))
             if e in self.conditions:
                 conditions.update(self.getConditions(e))
             if conditions:
@@ -315,23 +312,27 @@ class KnowledgeBase():
                         explst.append(pathAttribute <= c[1])
         return explst
 
-    def getDepChain(self, e1, e2):
+    def getForeignPath(self, e1, e2):
+        path = None
+        e1 = e1.upper()
+        e2 = e2.upper()
         if e1 == e2:
             print(f'Entity {e1} is given as both source and destination.')
             return False
-        d = e2
-        joins = self.joins[e1].copy()
-        invPath = [d]
-        while d != e1:
-            for j in joins:
-                if d == j[2]:
-                    d = j[0]
-                    joins.remove(j)
-                    invPath.append(d)
-            if not invPath:
-                print(f'There is no path from {e1} to {e2}.')
-                return False
-        return invPath
+        for a in self.joins[e1]:
+            print(a)
+            for j in self.joins[e1][a]:
+                print(e2, j)
+                if e2 == j[0]:
+                    print(self.joins[e1][a][:self.joins[e1][a].index(j)])
+                    path = (e1, *(l[0] for l in self.joins[e1]
+                            [a][:self.joins[e1][a].index(j)]))
+                    return path
+        if path:
+            return path
+        else:
+            print(f'There is no path from {e1} to {e2}.')
+            return False
 
     def isForeign(self, e, a):
         if len(self.schema[e][a]) == 4:
@@ -342,15 +343,18 @@ class KnowledgeBase():
     def getForeign(self, e1, e2):
         fs = None
         fd = None
-        if e1 in self.joins and e2 in self.joins:
-            for j in self.joins[e1]:
-                if j[2] == e2:
-                    fs = (j[0], j[1])
-                    fd = (j[2], j[3])
-                    return (fs, fd)
-        print(
-            f'No foreign key from {e1} to {e2}.')
-        return False
+        e1 = e1.upper()
+        e2 = e2.upper()
+        for a in self.joins[e1]:
+            for j in self.joins[e1][a]:
+                if j[0] == e2:
+                    fs = (e1, j)
+                    fd = (e2, j[1])
+        if not fs and not fd:
+            print(
+                f'No foreign key from {e1} to {e2}.')
+            return False
+        return (fs, fd)
 
     def getJoinPreds(self, e1, e2):
         e1 = e1.upper()
@@ -367,19 +371,14 @@ class KnowledgeBase():
 
     # Select from kb also delete the data csvs in dataModel
     def select(self, ent, cond=None, order=None, pOut=False, getQuery=False):
-        ent = {e.upper(): [a.upper() for a in ent[e]]
-               for e in ent}
-        jent = list(ent)
-        if cond:
-            cond = {e.upper(): {a.upper(): cond[e][a]
-                                for a in cond[e]} for e in cond}
+        jent = [e.upper() for e in ent]
         jlst = []
         if cond:
             for e in cond:
-                for je in ent:
-                    path = self.getDepChain(je, e)
+                for je in list(ent):
+                    path = self.getForeignPath(je, e)
                     if not path:
-                        path = self.getDepChain(e, je)
+                        print('Faaalse', path)
                     if path:
                         for p in path:
                             if p not in jent:
@@ -391,10 +390,9 @@ class KnowledgeBase():
         for e1 in jent:
             for e2 in list(jent)[list(jent).index(e1) + 1:]:
                 j = self.getJoinPreds(e1, e2)
-                if not j:
-                    j = self.getJoinPreds(e2, e1)
                 if (j):
                     jlst.append(j[0] == j[1])
+
         if type(ent).__name__ == 'dict':
             entpred = [self.mergedPreds[e.upper()] for e in jent]
             if pOut:
@@ -418,6 +416,7 @@ class KnowledgeBase():
             query = self.kb.query(*entpred)
         if len(jlst):
             query = query.join(*jlst)
+        print(jlst)
         if cond:
             cent = {c.upper(): cond[c] for c in cond}
             condlst = []
@@ -441,21 +440,18 @@ class KnowledgeBase():
         outdata = []
 
         if pOut and type(ent).__name__ == 'dict':
-            attrlen = [len(ent[e]) for e in ent]
             eind = []
-            s = 0
-            d = attrlen[0]
+            so = 0
             for e in ent:
-                eind.append((s, d))
-                ei = list(ent).index(e)
-                if ei < len(ent) - 1:
-                    s = d
-                    d += attrlen[ei+1]
+                eind.append(so)
+                s = so + len(ent[e])
+                so = s
+            eind.append(s)
             for pd in pdata:
                 for e in ent:
-                    ei = list(ent).index(e)
+                    ei = eind[list(ent).index(e)]
                     outdata.append(outPreds[ei](
-                        *pd[eind[ei][0]:eind[ei][1]]))
+                        *pd[eind[ei]:eind[ei+1]]))
             return outdata
 
         else:
@@ -467,16 +463,14 @@ class KnowledgeBase():
         else:
             return outdata
 
-    def extract(self, ent, split=False, cond=None, order=None):
+    def cascade(self):
+        pass
+
+    def extract(self, ent, cond=None, order=None):
         outKB = FactBase()
         preds = self.select(ent, cond=cond, order=order, pOut=True)
         for p in preds:
-            if split:
-                spreds = self.split(p)
-                for sp in spreds:
-                    outKB.add(sp)
-            else:
-                outKB.add(p)
+            outKB.add(p)
         return outKB
 
     # Update to kb and db
@@ -534,204 +528,69 @@ class KnowledgeBase():
 
     def split(self, mergedPred):
         entity = type(mergedPred).__name__.upper()
-        if entity not in self.schema:
-            print(
-                f'Predicate {entity} doesn not appear on the database schema.')
-            return False
-        attributes = [attr for attr in dir(type(mergedPred)) if callable(
-            getattr(type(mergedPred), attr)) and not (attr.startswith("__") or attr.startswith("_")) and attr not in ['Field', 'clone', 'sign']]
+        attributes = [attr for attr in dir(self.splitPreds[mergedPred]) if callable(
+            getattr(self.splitPreds[mergedPred], attr)) and not (attr.startswith("__") or attr.startswith("_")) and attr not in ['Field', 'clone', 'sign']]
         data = [getattr(mergedPred, attr) for attr in attributes]
-        prim = None
         outPreds = []
         for a in attributes:
             if self.isPrimary(entity, a):
                 p = self.splitPreds[entity.upper()]
-                prim = a
             else:
                 p = self.splitPreds[a.upper()]
-            if self.schema[entity.upper()][a.upper()][0] != 'boolean' or self.schema[entity.upper()][a.upper()][0] == 'boolean' and data[attributes.index(a)]:
-                pv = self.getPrimaryData(entity, attributes, data)
-                v = pv.copy()
-                if not self.isPrimary(entity, a) and not self.schema[entity.upper()][a.upper()][0] == 'boolean':
-                    v.append(data[attributes.index(a)])
-                outPreds.append(p(*v))
-        if not prim:
-            print('No primary key found. Unable to split predicate.')
-            return False
+            for d in data:
+                if self.schema[entity.upper()][a.upper()][0] != 'boolean' or self.schema[entity.upper()][a.upper()][0] == 'boolean' and d[attributes.index(a)]:
+                    pv = self.getPrimaryData(entity, attributes, d)
+                    v = pv.copy()
+                    if not self.isPrimary(entity, a) and not self.schema[entity.upper()][a.upper()][0] == 'boolean':
+                        v.append(d[attributes.index(a)])
+                    outPreds.append(p(*v))
         return outPreds
 
     def merge(self, splitPreds):
         pname = None
         content = {}
         data = []
-        attributes = {type(sp).__name__: [attr for attr in dir(type(sp)) if callable(
-            getattr(type(sp), attr)) and not (attr.startswith("__") or attr.startswith("_")) and attr not in ['Field', 'clone', 'sign']] for sp in splitPreds}
-        for e in attributes:
-            if len(attributes[e]) == 1:
-                pname = e
+        for sp in splitPreds:
+            attributes = [attr for attr in dir(self.splitPreds[sp]) if callable(
+                getattr(self.splitPreds[sp], attr)) and not (attr.startswith("__") or attr.startswith("_")) and attr not in ['Field', 'clone', 'sign']]
+            if len(attributes) == 1:
+                pname = type(sp).__name__
+                aname = attributes[0]
+            else:
+                aname = type(sp).__name__.lower()
+            data = getattr(sp, aname)
+            t = type(data)
+            field = self.TYPE2FIELD[t]
+            content[aname] = field
+            data.append(getattr(sp, aname))
         if not pname:
             print(' Unable to merge predicates. No primary key found')
             return False
-
-        for sp in splitPreds:
-            attr = attributes[type(sp).__name__]
-            if len(attr) == 1:
-                aname = attr[0]
-            else:
-                aname = type(sp).__name__.lower()
-            d = getattr(sp, aname)
-            data.append(d)
-            t = self.schema[pname.upper()][aname.upper()][0]
-            field = self.TYPE2FIELD[t]
-            content[aname] = field
-        mergedPred = type(
-            pname[0].upper() + pname[1:].lower(), (Predicate, ), content)
-        return mergedPred(*data)
-
-    def run(self, asp, outPreds=None, searchDuration=None, show=False, limit=False, subKB=None, subKBCond=None, merged=False, symbOut=False):
-        # Create a Control object that will unify models against the appropriate
-        # predicates. Then load the asp file that encodes the problem domain.
-        fname = asp.split('/')[-1]
-        print(f'\nExecuting {fname}...')
-        predicates = list(self.mergedPreds.values())
-        if outPreds:
-            for p in outPreds:
-                if p not in predicates:
-                    predicates.append(p)
-        ctrl = Control(unifier=predicates)
-        if limit:
-            ctrl.configuration.solve.models = limit
-        try:
-            ctrl.load(asp)
-        except RuntimeError as e:
-            print('Aborting...')
-            return False
-
-        # Add the instance data and ground the ASP program
-        if subKB:
-            # Fill in primaries if needed
-            for e in subKB:
-                prim = self.getPrimary(e)
-                if prim not in subKB[e]:
-                    subKB[e].insert(0, prim)
-            if merged:
-                kb = self.extract(subKB, cond=subKBCond)
-            else:
-                kb = self.extract(subKB, cond=subKBCond, split=True)
-            ctrl.add_facts(kb)
-            self.toFile('clingo/sub_', entities=subKB)
-
         else:
-            ctrl.add_facts(self.kb)
-        ctrl.ground([("base", [])])
-
-        # Generate a solution - use a call back that saves the solution
-        solution = None
-        start = datetime.now()
-        end = start + timedelta(minutes=int(searchDuration))
-
-        def on_model(model):
-            nonlocal solution
-            if symbOut:
-                solution = [model.optimality_proven,
-                            model.cost, model.number, model.symbols(shown=True)]
-            else:
-                solution = [model.optimality_proven,
-                            model.cost, model.number, model.facts(atoms=True)]
-            if solution[2] % 100 == 0:
-                print(f'MODEL {solution[2]}\nBENEFIT {-solution[1][0]}')
-            if datetime.now() > end:
-                Control.interrupt(ctrl)
-
-        ctrl.solve(on_model=on_model)
-        if not solution[1]:
-            print('No solution found\nCheck the grinding info above for more details')
-            return False
-        else:
-            output = {}
-            statistics = ctrl.statistics
-            total_time = statistics['summary']['times']['total']
-            cpu_time = statistics['summary']['times']['cpu']
-            benefit = -statistics['summary']['lower'][0]
-            optimal = statistics['summary']['models']['optimal']
-            if show:
-                if optimal and solution[0]:
-                    print('\nOPTIMAL SOLUTION FOUND')
-                elif optimal and not solution[0]:
-                    print('\nOPTIMUM SOLUTION FOUND')
-                else:
-                    print('\nOPTIMIZATION FAILED')
-
-                print('\nOUTPUT\n')
-                for p in outPreds:
-                    if symbOut:
-                        print(solution[3])
-                    else:
-                        out = list(solution[3].query(p).all())
-                        for o in out:
-                            print(str(o))
-                print('\nSTATISTICS\n')
-                print(f'Model: {solution[2]}')
-                print(f'Benefit: {benefit}')
-                print(f'Total time: {round(total_time,5)}')
-                print(f'CPU time: {round(cpu_time,5)}')
-
-            if symbOut:
-                return solution[3]
-            else:
-                for p in outPreds:
-                    out = list(solution[3].query(p).all())
-                    output[p.__name__] = out
-                return output
-
-    def clear(self):
-        for e in self.schema:
-            self.delete(e, fromDb=False)
-
-    def reload(self):
-        self.clear()
-        self.db2kb()
-
-    def __repr__(self):
-        return FactBase.asp_str(self.kb)
-
-    def __str__(self):
-        return FactBase.asp_str(self.kb)
+            mergedPred = type(
+                pname[0].upper + pname[1:].lower(), (Predicate, ), content)
+            return mergedPred(*data)
 
 
 def main():
-    # TODO tomorrow finish update and delete with cascade (18)
-    # TODO Sunday tune db select delete and update for list input in entities (19)
-    # TODO Monday create tests per specialty per doctor and general (19)
-    # TODO Tuesday create a simple html request interface (20 - 21 - 22)
-    # TODO Wednesday final changes and comments (23)
-    # TODO Thursday Τα έγγραφα του Τσάμπρα (24)
-    # TODO 25 - 31 paper
+    # TODO finish select and update
+    # TODO tomorrow finish update(cascade) and delete
+    # TODO Sunday finish db update and run with split and merge
+    # TODO Monday create tests per specialty per doctor and general
+    # TODO Tuesday create a simple html request interface
+    # TODO Wednesday final changes and comments
+    # TODO Thursday Τα έγγραφα του Τσάμπρα
+    # TODO 13 - 17 paper
 
     dbConditions = {'TIMESLOT': {
-        "TIMESLOT_AVAILABLE": [('=', True)]}, 'DOCTOR': {'ID': [('=', '04099610232')]}}
+        "TIMESLOT_AVAILABLE": ['boolean', [('=', True)]]}, 'SPECIALTY': {
+        "TITLE": ['text', [('=', 'Preventive_medicine')]]}}
     db_info = ['kanon2000', 'nhs', 'kanon2000']
     kb = KnowledgeBase('NHS_APPOINTMENTS', schema,
                        dbInfo=db_info, dbConditions=dbConditions)
     # kb.showPreds()
-    # data = kb.select({'Request': ['id'], 'Timeslot': ['id']}, cond={'DOCTOR': {'ID': [('=', '04099610232')]}}, order={
-    #                  'Request': ['patient_id']})
-
-    # class Grant(Predicate):
-    #     request = IntegerField
-
-    class Grant(Predicate):
-        request = IntegerField
-        score = IntegerField
-
-    class Claimed(Predicate):
-        request = IntegerField
-
-    subKB = {'REQUEST': ['PATIENT_ID',
-                         'TIMESLOT_ID', 'SCORE', 'STATUS'], 'TIMESLOT': ['DOCTOR_ID'], 'DOCTOR': ['SPECIALTY_TITLE']}
-    solution = kb.run('clingo/reschedulers/reschedulerGranGeneral.lp',
-                      [Grant, Claimed], searchDuration=12, show=True, subKB=subKB, subKBCond={'SPECIALTY': {
-                          "TITLE": [('=', 'Preventive_medicine')]}},  merged=True)
+    data = kb.select({'Request': ['id'], 'Doctor': ['id']}, cond={
+        'Doctor': {'id': [('=', '04099610232')]}}, order={'Request': ['id']}, pOut=True)
     # data = kb.select(['Request', 'Doctor'], cond={
     #     'Doctor': {'id': [('=', '04099610232')]}}, order={'Request': ['id']}, pOut=True)
     # newKB = kb.extract(['Request', 'Doctor'], cond={
