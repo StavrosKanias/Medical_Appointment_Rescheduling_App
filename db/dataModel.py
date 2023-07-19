@@ -213,21 +213,46 @@ class DataModel():
                 f"Failed to select attributes {attributes} from {table} using conditions {conditions}")
             return False
 
-    def delete(self, table, conditions):
-        try:
-            query = f"""\nDELETE FROM {table}\n"""
-            if conditions:
-                condstr = self.conditions(conditions, ' and ')
-                values = self.values(conditions)
-                query += f"""WHERE({condstr}); \n"""
-                self.executeSQL(query, values=values)
+    def delete(self, table, conditions=None, joins=None):
+        # try:
+        if joins:
+            using = []
+            for j in joins:
+                if j and j[1][0] != table:
+                    using.append(j[1][0])
+            print('aaaaaaaaaaa', using)
+
+        query = f"""\nDELETE FROM {table}\n"""
+
+        if joins:
+            query += 'USING '
+            for u in using:
+                query += f"""{u}"""
+                if using.index(u) < len(using) - 1:
+                    query += ', '
+                else:
+                    query += '\n'
+
+        if conditions:
+            condstr = self.conditions(conditions, ' and ')
+            if joins:
+                query += f"""WHERE("""
+                for j in joins:
+                    query += f"""{j[0][0]}.{j[0][1]} = {j[1][0]}.{j[1][1]} AND """
+                    if joins.index(j) == len(joins) - 1:
+                        query += f"""{condstr}); \n"""
             else:
-                self.executeSQL(query)
-            return True
-        except:
-            print(
-                f"Failed to delete the row from table {table}")
-            return False
+                query += f"""WHERE({condstr}); \n"""
+            values = self.values(conditions)
+            print(query)
+            self.executeSQL(query, values=values)
+        else:
+            self.executeSQL(query)
+        return True
+        # except:
+        #     print(
+        #         f"Failed to delete the row from table {table}")
+        #     return False
 
     def insert(self, table, val):
         try:

@@ -150,10 +150,11 @@ class KnowledgeBase():
                 raise Exception(
                     f"The predicate {s} doesn't exist in the given database.")
 
-    def getConditions(self, entity):
-        entcond = self.conditions[entity]
+    def getDbConditions(self, entity, cond):
+        entity = entity.upper()
+        cond = {a.upper(): cond[a] for a in cond}
         conditions = {}
-        for attribute in entcond:
+        for attribute in cond:
             if entity in self.schema and attribute in self.schema[entity]:
                 type = self.schema[entity][attribute][0]
             elif entity in self.conditions and attribute in self.conditions[entity]:
@@ -161,7 +162,7 @@ class KnowledgeBase():
             else:
                 print(
                     f'Unable to specify the type of condition attribute {attribute}')
-            attrcond = entcond[attribute]
+            attrcond = cond[attribute]
             for condition in attrcond:
                 conditions[f'{entity}.{attribute}'] = []
                 if type in ['date', 'time'] and condition[1][0] in ['+', '-']:
@@ -258,17 +259,22 @@ class KnowledgeBase():
                     joins[i].extend(jlst)
         return joins
 
+    def getJoinedConditions(self, e, joins):
+        conditions = {}
+        for j in joins:
+            if j[0] in self.conditions:
+                conditions.update(self.getDbConditions(
+                    j[0], self.conditions[j[0]]))
+        if e in self.conditions:
+            conditions.update(self.getDbConditions(e, self.conditions[e]))
+        return conditions
+
     # Translate db data to clingo predicates
     def db2kb(self):
         for e in self.schema:
             attributes = list(self.schema[e])
             joins = self.joins[e]
-            conditions = {}
-            for j in joins:
-                if j[0] in self.conditions:
-                    conditions.update(self.getConditions(j[0]))
-            if e in self.conditions:
-                conditions.update(self.getConditions(e))
+            conditions = self.getJoinedConditions(e, joins)
             if conditions:
                 data = self.db.select(
                     e, attributes, conditions, joins)
@@ -316,21 +322,21 @@ class KnowledgeBase():
         return explst
 
     def getDepChain(self, e1, e2):
-        if e1 == e2:
-            print(f'Entity {e1} is given as both source and destination.')
-            return False
+        e1 = e1.upper()
+        e2 = e2.upper()
         d = e2
         joins = self.joins[e1].copy()
         invPath = [d]
-        while d != e1:
-            for j in joins:
-                if d == j[2]:
-                    d = j[0]
-                    joins.remove(j)
-                    invPath.append(d)
-            if not invPath:
-                print(f'There is no path from {e1} to {e2}.')
-                return False
+        if joins:
+            while d != e1:
+                for j in joins:
+                    if d == j[2]:
+                        d = j[0]
+                        joins.remove(j)
+                        invPath.append(d)
+                if not invPath:
+                    print(f'There is no path from {e1} to {e2}.')
+                    return False
         return invPath
 
     def isForeign(self, e, a):
@@ -365,18 +371,13 @@ class KnowledgeBase():
         else:
             return False
 
-    # Select from kb also delete the data csvs in dataModel
-    def select(self, ent, cond=None, order=None, pOut=False, getQuery=False):
-        ent = {e.upper(): [a.upper() for a in ent[e]]
-               for e in ent}
+    def getJoinEntities(self, ent, cond):
         jent = list(ent)
-        if cond:
-            cond = {e.upper(): {a.upper(): cond[e][a]
-                                for a in cond[e]} for e in cond}
-        jlst = []
-        if cond:
-            for e in cond:
-                for je in ent:
+        cond = {e.upper(): {a.upper(): cond[e][a]
+                            for a in cond[e]} for e in cond}
+        for e in cond:
+            for je in ent:
+                if e != je:
                     path = self.getDepChain(je, e)
                     if not path:
                         path = self.getDepChain(e, je)
@@ -387,7 +388,26 @@ class KnowledgeBase():
                     else:
                         print('Unable to link joined entities.')
                         return False
+        return jent
+    # Select from kb also delete the data csvs in dataModel
 
+    def select(self, ent, cond=None, order=None, pOut=False, getQuery=False):
+
+        if type(ent).__name__ == 'dict':
+            ent = {e.upper(): [a.upper() for a in ent[e]]
+                   for e in ent}
+        elif type(ent).__name__ == 'list':
+            ent = [e.upper() for e in ent]
+        else:
+            print('Invalid input')
+            return False
+        jlst = []
+        entpred = None
+        jent = None
+        if cond:
+            jent = self.getJoinEntities(ent, cond)
+        else:
+            jent = list(ent)
         for e1 in jent:
             for e2 in list(jent)[list(jent).index(e1) + 1:]:
                 j = self.getJoinPreds(e1, e2)
@@ -425,7 +445,6 @@ class KnowledgeBase():
                 if e in cent:
                     condlst.extend(self.getCompExp(e, conditions=cent[e]))
             query = query.where(*condlst)
-
         query = query.select(*attrlst)
 
         if order:
@@ -452,11 +471,13 @@ class KnowledgeBase():
                     s = d
                     d += attrlen[ei+1]
             for pd in pdata:
-                for e in ent:
-                    ei = list(ent).index(e)
-                    outdata.append(outPreds[ei](
-                        *pd[eind[ei][0]:eind[ei][1]]))
-            return outdata
+                if type(pd) != list:
+                    outdata.append(outPreds[ei](pd))
+                else:
+                    for e in ent:
+                        ei = list(ent).index(e)
+                        outdata.append(outPreds[ei](
+                            *pd[eind[ei][0]:eind[ei][1]]))
 
         else:
             outdata = pdata.copy()
@@ -480,28 +501,74 @@ class KnowledgeBase():
         return outKB
 
     # Update to kb and db
-    def update(self, ent, val, cond=None, toDb=True):
+    def update(self, upd, cond=None, cascade=False, toDb=True):
+        upd = {e.upper(): {a.upper(): upd[e][a] for a in upd[e]} for e in upd}
+        ent = {e: list(upd[e]) for e in upd}
         # Update to kb
-        entpred = []
-        fpaths = {fe: [] for fe in self.schema}
-        for e in ent:
-            if e not in entpred:
-                entpred.append(self.mergedPreds[e.upper()])
-            for fe in self.schema:
-                fpaths[e.upper()].append(self.getForeignPath(e, fe))
-        # for e in ent:
-        #     if e in val:
-        #         mpreds, qout = self.select(
-        #             ent, cond=cond, outPreds=True, getQuery=True)
-        #         qout.delete()
-        #         for m in mpreds:
-        #             m = m.clone(**val[e])
-        #             self.kb.add(m)
+        mpreds = self.delete(ent, cascade=cascade, cond=cond, getData=True)
+        # print(mpreds)
+        # for m in mpreds:
+        #     m = m.clone(**val[e])
+        #     self.kb.add(m)
 
-        # Update to db
-        if toDb:
-            self.db.update([e.upper() for e in ent], cond, val)
+        # # Update to db
+        # if toDb:
+        #     self.db.update([e.upper() for e in ent], cond, val)
         return True
+
+    def getForeignPath(self, jent, e, a=None):
+        if a:
+            p = self.getForeignPaths[e][a]
+        else:
+            p = list(self.getForeignPaths[e].values())
+        for j in p:
+            if type(jent).__name__ == 'dict':
+                if j[0] not in jent:
+                    jent[j[0]] = [j[1]]
+                elif j[1] not in jent[j[0]]:
+                    jent[j[0]].append(j[1])
+            elif type(jent).__name__ == 'list':
+                jent.append[j[0]]
+
+    def cascade(self, ent):
+        jent = ent.copy()
+        for e in jent:
+            if type(jent).__name__ == 'dict':
+                for a in jent[e]:
+                    if self.isForeign(e, a):
+                        self.getForeignPath(jent, e, a)
+            if type(jent).__name__ == 'list':
+                self.getForeignPath(jent, e)
+        return jent
+
+    def delete(self, ent, cond=None, getData=False, cascade=True, fromDb=True):
+        ent = [e.upper() for e in ent]
+        if cascade:
+            mpreds, qsout = self.select(
+                list(self.cascade(ent)), cond=cond, pOut=True, getQuery=True)
+        else:
+            mpreds, qsout = self.select(
+                list(ent), cond=cond, pOut=True, getQuery=True)
+        print(mpreds)
+        qsout.delete()
+
+        if fromDb:
+            jent = self.getJoinEntities(ent, cond)
+            jlst = []
+            for e1 in jent:
+                for e2 in list(jent)[list(jent).index(e1) + 1:]:
+                    if self.getForeign(e1, e2):
+                        jlst.append(self.getForeign(e1, e2))
+            conditions = {}
+            for c in cond:
+                conditions.update(self.getDbConditions(c, cond[c]))
+            for e in ent:
+                self.db.delete(e, conditions=conditions, joins=jlst)
+
+        if getData:
+            return mpreds
+        else:
+            return True
 
     def getInwardForeigns(self, entity, attribue):
         schema = self.schema.copy()
@@ -700,16 +767,15 @@ class KnowledgeBase():
 
 
 def main():
-    # TODO tomorrow finish update and delete with cascade (18)
-    # TODO Sunday tune db select delete and update for list input in entities (19)
-    # TODO Monday create tests per specialty per doctor and general (19)
+    # TODO tomorrow finish update and delete with cascade (18) tune db select delete and update for list input in entities (19)
+    # TODO tomorrow create tests per specialty per doctor and general (19)
     # TODO Tuesday create a simple html request interface (20 - 21 - 22)
     # TODO Wednesday final changes and comments (23)
     # TODO Thursday Τα έγγραφα του Τσάμπρα (24)
     # TODO 25 - 31 paper
 
     dbConditions = {'TIMESLOT': {
-        "TIMESLOT_AVAILABLE": [('=', True)]}, 'DOCTOR': {'ID': [('=', '04099610232')]}}
+        "TIMESLOT_AVAILABLE": [('=', True)]}, 'DOCTOR': {'ID': [('=', '14108130692')]}}
     db_info = ['kanon2000', 'nhs', 'kanon2000']
     kb = KnowledgeBase('NHS_APPOINTMENTS', schema,
                        dbInfo=db_info, dbConditions=dbConditions)
@@ -720,18 +786,18 @@ def main():
     # class Grant(Predicate):
     #     request = IntegerField
 
-    class Grant(Predicate):
-        request = IntegerField
-        score = IntegerField
+    # class Grant(Predicate):
+    #     request = IntegerField
+    #     score = IntegerField
 
-    class Claimed(Predicate):
-        request = IntegerField
+    # class Claimed(Predicate):
+    #     request = IntegerField
 
-    subKB = {'REQUEST': ['PATIENT_ID',
-                         'TIMESLOT_ID', 'SCORE', 'STATUS'], 'TIMESLOT': ['DOCTOR_ID'], 'DOCTOR': ['SPECIALTY_TITLE']}
-    solution = kb.run('clingo/reschedulers/reschedulerGranGeneral.lp',
-                      [Grant, Claimed], searchDuration=12, show=True, subKB=subKB, subKBCond={'SPECIALTY': {
-                          "TITLE": [('=', 'Preventive_medicine')]}},  merged=True)
+    # subKB = {'REQUEST': ['PATIENT_ID',
+    #                      'TIMESLOT_ID', 'SCORE', 'STATUS'], 'TIMESLOT': ['DOCTOR_ID'], 'DOCTOR': ['SPECIALTY_TITLE']}
+    # solution = kb.run('clingo/reschedulers/reschedulerGranGeneral.lp',
+    #                   [Grant, Claimed], searchDuration=12, show=True, subKB=subKB, subKBCond={'SPECIALTY': {
+    #                       "TITLE": [('=', 'Preventive_medicine')]}},  merged=True)
     # data = kb.select(['Request', 'Doctor'], cond={
     #     'Doctor': {'id': [('=', '04099610232')]}}, order={'Request': ['id']}, pOut=True)
     # newKB = kb.extract(['Request', 'Doctor'], cond={
@@ -740,8 +806,10 @@ def main():
     #     'Doctor': {'id': [('=', '04099610232')]}}, order={'Request': ['id', 'timeslot_id']})
 
     # print(FactBase.asp_str(newKB))
-    # kb.update(('Person', 'Doctor'), val={'Doctor': {'id': '1234'}}, cond={
-    #     'Doctor': {'doctor_available': [('=', True)]}})
+    # kb.update(upd={'Timeslot': {'timeslot_available': False}, 'Request': {'id': 1}}, cond={
+    #     'Doctor': {'id': [('=', '04079699320')]}})
+    kb.delete(ent=['Timeslot', 'Request'], cond={
+        'Doctor': {'id': [('=', '14108130692')]}}, fromDb=True)
     kb.toFile('clingo/')
 
     # print(data)
