@@ -214,45 +214,44 @@ class DataModel():
             return False
 
     def delete(self, table, conditions=None, joins=None):
-        # try:
-        if joins:
-            using = []
-            for j in joins:
-                if j and j[1][0] != table:
-                    using.append(j[1][0])
-            print('aaaaaaaaaaa', using)
-
-        query = f"""\nDELETE FROM {table}\n"""
-
-        if joins:
-            query += 'USING '
-            for u in using:
-                query += f"""{u}"""
-                if using.index(u) < len(using) - 1:
-                    query += ', '
-                else:
-                    query += '\n'
-
-        if conditions:
-            condstr = self.conditions(conditions, ' and ')
+        try:
             if joins:
-                query += f"""WHERE("""
+                using = []
                 for j in joins:
-                    query += f"""{j[0][0]}.{j[0][1]} = {j[1][0]}.{j[1][1]} AND """
-                    if joins.index(j) == len(joins) - 1:
-                        query += f"""{condstr}); \n"""
+                    for jt in j:
+                        if jt[0] != table and jt[0] not in using:
+                            using.append(jt[0])
+
+            query = f"""\nDELETE FROM {table}\n"""
+
+            if joins:
+                query += 'USING '
+                for u in using:
+                    query += f"""{u}"""
+                    if using.index(u) < len(using) - 1:
+                        query += ', '
+                    else:
+                        query += '\n'
+
+            if conditions:
+                condstr = self.conditions(conditions, ' and ')
+                if joins:
+                    query += f"""WHERE("""
+                    for j in joins:
+                        query += f"""{j[0][0]}.{j[0][1]} = {j[1][0]}.{j[1][1]} AND """
+                        if joins.index(j) == len(joins) - 1:
+                            query += f"""{condstr}); \n"""
+                else:
+                    query += f"""WHERE({condstr}); \n"""
+                values = self.values(conditions)
+                self.executeSQL(query, values=values)
             else:
-                query += f"""WHERE({condstr}); \n"""
-            values = self.values(conditions)
-            print(query)
-            self.executeSQL(query, values=values)
-        else:
-            self.executeSQL(query)
-        return True
-        # except:
-        #     print(
-        #         f"Failed to delete the row from table {table}")
-        #     return False
+                self.executeSQL(query)
+            return True
+        except:
+            print(
+                f"Failed to delete the row from table {table}")
+            return False
 
     def insert(self, table, val):
         try:

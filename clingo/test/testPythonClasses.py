@@ -334,7 +334,7 @@ class KnowledgeBase():
                         d = j[0]
                         joins.remove(j)
                         invPath.append(d)
-                if not invPath:
+                if len(invPath) == 1:
                     print(f'There is no path from {e1} to {e2}.')
                     return False
         return invPath
@@ -386,13 +386,12 @@ class KnowledgeBase():
                             if p not in jent:
                                 jent.append(p)
                     else:
-                        print('Unable to link joined entities.')
-                        return False
+                        print(f'Unable to link joined entities {e}, {je}.')
+                        # return False
         return jent
     # Select from kb also delete the data csvs in dataModel
 
     def select(self, ent, cond=None, order=None, pOut=False, getQuery=False):
-
         if type(ent).__name__ == 'dict':
             ent = {e.upper(): [a.upper() for a in ent[e]]
                    for e in ent}
@@ -408,6 +407,8 @@ class KnowledgeBase():
             jent = self.getJoinEntities(ent, cond)
         else:
             jent = list(ent)
+        print(jent)
+
         for e1 in jent:
             for e2 in list(jent)[list(jent).index(e1) + 1:]:
                 j = self.getJoinPreds(e1, e2)
@@ -506,7 +507,7 @@ class KnowledgeBase():
         ent = {e: list(upd[e]) for e in upd}
         # Update to kb
         mpreds = self.delete(ent, cascade=cascade, cond=cond, getData=True)
-        # print(mpreds)
+        print(mpreds)
         # for m in mpreds:
         #     m = m.clone(**val[e])
         #     self.kb.add(m)
@@ -517,10 +518,16 @@ class KnowledgeBase():
         return True
 
     def getForeignPath(self, jent, e, a=None):
+        p = []
+        print('BBB')
         if a:
-            p = self.getForeignPaths[e][a]
+            if e in self.foreignPaths and a in self.foreignPaths[e]:
+                p = self.foreignPaths[e][a]
         else:
-            p = list(self.getForeignPaths[e].values())
+            if e in self.foreignPaths:
+                p = list(self.foreignPaths[e].values())[0]
+                print(p)
+
         for j in p:
             if type(jent).__name__ == 'dict':
                 if j[0] not in jent:
@@ -528,7 +535,8 @@ class KnowledgeBase():
                 elif j[1] not in jent[j[0]]:
                     jent[j[0]].append(j[1])
             elif type(jent).__name__ == 'list':
-                jent.append[j[0]]
+                if j[0] not in jent:
+                    jent.append(j[0])
 
     def cascade(self, ent):
         jent = ent.copy()
@@ -557,7 +565,7 @@ class KnowledgeBase():
             jlst = []
             for e1 in jent:
                 for e2 in list(jent)[list(jent).index(e1) + 1:]:
-                    if self.getForeign(e1, e2):
+                    if self.getForeign(e1, e2) and self.getForeign(e1, e2) not in jlst:
                         jlst.append(self.getForeign(e1, e2))
             conditions = {}
             for c in cond:
@@ -775,7 +783,7 @@ def main():
     # TODO 25 - 31 paper
 
     dbConditions = {'TIMESLOT': {
-        "TIMESLOT_AVAILABLE": [('=', True)]}, 'DOCTOR': {'ID': [('=', '14108130692')]}}
+        "TIMESLOT_AVAILABLE": [('=', True)]}, 'DOCTOR': {'ID': [('=', '13127462938')]}}
     db_info = ['kanon2000', 'nhs', 'kanon2000']
     kb = KnowledgeBase('NHS_APPOINTMENTS', schema,
                        dbInfo=db_info, dbConditions=dbConditions)
@@ -806,10 +814,10 @@ def main():
     #     'Doctor': {'id': [('=', '04099610232')]}}, order={'Request': ['id', 'timeslot_id']})
 
     # print(FactBase.asp_str(newKB))
-    # kb.update(upd={'Timeslot': {'timeslot_available': False}, 'Request': {'id': 1}}, cond={
-    #     'Doctor': {'id': [('=', '04079699320')]}})
-    kb.delete(ent=['Timeslot', 'Request'], cond={
-        'Doctor': {'id': [('=', '14108130692')]}}, fromDb=True)
+    kb.update(upd={'Timeslot': {'timeslot_available': False}, 'Request': {'id': 1}}, cond={
+        'Doctor': {'id': [('=', '13127462938')]}})
+    # kb.delete(ent=['Request', 'Timeslot'], cond={
+    #     'Doctor': {'id': [('=', '23068446477')]}}, fromDb=True)
     kb.toFile('clingo/')
 
     # print(data)
