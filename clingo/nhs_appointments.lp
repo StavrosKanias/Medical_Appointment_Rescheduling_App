@@ -1208,7 +1208,6 @@ specialty("Diagnostic_radiology").
 specialty("Preventive_medicine").
 specialty("Internal_medicine").
 specialty("Psychiatry").
-doctor("13127462938","bLZP-84078437",1,"Surgery").
 patient("14118577627",40).
 patient("25048707506",44).
 patient("23040767529",25).

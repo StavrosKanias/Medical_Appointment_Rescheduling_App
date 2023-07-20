@@ -197,7 +197,7 @@ class KnowledgeBase():
                     conditions[f'{entity}.{attribute}'].append(condition)
         return conditions
 
-    def getForeignPaths(self):
+    def getForeignPaths(self, out=True):
         inForeigns = {e: {} for e in self.schema}
         paths = {e: {} for e in self.schema}
         for e in self.schema:
@@ -217,7 +217,21 @@ class KnowledgeBase():
                             if nf not in paths[e][a]:
                                 paths[e][a].append(nf)
         self.clear2dDict(paths)
+
+        if out:
+            paths = self.in2out(paths)
         return paths
+
+    def in2out(self, inPaths):
+        outPaths = {e: {} for e in self.schema}
+        for e in inPaths:
+            for a in inPaths[e]:
+                for j in inPaths[e][a]:
+                    if j[1] not in outPaths[j[0]]:
+                        outPaths[j[0]][j[1]] = [(e, a)]
+                    elif (e, a) not in outPaths[j[0]][j[1]]:
+                        outPaths[j[0]][j[1]].append((e, a))
+        return outPaths
 
     def clear2dDict(self, dict):
         for e in list(dict):
@@ -407,7 +421,6 @@ class KnowledgeBase():
             jent = self.getJoinEntities(ent, cond)
         else:
             jent = list(ent)
-        print(jent)
 
         for e1 in jent:
             for e2 in list(jent)[list(jent).index(e1) + 1:]:
@@ -502,12 +515,16 @@ class KnowledgeBase():
         return outKB
 
     # Update to kb and db
-    def update(self, upd, cond=None, cascade=False, toDb=True):
+    def update(self, upd, cond=None, cascade=True, toDb=True):
         upd = {e.upper(): {a.upper(): upd[e][a] for a in upd[e]} for e in upd}
         ent = {e: list(upd[e]) for e in upd}
         # Update to kb
         mpreds = self.delete(ent, cascade=cascade, cond=cond, getData=True)
         print(mpreds)
+        # print(mpreds)
+        for e in ent:
+            print(self.foreignPaths[e])
+
         # for m in mpreds:
         #     m = m.clone(**val[e])
         #     self.kb.add(m)
@@ -519,15 +536,14 @@ class KnowledgeBase():
 
     def getForeignPath(self, jent, e, a=None):
         p = []
-        print('BBB')
         if a:
             if e in self.foreignPaths and a in self.foreignPaths[e]:
                 p = self.foreignPaths[e][a]
         else:
             if e in self.foreignPaths:
-                p = list(self.foreignPaths[e].values())[0]
-                print(p)
-
+                p = list(self.foreignPaths[e].values())
+                if p:
+                    p = p[0]
         for j in p:
             if type(jent).__name__ == 'dict':
                 if j[0] not in jent:
@@ -537,10 +553,13 @@ class KnowledgeBase():
             elif type(jent).__name__ == 'list':
                 if j[0] not in jent:
                     jent.append(j[0])
+        # print('path', p)
+        # print('entity', e)
+        # print('jent', jent)
 
     def cascade(self, ent):
         jent = ent.copy()
-        for e in jent:
+        for e in ent:
             if type(jent).__name__ == 'dict':
                 for a in jent[e]:
                     if self.isForeign(e, a):
@@ -552,12 +571,12 @@ class KnowledgeBase():
     def delete(self, ent, cond=None, getData=False, cascade=True, fromDb=True):
         ent = [e.upper() for e in ent]
         if cascade:
+            print(self.cascade(ent))
             mpreds, qsout = self.select(
                 list(self.cascade(ent)), cond=cond, pOut=True, getQuery=True)
         else:
             mpreds, qsout = self.select(
                 list(ent), cond=cond, pOut=True, getQuery=True)
-        print(mpreds)
         qsout.delete()
 
         if fromDb:
@@ -783,7 +802,7 @@ def main():
     # TODO 25 - 31 paper
 
     dbConditions = {'TIMESLOT': {
-        "TIMESLOT_AVAILABLE": [('=', True)]}, 'DOCTOR': {'ID': [('=', '13127462938')]}}
+        "TIMESLOT_AVAILABLE": [('=', True)]}, 'DOCTOR': {'ID': [('=', '26022102664')]}}
     db_info = ['kanon2000', 'nhs', 'kanon2000']
     kb = KnowledgeBase('NHS_APPOINTMENTS', schema,
                        dbInfo=db_info, dbConditions=dbConditions)
@@ -814,10 +833,11 @@ def main():
     #     'Doctor': {'id': [('=', '04099610232')]}}, order={'Request': ['id', 'timeslot_id']})
 
     # print(FactBase.asp_str(newKB))
-    kb.update(upd={'Timeslot': {'timeslot_available': False}, 'Request': {'id': 1}}, cond={
-        'Doctor': {'id': [('=', '13127462938')]}})
+    kb.update(upd={'Doctor': {'id': '26022102664'}, 'Timeslot': {'id': 1}}, cond={
+        'Doctor': {'id': [('=', '26022102664')]}})
     # kb.delete(ent=['Request', 'Timeslot'], cond={
     #     'Doctor': {'id': [('=', '23068446477')]}}, fromDb=True)
+    print(kb.foreignPaths)
     kb.toFile('clingo/')
 
     # print(data)
