@@ -197,7 +197,7 @@ class KnowledgeBase():
                     conditions[f'{entity}.{attribute}'].append(condition)
         return conditions
 
-    def getForeignPaths(self):
+    def getForeignPaths(self, out=True):
         inForeigns = {e: {} for e in self.schema}
         paths = {e: {} for e in self.schema}
         for e in self.schema:
@@ -217,7 +217,21 @@ class KnowledgeBase():
                             if nf not in paths[e][a]:
                                 paths[e][a].append(nf)
         self.clear2dDict(paths)
+
+        if out:
+            paths = self.in2out(paths)
         return paths
+
+    def in2out(self, inPaths):
+        outPaths = {e: {} for e in self.schema}
+        for e in inPaths:
+            for a in inPaths[e]:
+                for j in inPaths[e][a]:
+                    if j[1] not in outPaths[j[0]]:
+                        outPaths[j[0]][j[1]] = [(e, a)]
+                    elif (e, a) not in outPaths[j[0]][j[1]]:
+                        outPaths[j[0]][j[1]].append((e, a))
+        return outPaths
 
     def clear2dDict(self, dict):
         for e in list(dict):
@@ -389,8 +403,8 @@ class KnowledgeBase():
                         print(f'Unable to link joined entities {e}, {je}.')
                         # return False
         return jent
-    # Select from kb also delete the data csvs in dataModel
 
+    # Select from kb also delete the data csvs in dataModel
     def select(self, ent, cond=None, order=None, pOut=False, getQuery=False):
         if type(ent).__name__ == 'dict':
             ent = {e.upper(): [a.upper() for a in ent[e]]
@@ -501,15 +515,32 @@ class KnowledgeBase():
         return outKB
 
     # Update to kb and db
-    def update(self, upd, cond=None, cascade=False, toDb=True):
+    def update(self, upd, cond=None, cascade=True, toDb=True):
         upd = {e.upper(): {a.upper(): upd[e][a] for a in upd[e]} for e in upd}
         ent = {e: list(upd[e]) for e in upd}
         # Update to kb
         mpreds = self.delete(ent, cascade=cascade, cond=cond, getData=True)
         print(mpreds)
-        # for m in mpreds:
-        #     m = m.clone(**val[e])
-        #     self.kb.add(m)
+        if cascade:
+            ent = self.cascade(ent)
+            print(ent)
+            val = {e: {} for e in ent}
+            for e in ent:
+                for a in ent[e]:
+                    print(a)
+                    if type(a).__name__ == 'tuple':
+                        aname = a[0].lower()
+                        val[e][aname] = upd[a[1]][a[2]]
+                    else:
+                        aname = a.lower()
+                        val[e][aname] = upd[e][a]
+        print(val)
+        for m in mpreds:
+            for p in m:
+                e = type(p).__name__.upper()
+                p = p.clone(**val[e])
+                print(p)
+                self.kb.add(p)
 
         # # Update to db
         # if toDb:
@@ -518,32 +549,30 @@ class KnowledgeBase():
 
     def getForeignPath(self, jent, e, a=None):
         p = []
-        print('BBB')
         if a:
             if e in self.foreignPaths and a in self.foreignPaths[e]:
                 p = self.foreignPaths[e][a]
         else:
             if e in self.foreignPaths:
-                p = list(self.foreignPaths[e].values())[0]
-                print(p)
-
+                p = list(self.foreignPaths[e].values())
+                if p:
+                    p = p[0]
         for j in p:
-            if type(jent).__name__ == 'dict':
+            if a:
                 if j[0] not in jent:
-                    jent[j[0]] = [j[1]]
-                elif j[1] not in jent[j[0]]:
-                    jent[j[0]].append(j[1])
-            elif type(jent).__name__ == 'list':
+                    jent[j[0]] = [(j[1], e, a)]
+                elif j not in jent[j[0]]:
+                    jent[j[0]].append((j[1], e, a))
+            else:
                 if j[0] not in jent:
                     jent.append(j[0])
 
     def cascade(self, ent):
         jent = ent.copy()
-        for e in jent:
+        for e in ent:
             if type(jent).__name__ == 'dict':
                 for a in jent[e]:
-                    if self.isForeign(e, a):
-                        self.getForeignPath(jent, e, a)
+                    self.getForeignPath(jent, e, a)
             if type(jent).__name__ == 'list':
                 self.getForeignPath(jent, e)
         return jent
@@ -556,7 +585,6 @@ class KnowledgeBase():
         else:
             mpreds, qsout = self.select(
                 list(ent), cond=cond, pOut=True, getQuery=True)
-        print(mpreds)
         qsout.delete()
 
         if fromDb:
@@ -564,8 +592,11 @@ class KnowledgeBase():
             jlst = []
             for e1 in jent:
                 for e2 in list(jent)[list(jent).index(e1) + 1:]:
-                    if self.getForeign(e1, e2) and self.getForeign(e1, e2) not in jlst:
-                        jlst.append(self.getForeign(e1, e2))
+                    f = self.getForeign(e1, e2)
+                    if not f:
+                        f = self.getForeign(e2, e1)
+                    if f and f not in jlst:
+                        jlst.append(f)
             conditions = {}
             for c in cond:
                 conditions.update(self.getDbConditions(c, cond[c]))
