@@ -14,7 +14,8 @@ def main():
     db_info = ['kanon2000', 'nhs', 'kanon2000']
     kb = KnowledgeBase('NHS_APPOINTMENTS', schema,
                        dbInfo=db_info, dbConditions=dbConditions)
-    kb.select(['REQUEST','TIMESLOT'], conditions = {'REQUEST':{'ID':[('>',1000)]}, 'TIMESLOT':{'ID':[('>',100)]}}, order=('TIMESLOT','ID'))
+    kb.select(['REQUEST', 'TIMESLOT'], conditions={'REQUEST': {'ID': [
+              ('>', 1000)]}, 'TIMESLOT': {'ID': [('>', 100)]}}, order=('TIMESLOT', 'ID'))
     # kb.delete('DOCTOR', conditions={
     #     "ID": [('=', '20017620376')]}, cascade=True, fromDb=False)
     kb.toFile('clingo/')
@@ -59,20 +60,10 @@ def main():
 
 # TODO: Create tests per specialty per doctor and general groupings, maybe add joins in kb select
 
-# Βρίσκεις για κάθε οντότητα τα κλειδιά που ικανοποιούν τις συνθήκες
-# Παίρνεις την τομή
-# Κάνεις το join από το CLORM
-# Υπάρχει πρόβλημα, πρέπει η τομή να γίνει στο αντίστοιχο ξένο κλειδί που γίνεται το join
-# Άκυρο, γίνεται απλά θέλει στο where μετά να δώσεις συνθήκη για το ID κάθε οντότητας
-# Μπορείς να τα περάσεις τα joins στο getMatchingPrimaries και να εφαρμόσεις εκεί τις συνθήκες μετά συνεχίζεις με τα σωστά primaries
-# Πρόσθεσε flag για το cascade στα ξένα ώστε να τρέχε μόνο την πρώτη φορά που θα χρησιμοποιηθεί η βάση
-# Φτιάξε λειτουργία εξωτερική της κλάσσης στο backend για να κλείνουν τα ραντεβού του γιατρού που είναι unavailable 
-
-# Use merged method for joining!!! the split back Φτιάξε merge και split μεθόδους για ένα pred
-# Κάνε να μπορεί να ενημερωθεί το σχήμα
+# Φτιάξε λειτουργία εξωτερική της κλάσσης στο backend για να κλείνουν τα ραντεβού του γιατρού που είναι unavailable
 
 # Δυσκολίες:
-# Είναι immutable 
+# Είναι immutable
 # Δεν υπάρχει η έννοια του ξένου κλειδιού
 if __name__ == "__main__":
     main()

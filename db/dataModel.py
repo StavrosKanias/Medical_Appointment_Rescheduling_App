@@ -263,19 +263,48 @@ class DataModel():
             print(f"Failed to insert values {values} to table {table}")
             return False
 
-    def update(self, table, conditions, new):
+    def update(self, table, new, conditions=None, joins=None):
         try:
-            condstr = self.conditions(conditions, ' and ')
-            condval = self.values(conditions)
+            if joins:
+                using = []
+                for j in joins:
+                    for jt in j:
+                        if jt[0] != table and jt[0] not in using:
+                            using.append(jt[0])
+
             newstr = self.conditions(new, ', ')
-            newval = self.values(new)
-            values = newval + condval
-            query = f"UPDATE {table} SET {newstr} WHERE ({condstr});\n"
-            self.executeSQL(query, values)
+            values = self.values(new)
+            query = f"""UPDATE {table}\nSET {newstr}\n"""
+
+            if joins:
+                query += 'FROM '
+                for u in using:
+                    query += f"""{u}"""
+                    if using.index(u) < len(using) - 1:
+                        query += ', '
+                    else:
+                        query += '\n'
+
+            if conditions:
+                condstr = self.conditions(conditions, ' and ')
+                if joins:
+                    query += f"""WHERE("""
+                    for j in joins:
+                        query += f"""{j[0][0]}.{j[0][1]} = {j[1][0]}.{j[1][1]} AND """
+                        if joins.index(j) == len(joins) - 1:
+                            query += f"""{condstr}); \n"""
+                else:
+                    query += f"""WHERE({condstr}); \n"""
+                condstr = self.conditions(conditions, ' and ')
+                condval = self.values(conditions)
+                values.extend(condval)
+                self.executeSQL(query, values=values)
+            else:
+                self.executeSQL(query, values=values)
             return True
         except:
             print(
-                f"Failed to update the rows that have {condstr} from table {table} with value(s) {newstr}")
+                f"Failed to update table {table} for conditions {condstr} and value(s) {newstr}")
             return False
 
     def create(self, tableName, tableDict):
@@ -320,11 +349,7 @@ class DataModel():
             # Foreign key constraints
             if len(foreign_keys) != 0:
                 for fk in foreign_keys:
-                    query += f'CONSTRAINT INFORM_{tableDict[fk][2].upper()} FOREIGN KEY({fk}) REFERENCES {tableDict[fk][2]}({tableDict[fk][3]}) ON UPDATE CASCADE'
-                    if tableDict[fk][2].upper() == 'TIMESLOT' or tableDict[fk][2].upper() == 'PATIENT':
-                        query += ' ON DELETE CASCADE'
-                    else:
-                        query += ' ON DELETE SET NULL'
+                    query += f'CONSTRAINT INFORM_{tableDict[fk][2].upper()} FOREIGN KEY({fk}) REFERENCES {tableDict[fk][2]}({tableDict[fk][3]}) ON UPDATE CASCADE ON DELETE CASCADE'
 
                     if (foreign_keys.index(fk) < len(foreign_keys) - 1):
                         query += ",\n"
@@ -339,8 +364,25 @@ class DataModel():
         query = "SELECT tablename FROM pg_tables WHERE schemaname = current_schema()"
         tables = self.executeSQL(query, fetch=True)
         for i in range(len(tables)):
-            tables[i] = tables[i][0].upper()
+            tables[i] = tables[i][0]
         return tables
+
+    def getAttributes(self, table):
+        for t in self.getTables():
+            if table == t.upper():
+                query = f"""SELECT attname            AS col
+                            FROM   pg_attribute
+                            WHERE  attrelid = '{t}'::regclass
+                            AND    attnum > 0
+                            AND    NOT attisdropped
+                            ORDER  BY attnum;"""
+                attributes = self.executeSQL(query, fetch=True)
+                for i in range(len(attributes)):
+                    attributes[i] = attributes[i][0].upper()
+                return attributes
+        else:
+            print(f'Table {table} not in database schema')
+            return False
 
     def dropTables(self):
         query = """ DO $$ DECLARE

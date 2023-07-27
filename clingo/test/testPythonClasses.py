@@ -67,6 +67,7 @@ class KnowledgeBase():
                              (Predicate, ), content)
         else:
             print('Unable to create empty predicate')
+            return False
         return predicate
 
     def createMergedPreds(self):
@@ -141,9 +142,15 @@ class KnowledgeBase():
         self.db = DataModel(dbInfo[0], dbInfo[1], dbInfo[2])
         dbEntities = self.db.getTables()
         for s in self.schema:
-            if s not in dbEntities:
+            if s not in [de.upper() for de in dbEntities]:
                 raise Exception(
-                    f"The predicate {s} doesn't exist in the given database.")
+                    f"Invalid schema.\nPredicate {s} doesn't exist in the given database.")
+            else:
+                dbAttributes = self.db.getAttributes(s)
+                for a in self.schema[s]:
+                    if a not in [da.upper() for da in dbAttributes]:
+                        raise Exception(
+                            f"Invalid schema.\nAttribute {a} of entity {s} doesn't exist in the given database.")
 
     def getDbConditions(self, entity, cond):
         entity = entity.upper()
@@ -192,7 +199,7 @@ class KnowledgeBase():
                     conditions[f'{entity}.{attribute}'].append(condition)
         return conditions
 
-    def getForeignPaths(self, out=True):
+    def getForeignPaths(self):
         inForeigns = {e: {} for e in self.schema}
         paths = {e: {} for e in self.schema}
         for e in self.schema:
@@ -242,7 +249,6 @@ class KnowledgeBase():
                 inForeigns[e][a] = self.getInwardForeigns(e, a)
                 for i in inForeigns[e][a]:
                     ijoins[i[0]][i[1]].append((e, a))
-
         for i in ijoins:
             for a in ijoins[i]:
                 for f in ijoins[i][a]:
@@ -356,12 +362,10 @@ class KnowledgeBase():
         fd = None
         if e1 in self.joins and e2 in self.joins:
             for j in self.joins[e1]:
-                if j[2] == e2:
+                if j[0] == e1 and j[2] == e2:
                     fs = (j[0], j[1])
                     fd = (j[2], j[3])
                     return (fs, fd)
-        print(
-            f'No foreign key from {e1} to {e2}.')
         return False
 
     def getJoinPreds(self, e1, e2):
@@ -393,7 +397,7 @@ class KnowledgeBase():
                                 jent.append(p)
                     else:
                         print(f'Unable to link joined entities {e}, {je}.')
-                        # return False
+                        return False
         return jent
 
     # Select from kb also delete the data csvs in dataModel
@@ -413,7 +417,6 @@ class KnowledgeBase():
             jent = self.getJoinEntities(ent, cond)
         else:
             jent = list(ent)
-
         for e1 in jent:
             for e2 in list(jent)[list(jent).index(e1) + 1:]:
                 j = self.getJoinPreds(e1, e2)
@@ -477,7 +480,6 @@ class KnowledgeBase():
                     s = d
                     d += attrlen[ei+1]
             for pd in pdata:
-                print(pd)
                 for e in ent:
                     ei = list(ent).index(e)
                     outdata.append(outPreds[ei](
@@ -512,15 +514,23 @@ class KnowledgeBase():
         mpreds = self.delete(ent, cascade=cascade,
                              cond=cond, getData=True, fromDb=False)
         if cascade:
-            ent = self.cascade(ent)
-            val = {e: {} for e in ent}
-            for e in ent:
-                for a in ent[e]:
+            cent = self.cascade(ent)
+            val = {e: {} for e in cent}
+            for e in cent:
+                for a in cent[e]:
                     if type(a) == tuple:
                         aname = a[0].lower()
+                        if aname.upper() not in self.schema[e]:
+                            print(
+                                f'Unknown attribute {aname.upper()} for entity {e}')
+                            return False
                         val[e][aname] = upd[a[1]][a[2]]
                     else:
                         aname = a.lower()
+                        if aname.upper() not in self.schema[e]:
+                            print(
+                                f'Unknown attribute {aname.upper()} for entity {e}')
+                            return False
                         val[e][aname] = upd[e][a]
         for m in mpreds:
             for p in m:
@@ -528,15 +538,28 @@ class KnowledgeBase():
                 p = p.clone(**val[e])
                 self.kb.add(p)
 
-        # TODO Fix the update to db
-        # # Update to db
-        # if toDb:
-        #     self.db.update([e.upper() for e in ent], cond, val)
+        # Update to db
+        if toDb:
+            val = {e.upper(): {a.upper(): val[e][a]
+                               for a in val[e]} for e in val}
+            jlst = self.getAllDeps(cent, cond)
+            conditions = {}
+            for c in cond:
+                conditions.update(self.getDbConditions(c, cond[c]))
+            self.db.update(list(cent)[-1].upper(),
+                           val[e], conditions, joins=jlst)
         return True
 
     def getForeignPath(self, jent, e, a=None):
-        # TODO SOOOS combine forward and backward foreigns
         fpaths = self.in2out(self.foreignPaths)
+        for fe in self.foreignPaths:
+            for fa in self.foreignPaths[fe]:
+                for j in self.foreignPaths[fe][fa]:
+                    if fe in fpaths:
+                        if fa in fpaths[fe]:
+                            fpaths[fe][fa].append(j)
+                        else:
+                            fpaths[fe][fa] = [j]
         p = []
         if a:
             if e in fpaths and a in fpaths[e]:
@@ -564,10 +587,24 @@ class KnowledgeBase():
                     self.getForeignPath(jent, e, a)
             if type(jent) == list:
                 self.getForeignPath(jent, e)
+
         return jent
+
+    def getAllDeps(self, ent, cond):
+        jent = self.getJoinEntities(ent, cond)
+        jlst = []
+        for e1 in jent:
+            for e2 in list(jent)[list(jent).index(e1) + 1:]:
+                f = self.getForeign(e1, e2)
+                if not f:
+                    f = self.getForeign(e2, e1)
+                if f and f not in jlst:
+                    jlst.append(f)
+        return jlst
 
     def delete(self, ent, cond=None, getData=False, cascade=True, fromDb=True):
         ent = [e.upper() for e in ent]
+        ent.extend(e.upper() for e in cond)
         if cascade:
             mpreds, qsout = self.select(
                 list(self.cascade(ent)), cond=cond, pOut=True, getQuery=True)
@@ -577,15 +614,7 @@ class KnowledgeBase():
         qsout.delete()
 
         if fromDb:
-            jent = self.getJoinEntities(ent, cond)
-            jlst = []
-            for e1 in jent:
-                for e2 in list(jent)[list(jent).index(e1) + 1:]:
-                    f = self.getForeign(e1, e2)
-                    if not f:
-                        f = self.getForeign(e2, e1)
-                    if f and f not in jlst:
-                        jlst.append(f)
+            jlst = self.getAllDeps(ent, cond)
             conditions = {}
             for c in cond:
                 conditions.update(self.getDbConditions(c, cond[c]))
@@ -683,8 +712,8 @@ class KnowledgeBase():
         return mergedPred(*data)
 
     def run(self, asp, outPreds=None, searchDuration=None, show=False, limit=False, subKB=None, subKBCond=None, merged=False, symbOut=False):
-        # Create a Control object that will unify models against the appropriate
-        # predicates. Then load the asp file that encodes the problem domain.
+        # Create a Control object that will unify models against the appropriate predicates.
+        # Then load the asp file that encodes the problem domain.
         fname = asp.split('/')[-1]
         print(f'\nExecuting {fname}...')
         predicates = list(self.mergedPreds.values())
@@ -801,6 +830,32 @@ def main():
     # TODO Thursday Τα έγγραφα του Τσάμπρα (24)
     # TODO 25 - 31 paper
 
+    # schema = {
+    #     'SPECIALTY': {"TITLE": ('text', True)},
+
+    #     'DOCTOR': {"ID": ('text', True, 'PERSON', 'SSN'),
+    #                "UPIN": ('text', False, True),
+    #                "DOCTOR_AVAILABLE": ('boolean', False),
+    #                "SPECIALTY_TITLE": ('text', False, 'SPECIALTY', 'TITLE')},
+
+    #     'PATIENT': {"ID": ('text', True, 'PERSON', 'SSN'),
+    #                 "PRIORITY": ('integer', False)},
+
+    #     'TIMESLOT': {"ID": ('integer', True),
+    #                  "DATE": ('date', False),
+    #                  "TIME": ('time', False),
+    #                  "TIMESLOT_AVAILABLE": ('boolean', False),
+    #                  "DOCTOR_ID": ('text', False, 'DOCTOR', 'ID')},
+
+    #     'REQUEST': {"ID": ('integer', True),
+    #                 "PATIENT_ID": ('text', False, 'PATIENT', 'ID'),
+    #                 "TIMESLOT_ID": ('integer', False, 'TIMESLOT', 'ID'),
+    #                 "SCORE": ('integer', False),
+    #                 "STATUS": ('integer', False)}
+
+    #     # The "SCORE" must be rounded to an int because clingo does not support floats
+    # }
+
     dbConditions = {'TIMESLOT': {
         "TIMESLOT_AVAILABLE": [('=', True)]}, 'DOCTOR': {'ID': [('=', '02071521492')]}}
     db_info = ['kanon2000', 'nhs', 'kanon2000']
@@ -832,13 +887,13 @@ def main():
     #     'Doctor': {'id': [('=', '04099610232')]}}, order={'Request': ['id', 'timeslot_id']})
 
     # print(FactBase.asp_str(newKB))
-    kb.update(upd={'Doctor': {'id': '52071521492', 'upin': '154352345'}}, cond={
-        'Doctor': {'id': [('=', '02071521492')]}})
-    # kb.delete(ent=['Request', 'Timeslot'], cond={
-    #     'Doctor': {'id': [('=', '23068446477')]}}, fromDb=True)
+    kb.update(upd={'Request': {'patient_id': '12212121212121'}, 'Timeslot':{'id':1}}, cond={
+        'Request': {'patient_id': [('=', '00000000')]}})
+    # kb.delete(ent=['Doctor'], cond={
+    #     'Doctor': {'id': [('=', '04099610232')]}})
     kb.toFile('clingo/')
 
-    # print(data)
+    # TODO fix this !
 
 
 if __name__ == "__main__":

@@ -1,10 +1,8 @@
 import sys
 sys.path.append('./db')  # nopep8
-sys.path.append('./clingo')  # nopep8
 from clorm import monkey
 monkey.patch()  # nopep8 # must call this before importing clingo
 from copy import copy
-from dbCreator import schema
 from dataModel import DataModel
 from clorm import FactBase, Predicate, IntegerField, StringField
 from clorm.clingo import Control
@@ -34,17 +32,12 @@ class KnowledgeBase():
 
         elif data:
             for entity in data:
-                attributes = list(self.schema[entity])
                 d = data[entity]
                 self.insert(entity, d, toDb=False)
 
-    def showPreds(self):
-        for sp in self.splitPreds:
-            print(sp, [attr for attr in dir(self.splitPreds[sp]) if callable(
-                getattr(self.splitPreds[sp], attr)) and not (attr.startswith("__") or attr.startswith("_")) and attr not in ['Field', 'clone', 'sign']])
-        for mp in self.mergedPreds:
-            print(mp, [attr for attr in dir(self.mergedPreds[mp]) if callable(
-                getattr(self.mergedPreds[mp], attr)) and not (attr.startswith("__") or attr.startswith("_")) and attr not in ['Field', 'clone', 'sign']])
+    def showPredContent(self, p):
+        print(p, [attr for attr in dir(p) if callable(
+            getattr(p, attr)) and not (attr.startswith("__") or attr.startswith("_")) and attr not in ['Field', 'clone', 'sign']])
 
     def createSplitPreds(self):
         predicates = {}
@@ -72,6 +65,7 @@ class KnowledgeBase():
                              (Predicate, ), content)
         else:
             print('Unable to create empty predicate')
+            return False
         return predicate
 
     def createMergedPreds(self):
@@ -146,9 +140,15 @@ class KnowledgeBase():
         self.db = DataModel(dbInfo[0], dbInfo[1], dbInfo[2])
         dbEntities = self.db.getTables()
         for s in self.schema:
-            if s not in dbEntities:
+            if s not in [de.upper() for de in dbEntities]:
                 raise Exception(
-                    f"The predicate {s} doesn't exist in the given database.")
+                    f"Invalid schema.\nPredicate {s} doesn't exist in the given database.")
+            else:
+                dbAttributes = self.db.getAttributes(s)
+                for a in self.schema[s]:
+                    if a not in [da.upper() for da in dbAttributes]:
+                        raise Exception(
+                            f"Invalid schema.\nAttribute {a} of entity {s} doesn't exist in the given database.")
 
     def getDbConditions(self, entity, cond):
         entity = entity.upper()
@@ -217,9 +217,6 @@ class KnowledgeBase():
                             if nf not in paths[e][a]:
                                 paths[e][a].append(nf)
         self.clear2dDict(paths)
-
-        if out:
-            paths = self.in2out(paths)
         return paths
 
     def in2out(self, inPaths):
@@ -250,7 +247,6 @@ class KnowledgeBase():
                 inForeigns[e][a] = self.getInwardForeigns(e, a)
                 for i in inForeigns[e][a]:
                     ijoins[i[0]][i[1]].append((e, a))
-
         for i in ijoins:
             for a in ijoins[i]:
                 for f in ijoins[i][a]:
@@ -401,15 +397,15 @@ class KnowledgeBase():
                                 jent.append(p)
                     else:
                         print(f'Unable to link joined entities {e}, {je}.')
-                        # return False
+                        return False
         return jent
 
     # Select from kb also delete the data csvs in dataModel
     def select(self, ent, cond=None, order=None, pOut=False, getQuery=False):
-        if type(ent).__name__ == 'dict':
+        if type(ent) == dict:
             ent = {e.upper(): [a.upper() for a in ent[e]]
                    for e in ent}
-        elif type(ent).__name__ == 'list':
+        elif type(ent) == list:
             ent = [e.upper() for e in ent]
         else:
             print('Invalid input')
@@ -429,14 +425,14 @@ class KnowledgeBase():
                     j = self.getJoinPreds(e2, e1)
                 if (j):
                     jlst.append(j[0] == j[1])
-        if type(ent).__name__ == 'dict':
+        if type(ent) == dict:
             entpred = [self.mergedPreds[e.upper()] for e in jent]
             if pOut:
                 outPreds = [self.createMergedPred(e, ent[e]) for e in ent]
             attrlst = [getattr(self.mergedPreds[e.upper()],
                                a.lower()) for e in ent for a in ent[e]]
 
-        elif type(ent).__name__ == 'list':
+        elif type(ent) == list:
             entpred = [self.mergedPreds[e.upper()] for e in jent]
             attr = {e: list(self.schema[e.upper()]) for e in ent}
             if pOut:
@@ -462,7 +458,7 @@ class KnowledgeBase():
         query = query.select(*attrlst)
 
         if order:
-            if type(order).__name__ != 'dict':
+            if type(order) != dict:
                 print(
                     'Wrong input format for order attributes. Dictionary input required.')
                 return False
@@ -485,13 +481,11 @@ class KnowledgeBase():
                     s = d
                     d += attrlen[ei+1]
             for pd in pdata:
-                if type(pd) != list:
-                    outdata.append(outPreds[ei](pd))
-                else:
-                    for e in ent:
-                        ei = list(ent).index(e)
-                        outdata.append(outPreds[ei](
-                            *pd[eind[ei][0]:eind[ei][1]]))
+                print(pd)
+                for e in ent:
+                    ei = list(ent).index(e)
+                    outdata.append(outPreds[ei](
+                        *pd[eind[ei][0]:eind[ei][1]]))
 
         else:
             outdata = pdata.copy()
@@ -519,42 +513,54 @@ class KnowledgeBase():
         upd = {e.upper(): {a.upper(): upd[e][a] for a in upd[e]} for e in upd}
         ent = {e: list(upd[e]) for e in upd}
         # Update to kb
-        mpreds = self.delete(ent, cascade=cascade, cond=cond, getData=True)
-        print(mpreds)
+        mpreds = self.delete(ent, cascade=cascade,
+                             cond=cond, getData=True, fromDb=False)
         if cascade:
             ent = self.cascade(ent)
-            print(ent)
             val = {e: {} for e in ent}
             for e in ent:
                 for a in ent[e]:
-                    print(a)
-                    if type(a).__name__ == 'tuple':
+                    if type(a) == tuple:
                         aname = a[0].lower()
                         val[e][aname] = upd[a[1]][a[2]]
                     else:
                         aname = a.lower()
                         val[e][aname] = upd[e][a]
-        print(val)
         for m in mpreds:
             for p in m:
                 e = type(p).__name__.upper()
                 p = p.clone(**val[e])
-                print(p)
                 self.kb.add(p)
 
-        # # Update to db
-        # if toDb:
-        #     self.db.update([e.upper() for e in ent], cond, val)
+        # Update to db
+        if toDb:
+            val = {e.upper(): {a.upper(): val[e][a]
+                               for a in val[e]} for e in val}
+            jlst = self.getAllDeps(ent, cond)
+            conditions = {}
+            for c in cond:
+                conditions.update(self.getDbConditions(c, cond[c]))
+            for e in ent:
+                self.db.update(e.upper(), val[e], conditions, joins=jlst)
         return True
 
     def getForeignPath(self, jent, e, a=None):
+        fpaths = self.in2out(self.foreignPaths)
+        for fe in self.foreignPaths:
+            for fa in self.foreignPaths[fe]:
+                for j in self.foreignPaths[fe][fa]:
+                    if fe in fpaths:
+                        if fa in fpaths[fe]:
+                            fpaths[fe][fa].append(j)
+                        else:
+                            fpaths[fe][fa] = [j]
         p = []
         if a:
-            if e in self.foreignPaths and a in self.foreignPaths[e]:
-                p = self.foreignPaths[e][a]
+            if e in fpaths and a in fpaths[e]:
+                p = fpaths[e][a]
         else:
-            if e in self.foreignPaths:
-                p = list(self.foreignPaths[e].values())
+            if e in fpaths:
+                p = list(fpaths[e].values())
                 if p:
                     p = p[0]
         for j in p:
@@ -570,12 +576,25 @@ class KnowledgeBase():
     def cascade(self, ent):
         jent = ent.copy()
         for e in ent:
-            if type(jent).__name__ == 'dict':
+            if type(jent) == dict:
                 for a in jent[e]:
                     self.getForeignPath(jent, e, a)
-            if type(jent).__name__ == 'list':
+            if type(jent) == list:
                 self.getForeignPath(jent, e)
+
         return jent
+
+    def getAllDeps(self, ent, cond):
+        jent = self.getJoinEntities(ent, cond)
+        jlst = []
+        for e1 in jent:
+            for e2 in list(jent)[list(jent).index(e1) + 1:]:
+                f = self.getForeign(e1, e2)
+                if not f:
+                    f = self.getForeign(e2, e1)
+                if f and f not in jlst:
+                    jlst.append(f)
+        return jlst
 
     def delete(self, ent, cond=None, getData=False, cascade=True, fromDb=True):
         ent = [e.upper() for e in ent]
@@ -588,15 +607,7 @@ class KnowledgeBase():
         qsout.delete()
 
         if fromDb:
-            jent = self.getJoinEntities(ent, cond)
-            jlst = []
-            for e1 in jent:
-                for e2 in list(jent)[list(jent).index(e1) + 1:]:
-                    f = self.getForeign(e1, e2)
-                    if not f:
-                        f = self.getForeign(e2, e1)
-                    if f and f not in jlst:
-                        jlst.append(f)
+            jlst = self.getAllDeps(ent, cond)
             conditions = {}
             for c in cond:
                 conditions.update(self.getDbConditions(c, cond[c]))
@@ -694,8 +705,8 @@ class KnowledgeBase():
         return mergedPred(*data)
 
     def run(self, asp, outPreds=None, searchDuration=None, show=False, limit=False, subKB=None, subKBCond=None, merged=False, symbOut=False):
-        # Create a Control object that will unify models against the appropriate
-        # predicates. Then load the asp file that encodes the problem domain.
+        # Create a Control object that will unify models against the appropriate predicates.
+        # Then load the asp file that encodes the problem domain.
         fname = asp.split('/')[-1]
         print(f'\nExecuting {fname}...')
         predicates = list(self.mergedPreds.values())
