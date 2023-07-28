@@ -1,6 +1,6 @@
 % RULES
 %% GRANTED RULE
-granted(R) :- request(R,P,T,S,ST), ST = 1.
+granted(R) :- request(R,_,_,_,ST), ST = 1.
 %% APPOINTED RULE
 appointed(P) :- request(R,P,_,_,_), granted(R).
 %% BEST RULE
@@ -25,7 +25,7 @@ claimed(R) :- granted(R), not best(R), bestSingleRequest(R).
 %% A timeslot can be appointed only to one patient
 :- request(R,_,T,_,_), grant(R,_), request(X,_,T,_,_), grant(X,_), R != X.
 %% Only one timeslot of a particular specialty can be appointed to a patient
-:- request(R,P,T,_,_), grant(R,_), timeslot(T,D), doctor(D,S), request(X,P,TX,_,_), grant(X,_), timeslot(TX,DX), doctor(DX,SX), S = SX, R != X.
+:- request(R,P,T,_,_), grant(R,_), timeslot(T,D), doctor(D,SP), request(X,P,TX,_,_), grant(X,_), timeslot(TX,DX), doctor(DX,SPX), SP = SPX, R != X.
 % %% If a request is claimed all the other requests for the corresponding timeslot can't be granted
 :- request(R,_,T,_,_), grant(R,_), request(X,_,T,_,_), claimed(X), R != X.
 % %% If a request has a lower score than someone's only option it won't be considered in the optimizatioin process

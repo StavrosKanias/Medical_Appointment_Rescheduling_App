@@ -25,9 +25,9 @@ class KnowledgeBase():
             self.bind2db(dbInfo)
             if dbConditions:
                 self.conditions = dbConditions
-                self.joins = self.getJoins()
             else:
                 self.conditions = {}
+            self.joins = self.getJoins()
             self.db2kb()
 
         elif data:
@@ -252,20 +252,6 @@ class KnowledgeBase():
                 for f in ijoins[i][a]:
                     jlst = [(i, a, f[0], f[1])]
                     jlst.extend(joins[f[0]])
-                    for cj in joins[i]:
-                        for nj in jlst:
-                            if cj[2] == nj[2]:
-                                if cj[0] in self.conditions and nj[0] not in self.conditions:
-                                    jlst.remove(nj)
-                                elif cj[0] not in self.conditions and nj[0] in self.conditions:
-                                    joins[i].remove(cj)
-                                elif cj[0] in self.conditions and nj[0] in self.conditions:
-                                    print(
-                                        f'Unable to use db conditions due to cyclical dependency of entity {cj[2]}')
-                                else:
-                                    jlst.remove(nj)
-                                    joins[i].remove(cj)
-
                     joins[i].extend(jlst)
         return joins
 

@@ -9,8 +9,9 @@ from dbCreator import schema
 def main():
 
     dbConditions = {'TIMESLOT': {
-        "DATE": [('>', '+0')], "TIMESLOT_AVAILABLE": [('=', True)]}, 'SPECIALTY': {
-        "TITLE": [('=', 'Preventive_medicine')]}}
+        "DATE": [('>', '+0')], "TIMESLOT_AVAILABLE": [('=', True)]}, 'DOCTOR': {
+        "ID": [('=', '213294871')]}, 'PATIENT': {
+        "ID": [('=', '213294871')]}}
     db_info = ['kanon2000', 'nhs', 'kanon2000']
     kb = KnowledgeBase('NHS_APPOINTMENTS', schema,
                        dbInfo=db_info, dbConditions=dbConditions)
@@ -19,7 +20,7 @@ def main():
 
     class Claimed(Predicate):
         request = IntegerField
-
+    kb.delete(['Request'], cond={'Request': {'id': [('=', 1)]}})
     merged = input(" Do you want to run in merged mode?\n y/n:\n")
     if merged == 'y':
         class Grant(Predicate):
@@ -55,5 +56,6 @@ def main():
                   ('=', u)]}}, toDb=False)
 
 
+# TODO Last feature take into account cyclical dependencies in dataModel
 if __name__ == "__main__":
     main()
