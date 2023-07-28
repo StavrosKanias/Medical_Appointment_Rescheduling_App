@@ -197,7 +197,7 @@ class KnowledgeBase():
                     conditions[f'{entity}.{attribute}'].append(condition)
         return conditions
 
-    def getForeignPaths(self, out=True):
+    def getForeignPaths(self):
         inForeigns = {e: {} for e in self.schema}
         paths = {e: {} for e in self.schema}
         for e in self.schema:
@@ -345,7 +345,6 @@ class KnowledgeBase():
                         joins.remove(j)
                         invPath.append(d)
                 if len(invPath) == 1:
-                    print(f'There is no path from {e1} to {e2}.')
                     return False
         return invPath
 
@@ -360,12 +359,10 @@ class KnowledgeBase():
         fd = None
         if e1 in self.joins and e2 in self.joins:
             for j in self.joins[e1]:
-                if j[2] == e2:
+                if j[0] == e1 and j[2] == e2:
                     fs = (j[0], j[1])
                     fd = (j[2], j[3])
                     return (fs, fd)
-        print(
-            f'No foreign key from {e1} to {e2}.')
         return False
 
     def getJoinPreds(self, e1, e2):
@@ -417,7 +414,6 @@ class KnowledgeBase():
             jent = self.getJoinEntities(ent, cond)
         else:
             jent = list(ent)
-
         for e1 in jent:
             for e2 in list(jent)[list(jent).index(e1) + 1:]:
                 j = self.getJoinPreds(e1, e2)
@@ -481,7 +477,6 @@ class KnowledgeBase():
                     s = d
                     d += attrlen[ei+1]
             for pd in pdata:
-                print(pd)
                 for e in ent:
                     ei = list(ent).index(e)
                     outdata.append(outPreds[ei](
@@ -514,17 +509,25 @@ class KnowledgeBase():
         ent = {e: list(upd[e]) for e in upd}
         # Update to kb
         mpreds = self.delete(ent, cascade=cascade,
-                             cond=cond, getData=True, fromDb=False)
+                             cond=cond, getData=list(upd), fromDb=False)
         if cascade:
-            ent = self.cascade(ent)
-            val = {e: {} for e in ent}
-            for e in ent:
-                for a in ent[e]:
+            cent = self.cascade(ent)
+            val = {e: {} for e in cent}
+            for e in cent:
+                for a in cent[e]:
                     if type(a) == tuple:
                         aname = a[0].lower()
+                        if aname.upper() not in self.schema[e]:
+                            print(
+                                f'Unknown attribute {aname.upper()} for entity {e}')
+                            return False
                         val[e][aname] = upd[a[1]][a[2]]
                     else:
                         aname = a.lower()
+                        if aname.upper() not in self.schema[e]:
+                            print(
+                                f'Unknown attribute {aname.upper()} for entity {e}')
+                            return False
                         val[e][aname] = upd[e][a]
         for m in mpreds:
             for p in m:
@@ -536,12 +539,12 @@ class KnowledgeBase():
         if toDb:
             val = {e.upper(): {a.upper(): val[e][a]
                                for a in val[e]} for e in val}
-            jlst = self.getAllDeps(ent, cond)
+            jlst = self.getAllDeps(cent, cond)
             conditions = {}
             for c in cond:
                 conditions.update(self.getDbConditions(c, cond[c]))
-            for e in ent:
-                self.db.update(e.upper(), val[e], conditions, joins=jlst)
+            self.db.update(list(cent)[-1].upper(),
+                           val[e], conditions, joins=jlst)
         return True
 
     def getForeignPath(self, jent, e, a=None):
@@ -596,11 +599,13 @@ class KnowledgeBase():
                     jlst.append(f)
         return jlst
 
-    def delete(self, ent, cond=None, getData=False, cascade=True, fromDb=True):
+    def delete(self, ent, cond=None, getData=None, cascade=True, fromDb=True):
         ent = [e.upper() for e in ent]
+        ent.extend(e.upper() for e in cond if e not in ent)
         if cascade:
+            cent = self.cascade(ent)
             mpreds, qsout = self.select(
-                list(self.cascade(ent)), cond=cond, pOut=True, getQuery=True)
+                cent, cond=cond, pOut=True, getQuery=True)
         else:
             mpreds, qsout = self.select(
                 list(ent), cond=cond, pOut=True, getQuery=True)
@@ -615,7 +620,18 @@ class KnowledgeBase():
                 self.db.delete(e, conditions=conditions, joins=jlst)
 
         if getData:
-            return mpreds
+            outPreds = []
+            iOut = []
+            for e in cent:
+                for d in getData:
+                    if d.upper() == e:
+                        if cascade:
+                            iOut.append(cent.index(e))
+                        else:
+                            iOut.append(ent.index(e))
+            for m in mpreds:
+                outPreds.append(m[i] for i in iOut)
+            return outPreds
         else:
             return True
 
