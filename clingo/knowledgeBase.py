@@ -758,9 +758,14 @@ class KnowledgeBase():
                 Control.interrupt(ctrl)
 
         ctrl.solve(on_model=on_model)
-        if not solution[1]:
-            print('No solution found\nCheck the grinding info above for more details')
+        if not solution:
+            print('No solution found.\n')
             return False
+
+        elif not solution[1]:
+            print(
+                'No actions found to reach optimality\nCheck the grinding info above for more details')
+
         else:
             output = {}
             statistics = ctrl.statistics
