@@ -4,6 +4,7 @@ db/data/*
 db/secondary/*
 # Exclude pycahe
 __pycache__/*
+data/__pycache__/*
 # Exclude the docx files
 kr23.docx
 ~$kr23.docx

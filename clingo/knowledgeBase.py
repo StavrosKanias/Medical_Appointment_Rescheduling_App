@@ -246,23 +246,29 @@ class KnowledgeBase():
             for a in self.schema[e]:
                 inForeigns[e][a] = self.getInwardForeigns(e, a)
                 for i in inForeigns[e][a]:
-                    ijoins[i[0]][i[1]].append((e, a))
+                    ijoins[i[0]][i[1]].append([e, a])
         for i in ijoins:
             for a in ijoins[i]:
                 for f in ijoins[i][a]:
-                    jlst = [(i, a, f[0], f[1])]
+                    jlst = [[i, a, f[0], f[1]]]
                     jlst.extend(joins[f[0]])
                     joins[i].extend(jlst)
         return joins
 
     def getJoinedConditions(self, e, joins):
         conditions = {}
+        conde = [e]
         for j in joins:
-            if j[0] in self.conditions:
-                conditions.update(self.getDbConditions(
-                    j[0], self.conditions[j[0]]))
-        if e in self.conditions:
-            conditions.update(self.getDbConditions(e, self.conditions[e]))
+            if j[0] in self.conditions and j[0] not in conde:
+                conde.append(j[0])
+            if j[2] in self.conditions and j[2] not in conde:
+                conde.append(j[2])
+        for e in conde:
+            if e in self.conditions:
+                cond = self.getDbConditions(
+                    e, self.conditions[e])
+                conditions.update(cond)
+
         return conditions
 
     # Translate db data to clingo predicates

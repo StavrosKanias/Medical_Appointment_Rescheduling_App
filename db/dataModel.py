@@ -191,12 +191,22 @@ class DataModel():
             query += f"FROM {table}\n"
 
             if joins:
+                jind = {}
+                for j in joins:
+                    if j[2] in jind:
+                        jind[j[2]].append(joins.index(j))
+                    else:
+                        jind[j[2]] = [joins.index(j)]
                 for j in joins:
                     sEntity = j[0]
                     sAttribute = j[1]
                     tEntity = j[2]
                     tAttribute = j[3]
-                    query += f"JOIN {tEntity} ON {tEntity}.{tAttribute} = {sEntity}.{sAttribute}\n"
+                    query += f"JOIN {tEntity} "
+                    if len(jind[tEntity]) > 1 and joins.index(j) > jind[tEntity][0]:
+                        tEntity = tEntity + \
+                            str(jind[tEntity].index(joins.index(j)))
+                    query += f"AS {tEntity} ON {tEntity}.{tAttribute} = {sEntity}.{sAttribute}\n"
 
             if conditions:
                 condstr = self.conditions(conditions, ' and ')

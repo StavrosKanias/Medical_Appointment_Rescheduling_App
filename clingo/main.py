@@ -10,8 +10,8 @@ def main():
 
     dbConditions = {'TIMESLOT': {
         "DATE": [('>', '+0')], "TIMESLOT_AVAILABLE": [('=', True)]}, 'DOCTOR': {
-        "ID": [('=', '213294871')]}, 'PATIENT': {
-        "ID": [('=', '213294871')]}}
+        "DOCTOR_AVAILABLE": [('=', True)]}, 'PERSON': {
+        "Firstname": [('>', 'Ion')]}}
     db_info = ['kanon2000', 'nhs', 'kanon2000']
     kb = KnowledgeBase('NHS_APPOINTMENTS', schema,
                        dbInfo=db_info, dbConditions=dbConditions)
