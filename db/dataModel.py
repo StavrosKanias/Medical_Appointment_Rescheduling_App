@@ -46,6 +46,13 @@ class DataModel():
         except:
             print("Connection failed")
 
+    def close(self):
+        try:
+            self.con.commit()
+            self.con.close()
+        except:
+            print("Exit failed")
+
     def isEmpty(self):
         query = "SELECT count(*) FROM pg_catalog.pg_tables where schemaname not in ('information_schema', 'pg_catalog')"
         self.cur.execute(query)
@@ -56,8 +63,60 @@ class DataModel():
             print('The database has no tables')
             return True
 
-    def createTables(self):
+    def create(self, tableName, tableDict):
+        try:
+            primary_keys = []
+            foreign_keys = []
+            uniques = []
+            query = f"CREATE TABLE IF NOT EXISTS {tableName} (\n"
+            # Attributes with types
+            for a in tableDict.keys():
+                query += f"{a} {tableDict[a][0]},\n"
+                if tableDict[a][1]:
+                    primary_keys.append(a)
+                if len(tableDict[a]) > 3:
+                    foreign_keys.append(a)
+                elif len(tableDict[a]) == 3:
+                    uniques.append(a)
+            # Primary key(s)
+            if len(primary_keys) == 0:
+                print(f'No primary key found for table {tableName}')
+            else:
+                query += 'PRIMARY KEY ('
+                for p in primary_keys:
+                    query += p
+                    if (primary_keys.index(p) < len(primary_keys) - 1):
+                        query += ','
+                if len(foreign_keys) == 0 and len(uniques) == 0:
+                    query += ")\n);"
+                else:
+                    query += "),\n"
+            # Unique constraints
+            if len(uniques) != 0:
+                for u in uniques:
+                    query += f'CONSTRAINT KEEP_UNIQUE UNIQUE ({u})'
 
+                    if (uniques.index(u) < len(uniques) - 1):
+                        query += ",\n"
+                if len(foreign_keys) == 0:
+                    query += "\n);\n"
+                else:
+                    query += ",\n"
+            # Foreign key constraints
+            if len(foreign_keys) != 0:
+                for fk in foreign_keys:
+                    query += f'CONSTRAINT INFORM_{tableDict[fk][2].upper()} FOREIGN KEY({fk}) REFERENCES {tableDict[fk][2]}({tableDict[fk][3]}) ON UPDATE CASCADE ON DELETE CASCADE'
+
+                    if (foreign_keys.index(fk) < len(foreign_keys) - 1):
+                        query += ",\n"
+
+                query += "\n);\n"
+            return query
+
+        except:
+            print(f"Failed to create table {tableName}")
+
+    def createTables(self):
         print("Creating the database tables...")
         for table in self.schema.keys():
             try:
@@ -84,12 +143,51 @@ class DataModel():
                 print(f"Failed to load test data for table {table}")
                 return
 
-    def close(self):
-        try:
-            self.con.commit()
-            self.con.close()
-        except:
-            print("Exit failed")
+    def getTables(self):
+        query = "SELECT tablename FROM pg_tables WHERE schemaname = current_schema()"
+        tables = self.executeSQL(query, fetch=True)
+        for i in range(len(tables)):
+            tables[i] = tables[i][0]
+        return tables
+
+    def getAttributes(self, table):
+        for t in self.getTables():
+            if table == t.upper():
+                query = f"""SELECT attname AS col
+                            FROM   pg_attribute
+                            WHERE  attrelid = '{t}'::regclass
+                            AND    attnum > 0
+                            AND    NOT attisdropped
+                            ORDER  BY attnum;"""
+                attributes = self.executeSQL(query, fetch=True)
+                for i in range(len(attributes)):
+                    attributes[i] = attributes[i][0].upper()
+                return attributes
+        else:
+            print(f'Table {table} not in database schema')
+            return False
+
+    def dropTables(self):
+        query = """ DO $$ DECLARE
+                r RECORD;
+                BEGIN
+                FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = current_schema()) LOOP
+                EXECUTE 'DROP TABLE ' || quote_ident(r.tablename) || ' CASCADE';
+                END LOOP;
+                END $$;"""
+        self.cur.execute(query)
+        self.con.commit()
+
+    def dropData(self):
+        query = """ DO $$ DECLARE
+                r RECORD;
+                BEGIN
+                FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = current_schema()) LOOP
+                EXECUTE 'TRUNCATE ' || quote_ident(r.tablename) || ' CASCADE';
+                END LOOP;
+                END $$;"""
+        self.cur.execute(query)
+        self.con.commit()
 
     def executeSQL(self, strQuery, values=None, show=False, txtFile=None, fetch=False):
         try:
@@ -223,46 +321,6 @@ class DataModel():
                 f"Failed to select attributes {attributes} from {table} using conditions {conditions}")
             return False
 
-    def delete(self, table, conditions=None, joins=None):
-        try:
-            if joins:
-                using = []
-                for j in joins:
-                    for jt in j:
-                        if jt[0] != table and jt[0] not in using:
-                            using.append(jt[0])
-
-            query = f"""\nDELETE FROM {table}\n"""
-
-            if joins:
-                query += 'USING '
-                for u in using:
-                    query += f"""{u}"""
-                    if using.index(u) < len(using) - 1:
-                        query += ', '
-                    else:
-                        query += '\n'
-
-            if conditions:
-                condstr = self.conditions(conditions, ' and ')
-                if joins:
-                    query += f"""WHERE("""
-                    for j in joins:
-                        query += f"""{j[0][0]}.{j[0][1]} = {j[1][0]}.{j[1][1]} AND """
-                        if joins.index(j) == len(joins) - 1:
-                            query += f"""{condstr}); \n"""
-                else:
-                    query += f"""WHERE({condstr}); \n"""
-                values = self.values(conditions)
-                self.executeSQL(query, values=values)
-            else:
-                self.executeSQL(query)
-            return True
-        except:
-            print(
-                f"Failed to delete the row from table {table}")
-            return False
-
     def insert(self, table, val):
         try:
             values = self.values(val)
@@ -317,101 +375,42 @@ class DataModel():
                 f"Failed to update table {table} for conditions {condstr} and value(s) {newstr}")
             return False
 
-    def create(self, tableName, tableDict):
+    def delete(self, table, conditions=None, joins=None):
         try:
-            primary_keys = []
-            foreign_keys = []
-            uniques = []
-            query = f"CREATE TABLE IF NOT EXISTS {tableName} (\n"
-            # Attributes with types
-            for a in tableDict.keys():
-                query += f"{a} {tableDict[a][0]},\n"
-                if tableDict[a][1]:
-                    primary_keys.append(a)
-                if len(tableDict[a]) > 3:
-                    foreign_keys.append(a)
-                elif len(tableDict[a]) == 3:
-                    uniques.append(a)
-            # Primary key(s)
-            if len(primary_keys) == 0:
-                print(f'No primary key found for table {tableName}')
+            if joins:
+                using = []
+                for j in joins:
+                    for jt in j:
+                        if jt[0] != table and jt[0] not in using:
+                            using.append(jt[0])
+
+            query = f"""\nDELETE FROM {table}\n"""
+
+            if joins:
+                query += 'USING '
+                for u in using:
+                    query += f"""{u}"""
+                    if using.index(u) < len(using) - 1:
+                        query += ', '
+                    else:
+                        query += '\n'
+
+            if conditions:
+                condstr = self.conditions(conditions, ' and ')
+                if joins:
+                    query += f"""WHERE("""
+                    for j in joins:
+                        query += f"""{j[0][0]}.{j[0][1]} = {j[1][0]}.{j[1][1]} AND """
+                        if joins.index(j) == len(joins) - 1:
+                            query += f"""{condstr}); \n"""
+                else:
+                    query += f"""WHERE({condstr}); \n"""
+                values = self.values(conditions)
+                self.executeSQL(query, values=values)
             else:
-                query += 'PRIMARY KEY ('
-                for p in primary_keys:
-                    query += p
-                    if (primary_keys.index(p) < len(primary_keys) - 1):
-                        query += ','
-                if len(foreign_keys) == 0 and len(uniques) == 0:
-                    query += ")\n);"
-                else:
-                    query += "),\n"
-            # Unique constraints
-            if len(uniques) != 0:
-                for u in uniques:
-                    query += f'CONSTRAINT KEEP_UNIQUE UNIQUE ({u})'
-
-                    if (uniques.index(u) < len(uniques) - 1):
-                        query += ",\n"
-                if len(foreign_keys) == 0:
-                    query += "\n);\n"
-                else:
-                    query += ",\n"
-            # Foreign key constraints
-            if len(foreign_keys) != 0:
-                for fk in foreign_keys:
-                    query += f'CONSTRAINT INFORM_{tableDict[fk][2].upper()} FOREIGN KEY({fk}) REFERENCES {tableDict[fk][2]}({tableDict[fk][3]}) ON UPDATE CASCADE ON DELETE CASCADE'
-
-                    if (foreign_keys.index(fk) < len(foreign_keys) - 1):
-                        query += ",\n"
-
-                query += "\n);\n"
-            return query
-
+                self.executeSQL(query)
+            return True
         except:
-            print(f"Failed to create table {tableName}")
-
-    def getTables(self):
-        query = "SELECT tablename FROM pg_tables WHERE schemaname = current_schema()"
-        tables = self.executeSQL(query, fetch=True)
-        for i in range(len(tables)):
-            tables[i] = tables[i][0]
-        return tables
-
-    def getAttributes(self, table):
-        for t in self.getTables():
-            if table == t.upper():
-                query = f"""SELECT attname            AS col
-                            FROM   pg_attribute
-                            WHERE  attrelid = '{t}'::regclass
-                            AND    attnum > 0
-                            AND    NOT attisdropped
-                            ORDER  BY attnum;"""
-                attributes = self.executeSQL(query, fetch=True)
-                for i in range(len(attributes)):
-                    attributes[i] = attributes[i][0].upper()
-                return attributes
-        else:
-            print(f'Table {table} not in database schema')
+            print(
+                f"Failed to delete the row from table {table}")
             return False
-
-    def dropTables(self):
-        query = """ DO $$ DECLARE
-                r RECORD;
-                BEGIN
-                FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = current_schema()) LOOP
-                EXECUTE 'DROP TABLE ' || quote_ident(r.tablename) || ' CASCADE';
-                END LOOP;
-                END $$;"""
-        self.cur.execute(query)
-        self.con.commit()
-
-    def dropData(self):
-        query = """ DO $$ DECLARE
-                r RECORD;
-                BEGIN
-                FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = current_schema()) LOOP
-                EXECUTE 'TRUNCATE ' || quote_ident(r.tablename) || ' CASCADE';
-                END LOOP;
-                END $$;"""
-        self.cur.execute(query)
-        self.con.commit()

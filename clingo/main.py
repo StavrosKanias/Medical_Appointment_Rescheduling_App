@@ -10,8 +10,7 @@ def main():
 
     dbConditions = {'TIMESLOT': {
         "DATE": [('>', '+0')], "TIMESLOT_AVAILABLE": [('=', True)]}, 'DOCTOR': {
-        "DOCTOR_AVAILABLE": [('=', True)]}, 'PERSON': {
-        "Firstname": [('>', 'Ion')]}}
+        "DOCTOR_AVAILABLE": [('=', True)]}}
     db_info = ['kanon2000', 'nhs', 'kanon2000']
     kb = KnowledgeBase('NHS_APPOINTMENTS', schema,
                        dbInfo=db_info, dbConditions=dbConditions)
@@ -20,7 +19,9 @@ def main():
 
     class Claimed(Predicate):
         request = IntegerField
+
     kb.delete(['Request'], cond={'Request': {'id': [('=', 1)]}})
+
     merged = input(" Do you want to run in merged mode?\n y/n:\n")
     if merged == 'y':
         class Grant(Predicate):
@@ -54,6 +55,8 @@ def main():
     for u in update:
         kb.update({'REQUEST': {'STATUS': update[u]}}, cond={'REQUEST': {'ID': [
                   ('=', u)]}}, toDb=False)
+
+    kb.reload()
 
 
 # TODO Last feature take into account cyclical dependencies in dataModel
