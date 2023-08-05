@@ -1,8 +1,8 @@
-import sys
-sys.path.append('./db')  # nopep8
 from clorm import monkey
 monkey.patch()  # nopep8 # must call this before importing clingo
 from copy import copy
+import sys
+sys.path.append('./db')  # nopep8
 from dataModel import DataModel
 from clorm import FactBase, Predicate, IntegerField, StringField
 from clorm.clingo import Control
@@ -733,7 +733,7 @@ class KnowledgeBase():
             else:
                 kb = self.extract(subKB, cond=subKBCond, split=True)
             ctrl.add_facts(kb)
-            self.toFile('clingo/sub_', entities=subKB)
+            self.toFile('clingo/sub_', entities=subKB, merged=merged)
 
         else:
             ctrl.add_facts(self.kb)
@@ -803,11 +803,14 @@ class KnowledgeBase():
                     output[p.__name__] = out
                 return output
 
-    def toFile(self, path, format='lp', entities=None):
+    def toFile(self, path, format='lp', entities=None, merged=True):
         filename = path + self.name.lower() + '.' + format
         f = open(filename, "w")
         if entities:
-            subKb = self.extract(entities)
+            if merged:
+                subKb = self.extract(entities)
+            else:
+                subKb = self.extract(entities, split=True)
             content = FactBase.asp_str(subKb)
         else:
             content = FactBase.asp_str(self.kb)

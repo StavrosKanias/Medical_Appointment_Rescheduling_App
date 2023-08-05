@@ -25,21 +25,21 @@ claimed(R) :- granted(R), not best(R), bestSingleRequest(R).
 %% A timeslot can be appointed only to one patient
 :- request(R,_,T,_,_), grant(R,_), request(X,_,T,_,_), grant(X,_), R != X.
 %% Only one timeslot of a particular specialty can be appointed to a patient
-:- request(R,P,T,_,_), grant(R,_), timeslot(T,D), doctor(D,SP), request(X,P,TX,_,_), grant(X,_), timeslot(TX,DX), doctor(DX,SPX), SP = SPX, R != X.
-% %% If a request is claimed all the other requests for the corresponding timeslot can't be granted
+:- request(R,P,T,_,_), grant(R,_), timeslot(T,D), doctor(D,SP), request(X,P,TX,_,_), grant(X,_), timeslot(TX,DX), doctor(DX,SP), R != X.
+%% If a request is claimed all the other requests for the corresponding timeslot can't be granted
 :- request(R,_,T,_,_), grant(R,_), request(X,_,T,_,_), claimed(X), R != X.
-% %% If a request has a lower score than someone's only option it won't be considered in the optimizatioin process
-:- request(R,P,T,S,_), grant(R,_), not granted(R), appointed(P), request(X,_,T,SX,_), onlyOption(X), S < SX, R != X.
-% %% If someone had an appointment before they also have to have an appointment after the rescheduling
-:- request(R,P,T,_,_), granted(R), not claimed(R), 0 {grant(X,_) : request(X,P,_,_,_)} 0.
+%% If a request has a lower score than someone's only option it won't be considered in the optimizatioin process
+:- request(R,_,T,S,_), grant(R,_), not granted(R), appointed(P), request(X,_,T,SX,_), onlyOption(X), S < SX, R != X.
+%% If someone had an appointment before they also have to have an appointment after the rescheduling
+:- request(R,P,_,_,_), granted(R), not claimed(R), 0 {grant(X,SX) : request(X,P,_,SX,_)} 0.
 %% Only the best single request can be granted
 :- grant(R,_), singleRequest(R), not bestSingleRequest(R).
-% %% If a patient wants a timeslot and is the only one to request it, the request will be granted if it is better than the already granted request if it exists.
-:- request(R,P,_,S,_), bestSingleRequest(R), request(X,P,_,SX,_), granted(X), R != X, S > SX, request(Y,P,_,_,_), Y != R, grant(Y,_), not grant(R,_).
-:- request(R,P,_,_,ST), bestSingleRequest(R), not appointed(P), request(Y,P,_,_,_), Y != R, grant(Y,_), not grant(R,_).
+%% If a patient requests a timeslot and is the only one to do so, the request will be granted if it is better than the already granted request if it exists.
+:- request(R,P,_,S,_), bestSingleRequest(R), request(X,P,_,SX,_), granted(X), R != X, S > SX, request(Y,P,_,SY,_), Y != R, grant(Y,_), not grant(R,_).
+:- request(R,P,_,_,_), bestSingleRequest(R), not appointed(P), request(Y,P,_,_,_), Y != R, grant(Y,_), not grant(R,_).
 
 % OPTIMIZATION
 #maximize{ S, R : grant(R, S)}.
 
-% #show grant.
-% #show claimed.
+#show grant.
+#show claimed.

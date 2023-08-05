@@ -10,13 +10,14 @@ class DataModel():
         self.dbKey = dbKey
         self.schema = schema
         connection = None
-        try:
-            connection = psycopg2.connect(
-                dbname='postgres',
-                password=postgresKey,
-            )
-        except:
-            print('Connection refused.')
+        # try:
+        connection = psycopg2.connect(
+            user = 'postgres',
+            dbname='postgres',
+            password=postgresKey,
+        )
+        # except:
+        #     print('Connection refused.')
 
         if connection is not None:
             connection.autocommit = True
@@ -38,6 +39,7 @@ class DataModel():
             print("Connecting to database...")
             # connect to db
             self.con = psycopg2.connect(
+                user = 'postgres',
                 dbname=self.dbName,
                 password=self.dbKey,
             )
@@ -146,9 +148,10 @@ class DataModel():
     def getTables(self):
         query = "SELECT tablename FROM pg_tables WHERE schemaname = current_schema()"
         tables = self.executeSQL(query, fetch=True)
-        for i in range(len(tables)):
-            tables[i] = tables[i][0]
-        return tables
+        if tables:
+            for i in range(len(tables)):
+                tables[i] = tables[i][0]
+            return tables
 
     def getAttributes(self, table):
         for t in self.getTables():

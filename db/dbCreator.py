@@ -104,7 +104,7 @@ data = [person, specialty, doctor, patient, request, timeslot]
 
 def main():
 
-    db = DataModel('kanon2000', 'nhs', 'kanon2000', schema)
+    db = DataModel('Kanon2000', 'nhs', 'Kanon2000', schema)
 
     new_db = input(" Do you want to recreate the database?\n y/n:")
     if new_db == 'y':
@@ -122,10 +122,10 @@ def main():
         # demand = float(input(" Demand (load factor): \n"))
         # timeslot_availability = float(input(" Timeslot availability: \n"))
 
-        minimum_people = 1200
-        maximum_people = 1200
-        minimum_doctors = 12
-        maximum_doctors = 12
+        minimum_people = 2500
+        maximum_people = 2500
+        minimum_doctors = 25
+        maximum_doctors = 25
         minimum_specialites = 10
         maximum_specialites = 15
         demand = 2.5

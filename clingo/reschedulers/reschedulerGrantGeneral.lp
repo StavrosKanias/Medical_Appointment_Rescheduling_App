@@ -25,21 +25,21 @@ claimed(R) :- granted(R), not best(R), bestSingleRequest(R).
 %% A timeslot can be appointed only to one patient
 :- grant(R1), timeslot_id(R1, T), grant(R2), timeslot_id(R2, T), R1 != R2.
 %% Only one timeslot of a particular specialty can be appointed to a patient
-:- grant(R1), patient_id(R1, P), timeslot_id(R1, T1), doctor_id(T1, D1), specialty_title(D1, S1), grant(R2), patient_id(R2, P), timeslot_id(R2, T2), doctor_id(T2,D2), specialty_title(D2, S2), S1 = S2, R1 != R2.
-% %% If a request is claimed all the other requests for the corresponding timeslot can't be granted
+:- grant(R1), patient_id(R1, P), timeslot_id(R1, T1), doctor_id(T1, D1), specialty_title(D1, S), grant(R2), patient_id(R2, P), timeslot_id(R2, T2), doctor_id(T2,D2), specialty_title(D2, S), R1 != R2.
+%% If a request is claimed all the other requests for the corresponding timeslot can't be granted
 :- grant(R), timeslot_id(R,T), claimed(X), timeslot_id(X,T), R != X.
-% %% If a patient has only one option it can't be ignored for the maximization of the common benefit
+%% If a request has a lower score than someone's only option it won't be considered in the optimizatioin process
 :- timeslot_id(R, T), patient_id(R, P), score(R,S), grant(R), not granted(R), appointed(P), timeslot_id(X, T), score(X, SX), onlyOption(X), S < SX, R != X.
-% %% If someone had an appointment before they also have to have an appointment after the rescheduling
+%% If someone had an appointment before they also have to have an appointment after the rescheduling
 :- granted(R), patient_id(R, P), not claimed(R), 0 { grant(X) : patient_id(X, P) } 0.   
-% %% Only the best single request can be granted
+%% Only the best single request can be granted
 :- grant(R), singleRequest(R), not bestSingleRequest(R).
-% % %% If a patient wants a timeslot and is the only one to request it, the request will be granted if it is better than the already granted request if it exists.
+%% If a patient requests a timeslot and is the only one to do so, the request will be granted if it is better than the already granted request if it exists.
 :- patient_id(R, P), score(R, S), bestSingleRequest(R), patient_id(X, P), score(X, SX), granted(X), R != X, S > SX, patient_id(Y, P), Y != R, grant(Y), not grant(R).
 :- patient_id(R, P), bestSingleRequest(R), not appointed(P), patient_id(Y, P), Y != R, grant(Y), not grant(R).
 
 % OPTIMIZATION
 #maximize{ S, R : grant(R), score(R, S) }.
 
-% #show grant.
-% #show claimed.
+#show grant.
+#show claimed.
