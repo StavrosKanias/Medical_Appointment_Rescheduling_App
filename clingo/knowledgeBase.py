@@ -759,13 +759,13 @@ class KnowledgeBase():
 
         ctrl.solve(on_model=on_model)
         if not solution:
-            print('No solution found.\n')
-            return False
+            print('No solution found.\nThe problem is unsatisfiable.\n')
+            return None, None
 
         elif not solution[1]:
             print(
-                'No actions found to reach optimality\nCheck the grinding info above for more details')
-
+                'No steps found to reach optimality.\nThe problem is either already in an optimal state or optimality is unreachable.\nCheck the grinding info above for more details.\n')
+            return None, None
         else:
             output = {}
             statistics = ctrl.statistics
@@ -793,15 +793,15 @@ class KnowledgeBase():
                 print(f'Model: {solution[2]}')
                 print(f'Benefit: {benefit}')
                 print(f'Total time: {round(total_time,5)}')
-                print(f'CPU time: {round(cpu_time,5)}')
-
+                print(f'CPU time: {round(cpu_time,5)}\n')
+            
             if symbOut:
-                return solution[3]
+                return solution[3], statistics
             else:
                 for p in outPreds:
                     out = list(solution[3].query(p).all())
                     output[p.__name__] = out
-                return output
+                return output, statistics
 
     def toFile(self, path, format='lp', entities=None, merged=True):
         filename = path + self.name.lower() + '.' + format

@@ -30,7 +30,7 @@ class DataFabricator():
                 Faker.seed(seed)
                 random.seed(seed)
 
-    def write_to_csv(self, entity, entity_diction, list_of_dicts):
+    def write2csv(self, entity, entity_diction, list_of_dicts):
         with open('db\\data\\{}.csv'.format(entity), 'w', encoding='utf8') as csvfile:
             writer = csv.DictWriter(
                 csvfile, fieldnames=entity_diction.keys())
@@ -141,7 +141,7 @@ class DataFabricator():
                         minimum_age=18, maximum_age=100)
 
             list_of_dicts.append(temp_dict)
-        self.write_to_csv('PERSON', entity_diction, list_of_dicts)
+        self.write2csv('PERSON', entity_diction, list_of_dicts)
 
     def fabricateSpecialty(self, quantity):
         entity_diction = self.schema['SPECIALTY']
@@ -163,7 +163,7 @@ class DataFabricator():
                         random.shuffle(specialty_titles)
                         temp_dict[attribute] = specialty_titles.pop()
             list_of_dicts.append(temp_dict)
-        self.write_to_csv('SPECIALTY', entity_diction, list_of_dicts)
+        self.write2csv('SPECIALTY', entity_diction, list_of_dicts)
 
     def fabricateDoctor(self, quantity):
         fake = Faker('el_GR')
@@ -202,7 +202,7 @@ class DataFabricator():
                             temp_dict[attribute] = 1
 
             list_of_dicts.append(temp_dict)
-        self.write_to_csv('DOCTOR', entity_diction, list_of_dicts)
+        self.write2csv('DOCTOR', entity_diction, list_of_dicts)
 
     def fabricatePatient(self, quantity):
         entity_diction = self.schema['PATIENT']
@@ -234,7 +234,7 @@ class DataFabricator():
                         if attribute == 'PRIORITY':
                             temp_dict[attribute] = random.randint(1, 100)
             list_of_dicts.append(temp_dict)
-        self.write_to_csv('PATIENT', entity_diction, list_of_dicts)
+        self.write2csv('PATIENT', entity_diction, list_of_dicts)
 
     def fabricateTimeslot(self, quantity):
         primaryKey = 1
@@ -303,7 +303,7 @@ class DataFabricator():
                                     [0, 1], p=[1-self.tAvailability, self.tAvailability])
 
             list_of_dicts.append(temp_dict)
-        self.write_to_csv('TIMESLOT', entity_diction, list_of_dicts)
+        self.write2csv('TIMESLOT', entity_diction, list_of_dicts)
 
     def fabricateRequest(self, quantity):
         primaryKey = 1
@@ -361,7 +361,7 @@ class DataFabricator():
         patient_info = {patient: priority for patient, priority in zip(
             foreign_lists["PATIENT_ID"], priorities)}
         self.handleStatus(list_of_dicts, patient_info)
-        self.write_to_csv("REQUEST", entity_diction, list_of_dicts)
+        self.write2csv("REQUEST", entity_diction, list_of_dicts)
 
     def fabricate(self, entity):
 
