@@ -12,7 +12,7 @@ singleRequest(R) :- timeslot_id(R, T), 0 {timeslot_id(X, T) : R != X} 0.
 bestSingleRequest(R) :- patient_id(R,P), score(R,S), timeslot_id(R, T), singleRequest(R), 0 {patient_id(X,P) : score(X,SX), singleRequest(X), SX > S, R != X} 0.
 
 % SET GENERATION
-0 {grant(R)} 1 :- granted(R), not best(R), not bestSingleRequest(R).
+0 {grant(R)} 1 :- granted(R), not best(R).
 0 {grant(R)} 1 :- patient_id(R, P), score(R, S), not granted(R), patient_id(X,P), score(X, SX), granted(X), S > SX, R != X.
 0 {grant(R)} 1 :- patient_id(R, P), not appointed(P).
 

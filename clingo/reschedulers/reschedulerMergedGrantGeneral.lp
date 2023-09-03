@@ -12,7 +12,7 @@ singleRequest(R) :- request(R,_,T,_,_), 0 {request(X,_,T,_,_) :  R != X} 0.
 bestSingleRequest(R) :- request(R,P,_,S,_), singleRequest(R), 0 {request(X,P,_,SX,_): singleRequest(X), SX > S, R != X} 0.
 
 % SET CREATION
-0 {grant(R,S)} 1 :- request(R,_,_,S,_), granted(R), not best(R), not bestSingleRequest(R).
+0 {grant(R,S)} 1 :- request(R,_,_,S,_), granted(R), not best(R).
 0 {grant(R,S)} 1 :- request(R,P,_,S,_), not granted(R), request(X,P,_,SX,_), granted(X), S > SX, R != X.
 0 {grant(R,S)} 1 :- request(R,P,_,S,_), not appointed(P).
 
