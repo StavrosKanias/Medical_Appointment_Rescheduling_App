@@ -9,26 +9,26 @@ class DataModel():
         self.dbName = dbName
         self.dbKey = dbKey
         self.schema = schema
+        self.con = None
         connection = None
-        # try:
-        connection = psycopg2.connect(
-            user = 'postgres',
-            dbname='postgres',
-            password=postgresKey,
-        )
-        # except:
-        #     print('Connection refused.')
+        try:
+            connection = psycopg2.connect(
+                user = 'postgres',
+                dbname='postgres',
+                password=postgresKey,
+            )
+        except:
+            print('Connection refused.')
 
-        if connection is not None:
+        if connection:
             connection.autocommit = True
             cur = connection.cursor()
             cur.execute("SELECT datname FROM pg_database;")
             list_database = cur.fetchall()
-
             if (dbName,) in list_database:
                 print("'{}' Database exist".format(dbName))
                 self.connect()
-                if (self.isEmpty() and schema is not None):
+                if (self.con and self.isEmpty() and schema is not None):
                     self.createTables()
             else:
                 print("'{}' Database does not exist.".format(dbName))
@@ -131,8 +131,8 @@ class DataModel():
                 return
         print("Table creation finished")
 
-    def loadTestData(self):
-        print("Loading test data...")
+    def loadData(self):
+        print("Loading data...")
         for table in self.schema.keys():
             try:
                 csvFile = '\\' + table + '.csv'
@@ -140,9 +140,9 @@ class DataModel():
                     reader = csv.DictReader(f, delimiter=",", quotechar='"')
                     for row in reader:
                         self.insert(table, row)
-                print(f"Successfuly loaded test data for table {table}")
+                print(f"Successfuly loaded data for table {table}")
             except:
-                print(f"Failed to load test data for table {table}")
+                print(f"Failed to load data for table {table}")
                 return
 
     def getTables(self):
@@ -193,7 +193,7 @@ class DataModel():
         self.con.commit()
 
     def executeSQL(self, strQuery, values=None, show=False, txtFile=None, fetch=False):
-        try:
+        # try:
             if txtFile == None:
                 query = strQuery
             else:
@@ -230,9 +230,9 @@ class DataModel():
                             print(element)
                     return result
 
-        except psycopg2.Error as error:
-            print(f"Failed to execute SQL querie \n {query}", error)
-            return False
+        # except psycopg2.Error as error:
+        #     print(f"Failed to execute SQL querie \n {query}", error)
+        #     return False
 
     def values(self, val):
         try:

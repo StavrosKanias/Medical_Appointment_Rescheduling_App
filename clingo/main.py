@@ -11,11 +11,14 @@ def main():
     print('Initiating connection...\n')
     dbConditions = {'TIMESLOT': {
         "DATE": [('>', '+0')], "TIMESLOT_AVAILABLE": [('=', True)]}}
-    name = input("Insert DB credentials\nDB name: \n")
-    password = getpass("DB password: \n")
-    db_info = ['Kanon2000', name, password]
-    kb = KnowledgeBase(name, schema,
-                       dbInfo=db_info, dbConditions=dbConditions)
+    dbConditions = {}
+    kb = None
+    while not kb or not kb.db.con: 
+        name = input("\nInsert DB credentials\nDB name: \n")
+        password = getpass("DB password: \n")
+        db_info = ['Kanon2000', name, password]
+        kb = KnowledgeBase(name, schema,
+                        dbInfo=db_info, dbConditions=dbConditions)
     write = input(f"\nCreate {name}.lp?\n y/n:\n")
     if write == 'y':
         kb.toFile('clingo/')
@@ -71,7 +74,7 @@ def main():
                     # update(kb, solution,bcond=bcond)
 
         else:
-            solution, stats = kb.run(asp, [Grant, Claimed], searchDuration=12, show=True, subKB=subKB, merged=merged)
+            solution, stats = kb.run(asp, [Grant, Claimed], searchDuration=20, show=True, subKB=subKB, merged=merged)
             if solution:
                 benefit = -stats['summary']['lower'][0]
                 time = stats['summary']['times']['cpu']

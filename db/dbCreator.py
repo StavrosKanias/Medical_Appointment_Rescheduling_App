@@ -122,12 +122,12 @@ def main():
         # demand = float(input(" Demand (load factor): \n"))
         # timeslot_availability = float(input(" Timeslot availability: \n"))
 
-        minimum_people = 1200
-        maximum_people = 1200
-        minimum_doctors = 12
-        maximum_doctors = 12
-        minimum_specialites = 4
-        maximum_specialites = 6
+        minimum_people = 2500
+        maximum_people = 2500
+        minimum_doctors = 25
+        maximum_doctors = 25
+        minimum_specialites = 8
+        maximum_specialites = 8
         demand = 2.5
         timeslot_availability = 0.8
 
@@ -136,20 +136,20 @@ def main():
         for e in schema.keys():
             fab.fabricate(e)
         if db.isEmpty():
-            db.loadTestData()
+            db.loadData()
         else:
             db.dropData()
-            db.loadTestData()
+            db.loadData()
     else:
         print('Using default data\n')
         fab = DataFabricator()
         for d in data:
-            fab.write_to_csv(d[0], schema[d[0]], d[1])
+            fab.write2csv(d[0], schema[d[0]], d[1])
         if db.isEmpty():
-            db.loadTestData()
+            db.loadData()
         else:
             db.dropData()
-            db.loadTestData()
+            db.loadData()
 
     db.close()
 

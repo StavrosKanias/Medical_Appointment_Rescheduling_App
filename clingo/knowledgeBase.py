@@ -16,24 +16,23 @@ class KnowledgeBase():
         self.name = name
         self.schema = schema
         self.kb = FactBase()
+        self.db = None
         self.TYPE2FIELD = {'integer': IntegerField, 'boolean': IntegerField,
                            'text': StringField, 'date': DateField, 'time': TimeField}
         self.splitPreds = self.createSplitPreds()
         self.mergedPreds = self.createMergedPreds()
         self.foreignPaths = self.getForeignPaths()
-        if dbInfo:
-            self.bind2db(dbInfo)
+        if data:
+            for entity in data:
+                d = data[entity]
+                self.insert(entity, d, toDb=False)
+        elif dbInfo and self.bind2db(dbInfo):
             if dbConditions:
                 self.conditions = dbConditions
             else:
                 self.conditions = {}
             self.joins = self.getJoins()
             self.db2kb()
-
-        elif data:
-            for entity in data:
-                d = data[entity]
-                self.insert(entity, d, toDb=False)
 
     def showPredContent(self, p):
         print(p, [attr for attr in dir(p) if callable(
@@ -62,7 +61,7 @@ class KnowledgeBase():
             if self.isPrimary(entity, a):
                 d = data[attributes.index(a)]
                 primaryData.append(d)
-        return primaryData
+        return primaryData  
 
     def getSplitPredName(self, schemaName):
         predicate_name_parts = schemaName.split('_')
@@ -439,7 +438,10 @@ class KnowledgeBase():
         return conditions
 
     def bind2db(self, dbInfo):
+        self.db = None
         self.db = DataModel(dbInfo[0], dbInfo[1], dbInfo[2])
+        if not self.db.con:
+            return False 
         dbEntities = self.db.getTables()
         for s in self.schema:
             if s not in [de.upper() for de in dbEntities]:
@@ -451,7 +453,7 @@ class KnowledgeBase():
                     if a not in [da.upper() for da in dbAttributes]:
                         raise Exception(
                             f"Invalid schema.\nAttribute {a} of entity {s} doesn't exist in the given database.")
-
+        return True
     # Translate db data to clingo predicates
     def db2kb(self):
         for e in self.schema:
@@ -609,7 +611,6 @@ class KnowledgeBase():
         return jent
 
     # Update to kb and db
-
     def update(self, upd, cond=None, cascade=True, toDb=True):
         upd = {e.upper(): {a.upper(): upd[e][a] for a in upd[e]} for e in upd}
         ent = {e: list(upd[e]) for e in upd}
@@ -752,7 +753,7 @@ class KnowledgeBase():
             else:
                 solution = [model.optimality_proven,
                             model.cost, model.number, model.facts(atoms=True)]
-            if solution[2] % 100 == 0:
+            if solution[2] % 100 == 0 and solution[1]:
                 print(f'MODEL {solution[2]}\nBENEFIT {-solution[1][0]}')
             if datetime.now() > end:
                 Control.interrupt(ctrl)
